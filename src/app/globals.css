@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  --primary-purple: #481268;
+  --primary-purple-dark: #320a4b;
+  --primary-purple-light: #5d1785;
+  --unity-gold: #e5a910;
+  --unity-gold-dark: #c48b04;
+  --unity-gold-light: #f6c84c;
+  --unity-bg: #f8f6fb;
+  --foreground: #1c1917;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: var(--foreground);
+  background-color: #ffffff;
+}
+
+.font-script {
+  font-family: 'Dancing Script', cursive;
+}
+
+.font-serif-brand {
+  font-family: 'Cinzel', Georgia, serif;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f5;
+}
+::-webkit-scrollbar-thumb {
+  background: #c3b5d1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9076ab;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spinSlowReverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 90s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spinSlowReverse 90s linear infinite;
+}
+
