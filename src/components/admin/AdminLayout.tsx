@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
@@ -9,7 +9,6 @@ import {
   Users,
   Trash2,
   Settings,
-  UserCheck,
   LogOut,
   Menu,
   X,
@@ -25,9 +24,14 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
-  Database,
   Building,
+  Bell,
+  CheckCircle,
+  Clock,
+  User,
+  ChevronDown,
 } from 'lucide-react';
+import { Registration } from '@/types';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -50,6 +54,35 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
   const [loading, setLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [guestCount, setGuestCount] = useState<number>(4);
+  const [recentNotifications, setRecentNotifications] = useState<Registration[]>([]);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
+
+  // Helper for human-readable relative time
+  const formatRelativeTime = (dateStr?: string | Date) => {
+    if (!dateStr) return 'Recently';
+    try {
+      const now = new Date();
+      const past = new Date(dateStr);
+      const diffSec = Math.floor((now.getTime() - past.getTime()) / 1000);
+      if (diffSec < 45) return 'Just now';
+      const diffMin = Math.floor(diffSec / 60);
+      if (diffMin < 60) return `${diffMin}m ago`;
+      const diffHr = Math.floor(diffMin / 60);
+      if (diffHr < 24) return `${diffHr}h ago`;
+      const diffDays = Math.floor(diffHr / 24);
+      if (diffDays < 7) return `${diffDays}d ago`;
+      return past.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    } catch {
+      return 'Recently';
+    }
+  };
+
+  // Header Dropdown States
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+
+  const notificationsRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   // Sync theme with localStorage & system preference
   useEffect(() => {
@@ -66,6 +99,20 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     if (savedCollapsed === 'true') {
       setIsCollapsed(true);
     }
+  }, []);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
+        setNotificationsOpen(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const toggleTheme = () => {
@@ -109,22 +156,36 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     checkAuth();
   }, [router]);
 
-  // Fetch live metrics for sidebar widget
+  // Fetch live metrics and recent notifications with polling
   useEffect(() => {
+    let isMounted = true;
+
     async function loadQuickStats() {
       try {
         const res = await fetch('/api/admin/dashboard');
-        if (res.ok) {
+        if (res.ok && isMounted) {
           const data = await res.json();
           if (data.metrics && data.metrics.totalRegistrations !== undefined) {
             setGuestCount(data.metrics.totalRegistrations);
+          }
+          if (data.recentRegistrations) {
+            setRecentNotifications(data.recentRegistrations.slice(0, 6));
+            setUnreadCount(data.recentRegistrations.slice(0, 6).length);
           }
         }
       } catch {
         // Fallback gracefully
       }
     }
+
     loadQuickStats();
+
+    // Auto-poll every 25 seconds for live notifications feed
+    const pollTimer = setInterval(loadQuickStats, 25000);
+    return () => {
+      isMounted = false;
+      clearInterval(pollTimer);
+    };
   }, [pathname]);
 
   const handleLogout = async () => {
@@ -337,7 +398,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
           )}
         </div>
 
-        {/* Sidebar Collapse Toggle & User Profile Card */}
+        {/* Sidebar Collapse Toggle & Bottom Card */}
         <div className="p-3 border-t border-purple-900/60 bg-[#160624] shrink-0">
           {/* Desktop Collapse Toggle < > */}
           <div className="hidden md:flex justify-end mb-2">
@@ -356,18 +417,6 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
               )}
             </button>
           </div>
-
-          {!isCollapsed && (
-            <div className="flex items-center space-x-2.5 mb-2.5 px-1 py-1">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-400 to-amber-300 text-slate-950 font-bold text-xs flex items-center justify-center uppercase shrink-0 shadow-xs">
-                {currentUser?.name ? currentUser.name.charAt(0) : 'A'}
-              </div>
-              <div className="truncate flex-1">
-                <p className="text-xs font-semibold text-white truncate">{currentUser?.name || 'Administrator'}</p>
-                <p className="text-[10px] text-purple-300 truncate">{currentUser?.email}</p>
-              </div>
-            </div>
-          )}
 
           <div className={`grid gap-1.5 ${isCollapsed ? 'grid-cols-1' : 'grid-cols-2'}`}>
             <Link
@@ -395,68 +444,318 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header Bar */}
-        <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#0d121f]/95 backdrop-blur border-b border-slate-200/80 dark:border-slate-800 px-4 sm:px-8 py-3.5 flex items-center justify-between shadow-xs transition-colors">
-          <div className="flex items-center space-x-3">
+        <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#0d121f]/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 px-3 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between shadow-xs transition-colors">
+          <div className="flex items-center space-x-2.5 sm:space-x-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="md:hidden text-slate-700 dark:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              className="md:hidden text-slate-700 dark:text-slate-200 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer border border-slate-200 dark:border-slate-700"
               aria-label="Open sidebar"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div>
-              <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center space-x-2">
-                <span>{title}</span>
-              </h2>
+
+            {/* Left Header Title & Logo */}
+            <div className="flex items-center space-x-2.5">
+              <div className="w-8 h-8 relative rounded-xl bg-amber-400/10 border border-amber-400/30 p-1 flex items-center justify-center shrink-0 shadow-xs">
+                <Image
+                  src="/images/unity101-logo.png"
+                  alt="Unity 101"
+                  width={24}
+                  height={24}
+                  className="object-contain"
+                />
+              </div>
+              <div>
+                <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight flex items-center space-x-1.5">
+                  <span>{title}</span>
+                </h2>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 hidden sm:block font-medium">
+                  Unity 101 Community Radio Portal
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Header Controls: Live status, Theme Toggle & Admin Profile */}
+          {/* Right Header Controls: Notification Feed, Theme Switcher, Radio Badges, Profile & Sign Out */}
           <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Dark / Light Mode Switcher */}
-            <button
-              onClick={toggleTheme}
-              className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/90 text-slate-800 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer shadow-xs flex items-center space-x-1.5 text-xs font-semibold"
-              title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            >
-              {isDarkMode ? (
-                <>
-                  <Sun className="w-4 h-4 text-amber-400" />
-                  <span className="hidden sm:inline">Light Mode</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-4 h-4 text-slate-700" />
-                  <span className="hidden sm:inline">Dark Mode</span>
-                </>
-              )}
-            </button>
+            {/* Live Registration Notifications Dropdown */}
+            <div className="relative" ref={notificationsRef}>
+              <button
+                onClick={() => setNotificationsOpen(!notificationsOpen)}
+                className={`relative p-2 rounded-xl border transition-all cursor-pointer shadow-xs ${
+                  notificationsOpen
+                    ? 'bg-purple-100 dark:bg-purple-950/80 text-purple-900 dark:text-amber-400 border-purple-300 dark:border-purple-700 ring-2 ring-purple-400/30'
+                    : 'bg-slate-100 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700'
+                }`}
+                title="Registration Alerts & Live Activity"
+                aria-label="Notifications"
+              >
+                <Bell className="w-4 h-4" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-amber-500 text-slate-950 font-extrabold text-[9px] shadow-sm animate-pulse">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
 
-            {/* Radio Station Pill */}
-            <div className="hidden sm:flex items-center space-x-2 bg-purple-50 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/60 text-purple-900 dark:text-purple-200 px-3 py-1 rounded-full text-xs font-semibold">
-              <Radio className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
+              {notificationsOpen && (
+                <div className="absolute right-0 sm:right-auto sm:left-auto mt-2 w-80 sm:w-96 bg-white dark:bg-[#111625] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
+                  {/* Dropdown Header */}
+                  <div className="p-3.5 bg-gradient-to-r from-[#2f0846] to-[#481268] text-white flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                      <h4 className="font-bold text-xs tracking-wide">Registration Notifications</h4>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {unreadCount > 0 && (
+                        <button
+                          onClick={() => setUnreadCount(0)}
+                          className="text-[10px] bg-white/20 hover:bg-white/30 text-white px-2 py-0.5 rounded-md font-semibold transition-colors cursor-pointer"
+                        >
+                          Mark all read
+                        </button>
+                      )}
+                      <span className="text-[10px] bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full font-mono font-bold">
+                        Live
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Notifications List */}
+                  <div className="max-h-84 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60 text-xs">
+                    {recentNotifications.length === 0 ? (
+                      <div className="p-8 text-center text-slate-400">
+                        <Clock className="w-8 h-8 mx-auto mb-2 text-slate-300 dark:text-slate-600" />
+                        <p className="font-semibold text-xs text-slate-600 dark:text-slate-300">
+                          No recent registration alerts
+                        </p>
+                        <p className="text-[11px] text-slate-400 mt-0.5">
+                          New guest submissions will appear here automatically
+                        </p>
+                      </div>
+                    ) : (
+                      recentNotifications.map((reg) => (
+                        <Link
+                          key={reg.id}
+                          href={`/admin/registrations/${reg.id}`}
+                          onClick={() => {
+                            setNotificationsOpen(false);
+                            setUnreadCount((c) => Math.max(0, c - 1));
+                          }}
+                          className="p-3 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors flex items-start space-x-2.5 block group"
+                        >
+                          <div className="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-950/80 text-[#481268] dark:text-amber-400 font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 border border-purple-200 dark:border-purple-800">
+                            #{reg.id}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <p className="font-bold text-slate-900 dark:text-white truncate group-hover:text-purple-700 dark:group-hover:text-amber-300 transition-colors">
+                                {reg.first_name} {reg.last_name}
+                              </p>
+                              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono shrink-0 ml-1">
+                                {formatRelativeTime(reg.created_at)}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-2 mt-1">
+                              <span
+                                className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
+                                  reg.food_preference === 'Veg Food'
+                                    ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300'
+                                    : 'bg-red-100 text-red-900 dark:bg-red-950/80 dark:text-red-300'
+                                }`}
+                              >
+                                {reg.food_preference}
+                              </span>
+                              <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                                {reg.town || 'No town'}
+                              </span>
+                            </div>
+                          </div>
+                          <span
+                            className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
+                              reg.status === 'confirmed'
+                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                                : reg.status === 'cancelled'
+                                ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300'
+                                : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
+                            }`}
+                          >
+                            {reg.status}
+                          </span>
+                        </Link>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Dropdown Footer */}
+                  <div className="p-2.5 bg-slate-50 dark:bg-[#0d121f] border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                      Total: <strong className="text-slate-800 dark:text-slate-200">{guestCount}</strong> registered
+                    </span>
+                    <Link
+                      href="/admin/registrations"
+                      onClick={() => setNotificationsOpen(false)}
+                      className="text-xs font-bold text-purple-700 dark:text-amber-400 hover:underline flex items-center space-x-1"
+                    >
+                      <span>View All Registrations</span>
+                      <span>&rarr;</span>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Segmented Light / Dark Mode Toggle Switch (Clear active state) */}
+            <div
+              onClick={toggleTheme}
+              className="flex items-center p-0.5 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 cursor-pointer shadow-xs select-none"
+              title={isDarkMode ? 'Active: Dark Mode (Click to switch to Light Mode)' : 'Active: Light Mode (Click to switch to Dark Mode)'}
+            >
+              <div
+                className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold transition-all ${
+                  !isDarkMode
+                    ? 'bg-white text-amber-600 shadow-xs border border-slate-200/50'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Sun className="w-3.5 h-3.5 text-amber-500" />
+                <span className="hidden sm:inline">Light</span>
+              </div>
+              <div
+                className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold transition-all ${
+                  isDarkMode
+                    ? 'bg-[#161e31] text-amber-300 shadow-xs border border-slate-700/60'
+                    : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                <Moon className="w-3.5 h-3.5 text-amber-400" />
+                <span className="hidden sm:inline">Dark</span>
+              </div>
+            </div>
+
+            {/* Radio Station Badge */}
+            <div className="hidden xl:flex items-center space-x-2 bg-gradient-to-r from-purple-50 to-amber-50/50 dark:from-purple-950/40 dark:to-slate-900 border border-purple-200/80 dark:border-purple-800/60 text-purple-900 dark:text-purple-200 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-xs">
+              <Radio className="w-3.5 h-3.5 text-amber-500 animate-pulse shrink-0" />
               <span>Unity 101 Radio 99.8 FM</span>
             </div>
 
             {/* System Status Pill */}
-            <div className="flex items-center space-x-1.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 px-2.5 py-1 rounded-full text-[11px] font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="hidden lg:flex items-center space-x-1.5 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
               <span>System Connected</span>
             </div>
 
-            {/* Profile Avatar */}
-            <Link
-              href="/admin/profile"
-              className="flex items-center space-x-2 p-1 pl-2 pr-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-all text-xs font-semibold text-slate-800 dark:text-slate-100"
-              title="Admin Profile & Security"
+            {/* Profile Avatar & Header Dropdown Menu */}
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                className={`flex items-center space-x-2 p-1 pl-1.5 pr-2 rounded-xl transition-all text-xs font-semibold cursor-pointer border ${
+                  userDropdownOpen
+                    ? 'bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600'
+                    : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 border-transparent hover:border-slate-200 dark:hover:border-slate-700'
+                }`}
+                title="Admin Account Profile"
+              >
+                <div className="w-7 h-7 relative rounded-lg bg-amber-400/20 border border-amber-400/40 p-0.5 flex items-center justify-center shrink-0 shadow-xs">
+                  <Image
+                    src="/images/unity101-logo.png"
+                    alt="Unity 101 Admin"
+                    width={22}
+                    height={22}
+                    className="object-contain"
+                  />
+                </div>
+                <div className="hidden sm:flex flex-col text-left leading-tight max-w-[120px]">
+                  <span className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                    {currentUser?.name || 'Unity 101 Admin'}
+                  </span>
+                  <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider">
+                    Super Admin
+                  </span>
+                </div>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              </button>
+
+              {userDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-68 bg-white dark:bg-[#111625] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 text-xs">
+                  <div className="p-4 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50/80 dark:bg-[#0d121f] flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-400/20 border border-amber-400/40 p-1 flex items-center justify-center shrink-0 shadow-xs">
+                      <Image
+                        src="/images/unity101-logo.png"
+                        alt="Unity 101"
+                        width={32}
+                        height={32}
+                        className="object-contain"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-slate-900 dark:text-white text-xs truncate">
+                        {currentUser?.name || 'Unity 101 Admin'}
+                      </p>
+                      <p className="text-slate-500 dark:text-slate-400 text-[11px] truncate">
+                        {currentUser?.email || 'admin@unity101events.org'}
+                      </p>
+                      <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-700 dark:text-amber-300 font-bold text-[9px] uppercase">
+                        Super Administrator
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-2 space-y-1">
+                    <Link
+                      href="/admin/profile"
+                      onClick={() => setUserDropdownOpen(false)}
+                      className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium"
+                    >
+                      <ShieldCheck className="w-4 h-4 text-purple-600 dark:text-amber-400" />
+                      <span>Security & Profile</span>
+                    </Link>
+
+                    <Link
+                      href="/admin/settings"
+                      onClick={() => setUserDropdownOpen(false)}
+                      className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium"
+                    >
+                      <Settings className="w-4 h-4 text-purple-600 dark:text-amber-400" />
+                      <span>System Settings</span>
+                    </Link>
+
+                    <Link
+                      href="/register"
+                      target="_blank"
+                      onClick={() => setUserDropdownOpen(false)}
+                      className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium"
+                    >
+                      <ExternalLink className="w-4 h-4 text-slate-400" />
+                      <span>Public Registration Form</span>
+                    </Link>
+                  </div>
+
+                  <div className="p-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-[#0d121f]">
+                    <button
+                      onClick={() => {
+                        setUserDropdownOpen(false);
+                        handleLogout();
+                      }}
+                      className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors font-bold cursor-pointer"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Sign Out from Admin</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Direct Header Sign Out Button */}
+            <button
+              onClick={handleLogout}
+              className="inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/60 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/60 text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95 shrink-0"
+              title="Quick Sign Out from Admin Portal"
             >
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-400 to-amber-300 text-slate-950 font-bold text-xs flex items-center justify-center shadow-xs">
-                {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'A'}
-              </div>
-              <span className="hidden lg:inline-block max-w-[120px] truncate text-slate-700 dark:text-slate-200">
-                {currentUser?.name || 'Admin'}
-              </span>
-            </Link>
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
           </div>
         </header>
 

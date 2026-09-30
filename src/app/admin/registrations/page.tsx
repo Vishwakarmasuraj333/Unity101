@@ -216,22 +216,22 @@ export default function RegistrationsManagementPage() {
         )}
 
         {/* Top Control Bar */}
-        <div className="bg-white rounded-2xl border border-purple-100/80 p-4 shadow-xs space-y-3">
+        <div className="bg-white dark:bg-[#111625] rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-xs space-y-3 transition-colors">
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
             {/* Search Input */}
             <div className="relative flex-1">
-              <Search className="w-4 h-4 text-slate-400 dark:text-purple-300 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-slate-400 dark:text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by name, email, mobile, town, or postcode..."
-                className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm bg-slate-50 dark:bg-[#12071f] border border-slate-200 dark:border-purple-800 rounded-xl focus:outline-none focus:border-[#481268] dark:focus:border-amber-400 focus:bg-white text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/50 transition-colors"
+                className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm bg-slate-50 dark:bg-[#161e31] border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-[#481268] dark:focus:border-amber-400 focus:bg-white text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors"
               />
               {search && (
                 <button
                   onClick={() => setSearch('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-white text-xs"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-white text-xs cursor-pointer"
                 >
                   ✕
                 </button>
@@ -242,7 +242,7 @@ export default function RegistrationsManagementPage() {
             <div className="flex items-center space-x-2 shrink-0">
               <button
                 onClick={() => handleExport(false)}
-                className="inline-flex items-center space-x-1.5 bg-slate-100 dark:bg-purple-900/60 hover:bg-slate-200 dark:hover:bg-purple-800 text-slate-800 dark:text-purple-100 text-xs font-semibold py-2 px-3.5 rounded-xl border border-slate-200/80 dark:border-purple-700/80 transition-all cursor-pointer shadow-xs"
+                className="inline-flex items-center space-x-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold py-2 px-3.5 rounded-xl border border-slate-200/80 dark:border-slate-700 transition-all cursor-pointer shadow-xs"
                 title="Export filtered records to CSV"
               >
                 <Download className="w-3.5 h-3.5" />
@@ -251,7 +251,7 @@ export default function RegistrationsManagementPage() {
 
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="inline-flex items-center space-x-1.5 bg-[#481268] hover:bg-[#380952] text-white text-xs font-bold py-2 px-4 rounded-xl shadow-xs transition-all active:scale-95"
+                className="inline-flex items-center space-x-1.5 bg-[#481268] hover:bg-[#380952] text-white text-xs font-bold py-2 px-4 rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5 text-amber-400" />
                 <span>Add Guest</span>
@@ -260,9 +260,9 @@ export default function RegistrationsManagementPage() {
           </div>
 
           {/* Filters Row */}
-          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 text-xs text-slate-600">
-            <div className="flex items-center space-x-1 text-slate-500 font-semibold mr-1">
-              <Filter className="w-3.5 h-3.5 text-[#481268]" />
+          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300">
+            <div className="flex items-center space-x-1 text-slate-500 dark:text-slate-400 font-semibold mr-1">
+              <Filter className="w-3.5 h-3.5 text-[#481268] dark:text-amber-400" />
               <span>Filters:</span>
             </div>
 
@@ -273,7 +273,7 @@ export default function RegistrationsManagementPage() {
                 setStatusFilter(e.target.value);
                 setPage(1);
               }}
-              className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 text-xs focus:outline-none focus:border-[#481268]"
+              className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#161e31] text-slate-700 dark:text-slate-200 text-xs focus:outline-none focus:border-[#481268] dark:focus:border-amber-400 cursor-pointer"
             >
               <option value="all">All Statuses</option>
               <option value="new">New</option>
@@ -288,7 +288,7 @@ export default function RegistrationsManagementPage() {
                 setFoodFilter(e.target.value);
                 setPage(1);
               }}
-              className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 text-xs focus:outline-none focus:border-[#481268]"
+              className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#161e31] text-slate-700 dark:text-slate-200 text-xs focus:outline-none focus:border-[#481268] dark:focus:border-amber-400 cursor-pointer"
             >
               <option value="all">All Food Choices</option>
               <option value="Veg Food">Veg Food</option>
@@ -302,7 +302,7 @@ export default function RegistrationsManagementPage() {
                 setDateFilter(e.target.value);
                 setPage(1);
               }}
-              className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 text-xs focus:outline-none focus:border-[#481268]"
+              className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#161e31] text-slate-700 dark:text-slate-200 text-xs focus:outline-none focus:border-[#481268] dark:focus:border-amber-400 cursor-pointer"
             >
               <option value="all">All Dates</option>
               <option value="today">Registered Today</option>
@@ -319,7 +319,7 @@ export default function RegistrationsManagementPage() {
                 setSortOrder(so as 'ASC' | 'DESC');
                 setPage(1);
               }}
-              className="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 text-xs focus:outline-none focus:border-[#481268] ml-auto"
+              className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#161e31] text-slate-700 dark:text-slate-200 text-xs focus:outline-none focus:border-[#481268] dark:focus:border-amber-400 cursor-pointer ml-auto"
             >
               <option value="created_at-DESC">Newest First</option>
               <option value="created_at-ASC">Oldest First</option>
@@ -335,7 +335,7 @@ export default function RegistrationsManagementPage() {
                 setLimit(Number(e.target.value));
                 setPage(1);
               }}
-              className="px-2 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 text-xs focus:outline-none focus:border-[#481268]"
+              className="px-2 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#161e31] text-slate-700 dark:text-slate-200 text-xs focus:outline-none focus:border-[#481268] dark:focus:border-amber-400 cursor-pointer"
             >
               <option value={10}>10 / page</option>
               <option value={25}>25 / page</option>
@@ -392,44 +392,44 @@ export default function RegistrationsManagementPage() {
         )}
 
         {/* Main Registrations Table Card */}
-        <div className="bg-white rounded-2xl border border-purple-100/80 shadow-xs overflow-hidden">
+        <div className="bg-white dark:bg-[#111625] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden transition-colors">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 border-b border-slate-200/80 text-slate-500 uppercase text-[10px] tracking-wider select-none">
+              <thead className="bg-slate-50 dark:bg-[#0d121f] border-b border-slate-200/80 dark:border-slate-800 text-slate-600 dark:text-slate-300 uppercase text-[10px] tracking-wider select-none">
                 <tr>
-                  <th className="py-3 px-4 w-10">
+                  <th className="py-3.5 px-4 w-10">
                     <input
                       type="checkbox"
                       onChange={handleSelectAll}
                       checked={
                         registrations.length > 0 && selectedIds.length === registrations.length
                       }
-                      className="rounded border-slate-300 text-[#481268] focus:ring-purple-700"
+                      className="rounded border-slate-300 dark:border-slate-600 text-[#481268] focus:ring-purple-700 cursor-pointer"
                     />
                   </th>
-                  <th className="py-3 px-3 font-semibold">Ref</th>
-                  <th className="py-3 px-3 font-semibold">Guest Name</th>
-                  <th className="py-3 px-3 font-semibold">Contact</th>
-                  <th className="py-3 px-3 font-semibold">Town & Postcode</th>
-                  <th className="py-3 px-3 font-semibold">Food</th>
-                  <th className="py-3 px-3 font-semibold">Status</th>
-                  <th className="py-3 px-3 font-semibold">Registered</th>
-                  <th className="py-3 px-4 font-semibold text-right">Actions</th>
+                  <th className="py-3.5 px-3 font-bold">Ref</th>
+                  <th className="py-3.5 px-3 font-bold">Guest Name</th>
+                  <th className="py-3.5 px-3 font-bold">Contact</th>
+                  <th className="py-3.5 px-3 font-bold">Town & Postcode</th>
+                  <th className="py-3.5 px-3 font-bold">Food</th>
+                  <th className="py-3.5 px-3 font-bold">Status</th>
+                  <th className="py-3.5 px-3 font-bold">Registered</th>
+                  <th className="py-3.5 px-4 font-bold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
                 {loading ? (
                   <tr>
                     <td colSpan={9} className="py-12 text-center text-slate-400">
-                      <Loader2 className="w-6 h-6 animate-spin mx-auto text-[#481268] mb-2" />
-                      <span>Loading registration records from MySQL...</span>
+                      <Loader2 className="w-6 h-6 animate-spin mx-auto text-[#481268] dark:text-amber-400 mb-2" />
+                      <span>Loading registration records from database...</span>
                     </td>
                   </tr>
                 ) : registrations.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="py-12 text-center text-slate-400">
-                      <p className="text-sm font-semibold text-slate-600 mb-1">No registrations found</p>
-                      <p className="text-xs text-slate-400">
+                    <td colSpan={9} className="py-12 text-center text-slate-400 dark:text-slate-500">
+                      <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">No registrations found</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
                         {search || statusFilter !== 'all' || foodFilter !== 'all'
                           ? 'Try adjusting your search filters.'
                           : 'No guests have registered yet.'}
@@ -442,8 +442,8 @@ export default function RegistrationsManagementPage() {
                     return (
                       <tr
                         key={reg.id}
-                        className={`hover:bg-purple-50/30 transition-colors ${
-                          isSelected ? 'bg-purple-50/50' : ''
+                        className={`hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors ${
+                          isSelected ? 'bg-purple-50/60 dark:bg-purple-950/40' : ''
                         }`}
                       >
                         <td className="py-3 px-4">
@@ -451,7 +451,7 @@ export default function RegistrationsManagementPage() {
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => handleToggleSelect(reg.id)}
-                            className="rounded border-slate-300 text-[#481268] focus:ring-purple-700"
+                            className="rounded border-slate-300 dark:border-slate-600 text-[#481268] focus:ring-purple-700 cursor-pointer"
                           />
                         </td>
                         <td className="py-3.5 px-3 font-mono font-bold text-[#481268] dark:text-amber-400 text-xs">
@@ -461,22 +461,22 @@ export default function RegistrationsManagementPage() {
                           <p className="font-bold text-slate-900 dark:text-white">
                             {reg.first_name} {reg.last_name}
                           </p>
-                          <p className="text-[11px] text-slate-500 dark:text-purple-300 truncate max-w-[180px]">{reg.address}</p>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[180px]">{reg.address}</p>
                         </td>
                         <td className="py-3 px-3">
-                          <p className="text-slate-800 dark:text-purple-100 font-medium">{reg.email}</p>
-                          <p className="text-[11px] text-slate-500 dark:text-amber-300 font-mono font-semibold">{reg.mobile}</p>
+                          <p className="text-slate-800 dark:text-slate-200 font-medium">{reg.email}</p>
+                          <p className="text-[11px] text-slate-600 dark:text-amber-300 font-mono font-semibold">{reg.mobile}</p>
                         </td>
                         <td className="py-3 px-3">
-                          <p className="text-slate-700 dark:text-purple-100 font-medium">{reg.town}</p>
-                          <p className="text-[10px] font-mono text-slate-500 dark:text-purple-300 uppercase font-semibold">{reg.post_code}</p>
+                          <p className="text-slate-700 dark:text-slate-200 font-medium">{reg.town}</p>
+                          <p className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase font-semibold">{reg.post_code}</p>
                         </td>
                         <td className="py-3 px-3">
                           <span
                             className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                               reg.food_preference === 'Veg Food'
-                                ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 border border-amber-300/40'
-                                : 'bg-red-100 dark:bg-red-950/80 text-red-900 dark:text-red-300 border border-red-300/40'
+                                ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 border border-amber-300/40 dark:border-amber-700/60'
+                                : 'bg-red-100 dark:bg-red-950/80 text-red-900 dark:text-red-300 border border-red-300/40 dark:border-red-700/60'
                             }`}
                           >
                             {reg.food_preference}
@@ -490,10 +490,10 @@ export default function RegistrationsManagementPage() {
                             }
                             className={`text-[11px] font-bold py-1 px-2 rounded-lg border cursor-pointer focus:ring-1 focus:ring-purple-700 ${
                               reg.status === 'confirmed'
-                                ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-900 dark:text-emerald-300 border-emerald-300 dark:border-emerald-600/50'
+                                ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-900 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700/70'
                                 : reg.status === 'cancelled'
-                                ? 'bg-red-100 dark:bg-red-950/80 text-red-900 dark:text-red-300 border-red-300 dark:border-red-600/50'
-                                : 'bg-blue-100 dark:bg-blue-950/80 text-blue-900 dark:text-blue-300 border-blue-300 dark:border-blue-600/50'
+                                ? 'bg-red-100 dark:bg-red-950/80 text-red-900 dark:text-red-300 border-red-300 dark:border-red-700/70'
+                                : 'bg-blue-100 dark:bg-blue-950/80 text-blue-900 dark:text-blue-300 border-blue-300 dark:border-blue-700/70'
                             }`}
                           >
                             <option value="new">New</option>
@@ -501,29 +501,29 @@ export default function RegistrationsManagementPage() {
                             <option value="cancelled">Cancelled</option>
                           </select>
                         </td>
-                        <td className="py-3 px-3 text-[11px] text-slate-500 dark:text-purple-200 whitespace-nowrap">
+                        <td className="py-3 px-3 text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">
                           {new Date(reg.created_at).toLocaleDateString()}
                         </td>
                         <td className="py-3 px-4 text-right">
                           <div className="flex items-center justify-end space-x-1">
                             <Link
                               href={`/admin/registrations/${reg.id}`}
-                              className="p-1.5 text-slate-500 dark:text-purple-300 hover:text-purple-700 dark:hover:text-amber-300 hover:bg-purple-100 dark:hover:bg-purple-900/60 rounded-lg transition-colors inline-flex items-center"
+                              className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-purple-700 dark:hover:text-amber-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors inline-flex items-center"
                               title="View Registration Details"
                             >
                               <Eye className="w-3.5 h-3.5" />
                             </Link>
                             <button
                               onClick={() => setEditingItem(reg)}
-                              className="p-1.5 text-slate-500 dark:text-purple-300 hover:text-amber-700 dark:hover:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-950/60 rounded-lg transition-colors cursor-pointer"
+                              className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-amber-700 dark:hover:text-amber-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                               title="Edit Registration"
                             >
                               <Edit2 className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => setDeleteConfirmItem(reg)}
-                              className="p-1.5 text-slate-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-950/60 rounded-lg transition-colors cursor-pointer"
-                              title="Move to Trash"
+                              className="p-1.5 text-slate-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/60 rounded-lg transition-colors cursor-pointer"
+                              title="Delete Registration"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -538,34 +538,34 @@ export default function RegistrationsManagementPage() {
           </div>
 
           {/* Pagination Footer */}
-          <div className="px-4 py-3 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+          <div className="px-4 py-3 bg-slate-50/80 dark:bg-[#0d121f] border-t border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400 transition-colors">
             <div>
               Showing{' '}
-              <span className="font-semibold text-slate-800">
+              <span className="font-semibold text-slate-800 dark:text-slate-200">
                 {totalCount === 0 ? 0 : (page - 1) * limit + 1}
               </span>{' '}
               to{' '}
-              <span className="font-semibold text-slate-800">
+              <span className="font-semibold text-slate-800 dark:text-slate-200">
                 {Math.min(page * limit, totalCount)}
               </span>{' '}
-              of <span className="font-semibold text-slate-800">{totalCount}</span> registrations
+              of <span className="font-semibold text-slate-800 dark:text-slate-200">{totalCount}</span> registrations
             </div>
 
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page <= 1}
-                className="p-1.5 rounded-lg border border-slate-200 hover:bg-white text-slate-600 disabled:opacity-40 disabled:pointer-events-none transition-colors"
+                className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="px-2 text-xs font-medium">
+              <span className="px-2 text-xs font-medium text-slate-700 dark:text-slate-300">
                 Page {page} of {totalPages}
               </span>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page >= totalPages}
-                className="p-1.5 rounded-lg border border-slate-200 hover:bg-white text-slate-600 disabled:opacity-40 disabled:pointer-events-none transition-colors"
+                className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
