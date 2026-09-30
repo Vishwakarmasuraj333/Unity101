@@ -567,20 +567,20 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
             {/* Left Header Title & Logo */}
             <div className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 relative rounded-xl bg-purple-100 dark:bg-purple-950/80 border border-purple-300 dark:border-purple-800 p-1 flex items-center justify-center shrink-0 shadow-xs">
+              <div className="w-9 h-9 relative rounded-xl bg-[#200533] border-2 border-amber-400 p-1 flex items-center justify-center shrink-0 shadow-md">
                 <Image
                   src="/images/unity101-logo.png"
                   alt="Unity 101"
-                  width={24}
-                  height={24}
-                  className="object-contain"
+                  width={26}
+                  height={26}
+                  className="object-contain drop-shadow-xs"
                 />
               </div>
               <div>
                 <h2 className="text-sm sm:text-base font-extrabold text-slate-950 dark:text-white tracking-tight">
                   {title}
                 </h2>
-                <p className="text-[11px] text-purple-900 dark:text-purple-300 hidden sm:block font-bold">
+                <p className="text-[11px] text-purple-900 dark:text-amber-400 hidden sm:block font-bold">
                   Unity 101 Community Radio
                 </p>
               </div>
@@ -737,13 +737,13 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                 }`}
                 title="Admin Account Profile"
               >
-                <div className="w-8 h-8 relative rounded-xl bg-gradient-to-br from-amber-400/20 via-purple-900/40 to-black/60 border-2 border-amber-400/90 p-1 flex items-center justify-center shrink-0 shadow-xs">
+                <div className="w-8 h-8 relative rounded-xl bg-[#200533] border-2 border-amber-400 p-1 flex items-center justify-center shrink-0 shadow-xs">
                   <Image
                     src="/images/unity101-logo.png"
                     alt="Unity 101 Admin"
-                    width={24}
-                    height={24}
-                    className="object-contain"
+                    width={22}
+                    height={22}
+                    className="object-contain drop-shadow-xs"
                   />
                 </div>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
@@ -752,13 +752,13 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
               {userDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-68 bg-white dark:bg-[#111625] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 text-xs">
                   <div className="p-4 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50/80 dark:bg-[#0d121f] flex items-center space-x-3">
-                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400/25 via-purple-900/50 to-black/70 border-2 border-amber-400 p-1 flex items-center justify-center shrink-0 shadow-xs">
+                    <div className="w-12 h-12 rounded-xl bg-[#200533] border-2 border-amber-400 p-1.5 flex items-center justify-center shrink-0 shadow-md">
                       <Image
                         src="/images/unity101-logo.png"
                         alt="Unity 101"
                         width={36}
                         height={36}
-                        className="object-contain"
+                        className="object-contain drop-shadow-xs"
                       />
                     </div>
                     <div className="min-w-0 flex-1">
@@ -768,7 +768,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                       <p className="text-slate-500 dark:text-slate-400 text-[11px] truncate">
                         {currentUser?.email || 'admin@unity101events.org'}
                       </p>
-                      <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-purple-900/30 text-purple-300 border border-purple-700/50 font-bold text-[9px] uppercase">
+                      <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-purple-900/30 text-purple-700 dark:text-purple-300 border border-purple-400/50 font-bold text-[9px] uppercase">
                         Super Administrator
                       </span>
                     </div>
@@ -804,16 +804,16 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                     </Link>
                   </div>
 
-                  <div className="p-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-[#0d121f]">
+                  <div className="p-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-[#0d121f]">
                     <button
                       onClick={() => {
                         setUserDropdownOpen(false);
                         handleLogout();
                       }}
-                      className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl text-purple-300 hover:text-white hover:bg-purple-900/40 transition-colors font-bold cursor-pointer"
+                      className="w-full flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-rose-700 dark:text-rose-300 bg-rose-50/90 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-950/70 border border-rose-200 dark:border-rose-800/60 transition-all font-bold cursor-pointer"
                     >
-                      <LogOut className="w-4 h-4" />
-                      <span>Sign Out from Admin</span>
+                      <LogOut className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
+                      <span className="text-xs font-extrabold text-rose-700 dark:text-rose-300 tracking-wide">Sign Out from Admin</span>
                     </button>
                   </div>
                 </div>

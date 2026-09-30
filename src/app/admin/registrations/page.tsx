@@ -497,18 +497,23 @@ export default function RegistrationsManagementPage() {
                 </button>
               </div>
 
+              {/* Prominent Bulk Delete & Clear Selection */}
               <button
                 onClick={() => handleBulkAction('soft_delete')}
                 disabled={bulkActionLoading}
-                className="bg-purple-950/80 hover:bg-purple-900 text-purple-200 text-[11px] font-semibold py-1.5 px-3 rounded-lg border border-purple-800/80 transition-colors cursor-pointer"
+                className="bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold py-1.5 px-3 rounded-lg border border-rose-500 shadow-sm transition-all flex items-center space-x-1 cursor-pointer"
+                title="Move selected registrations to Archive / Trash"
               >
-                Move to Trash
+                <Trash2 className="w-3.5 h-3.5 text-white shrink-0" />
+                <span>Delete Selected</span>
               </button>
               <button
                 onClick={() => setSelectedIds([])}
-                className="text-purple-300 hover:text-white text-[11px] underline ml-1 cursor-pointer"
+                className="bg-white/15 hover:bg-white/25 text-white text-[11px] font-bold py-1.5 px-3 rounded-lg border border-white/20 transition-all flex items-center space-x-1 cursor-pointer ml-1"
+                title="Deselect all selected rows"
               >
-                Clear
+                <X className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+                <span>Clear Selection</span>
               </button>
             </div>
           </div>
@@ -530,7 +535,7 @@ export default function RegistrationsManagementPage() {
                       className="rounded border-slate-300 dark:border-slate-600 text-[#481268] focus:ring-purple-700 cursor-pointer"
                     />
                   </th>
-                  <th className="py-3.5 px-3 font-bold">Ref</th>
+                  <th className="py-3.5 px-3 font-bold">Sr No.</th>
                   <th className="py-3.5 px-3 font-bold">Guest Name</th>
                   <th className="py-3.5 px-3 font-bold">Contact</th>
                   <th className="py-3.5 px-3 font-bold">Town & Postcode</th>
@@ -560,8 +565,9 @@ export default function RegistrationsManagementPage() {
                     </td>
                   </tr>
                 ) : (
-                  registrations.map((reg) => {
+                  registrations.map((reg, index) => {
                     const isSelected = selectedIds.includes(reg.id);
+                    const serialNumber = (page - 1) * limit + index + 1;
                     return (
                       <tr
                         key={reg.id}
@@ -577,8 +583,8 @@ export default function RegistrationsManagementPage() {
                             className="rounded border-slate-300 dark:border-slate-600 text-[#481268] focus:ring-purple-700 cursor-pointer"
                           />
                         </td>
-                        <td className="py-3.5 px-3 font-mono font-bold text-purple-700 dark:text-purple-300 text-xs">
-                          #{reg.id}
+                        <td className="py-3.5 px-3 font-mono font-bold text-slate-900 dark:text-amber-400 text-xs">
+                          {serialNumber}
                         </td>
                         <td className="py-3 px-3">
                           <p className="font-bold text-slate-900 dark:text-white">

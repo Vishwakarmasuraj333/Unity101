@@ -206,7 +206,7 @@ export default function TrashRecoveryPage() {
                       className="rounded border-slate-300 text-[#481268] focus:ring-purple-700"
                     />
                   </th>
-                  <th className="py-3 px-3 font-semibold">Ref</th>
+                  <th className="py-3 px-3 font-semibold">Sr No.</th>
                   <th className="py-3 px-3 font-semibold">Guest</th>
                   <th className="py-3 px-3 font-semibold">Contact</th>
                   <th className="py-3 px-3 font-semibold">Town</th>
@@ -220,19 +220,19 @@ export default function TrashRecoveryPage() {
                   <tr>
                     <td colSpan={8} className="py-12 text-center text-slate-400">
                       <Loader2 className="w-5 h-5 animate-spin mx-auto text-[#481268] mb-2" />
-                      <span>Loading trash...</span>
+                      <span>Loading archived directory...</span>
                     </td>
                   </tr>
                 ) : items.length === 0 ? (
                   <tr>
                     <td colSpan={8} className="py-12 text-center text-slate-400">
                       <Trash2 className="w-8 h-8 mx-auto text-slate-300 mb-2" />
-                      <p className="font-semibold text-slate-600">Trash is Empty</p>
-                      <p className="text-xs text-slate-400 mt-0.5">No deleted registrations currently in trash.</p>
+                      <p className="font-semibold text-slate-600 dark:text-slate-300">Archived Directory is Empty</p>
+                      <p className="text-xs text-slate-400 mt-0.5">No deleted registrations currently in archive.</p>
                     </td>
                   </tr>
                 ) : (
-                  items.map((item) => (
+                  items.map((item, index) => (
                     <tr key={item.id} className="hover:bg-purple-50/20 dark:hover:bg-purple-950/20 transition-colors">
                       <td className="py-3 px-4">
                         <input
@@ -248,7 +248,9 @@ export default function TrashRecoveryPage() {
                           className="rounded border-slate-300 text-[#481268] focus:ring-purple-700"
                         />
                       </td>
-                      <td className="py-3 px-3 font-mono font-bold text-slate-700 dark:text-amber-400">#{item.id}</td>
+                      <td className="py-3 px-3 font-mono font-bold text-slate-700 dark:text-amber-400">
+                        {(page - 1) * 25 + index + 1}
+                      </td>
                       <td className="py-3 px-3">
                         <p className="font-bold text-slate-800 dark:text-white">
                           {item.first_name} {item.last_name}
