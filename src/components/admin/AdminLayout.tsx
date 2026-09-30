@@ -18,6 +18,13 @@ import {
   Radio,
   Sun,
   Moon,
+  Salad,
+  Drumstick,
+  FileSpreadsheet,
+  History,
+  Plus,
+  Sparkles,
+  Download,
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -39,6 +46,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [guestCount, setGuestCount] = useState<number>(4);
 
   // Sync theme with localStorage & system preference
   useEffect(() => {
@@ -85,6 +93,24 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     checkAuth();
   }, [router]);
 
+  // Fetch quick metrics for sidebar widget
+  useEffect(() => {
+    async function loadQuickStats() {
+      try {
+        const res = await fetch('/api/admin/dashboard');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.metrics && data.metrics.totalRegistrations !== undefined) {
+            setGuestCount(data.metrics.totalRegistrations);
+          }
+        }
+      } catch {
+        // Fallback gracefully
+      }
+    }
+    loadQuickStats();
+  }, [pathname]);
+
   const handleLogout = async () => {
     try {
       await fetch('/api/admin/logout', { method: 'POST' });
@@ -94,12 +120,30 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     }
   };
 
-  const navItems = [
-    { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-    { name: 'Registrations', href: '/admin/registrations', icon: Users },
-    { name: 'Trash & Recovery', href: '/admin/trash', icon: Trash2 },
-    { name: 'Event Settings', href: '/admin/settings', icon: Settings },
-    { name: 'Admin Profile', href: '/admin/profile', icon: UserCheck },
+  const navSections = [
+    {
+      heading: 'CORE OPERATIONS',
+      items: [
+        { name: 'Dashboard & Analytics', href: '/admin/dashboard', icon: LayoutDashboard },
+        { name: 'All Registrations', href: '/admin/registrations', icon: Users, badge: guestCount },
+        { name: 'Veg Catering Choice', href: '/admin/registrations?food=Veg+Food', icon: Salad },
+        { name: 'Non-Veg Catering', href: '/admin/registrations?food=Non+Veg+Food', icon: Drumstick },
+      ],
+    },
+    {
+      heading: 'REPORTS & DATA',
+      items: [
+        { name: 'Trash & Recovery', href: '/admin/trash', icon: Trash2 },
+        { name: 'System Activity Logs', href: '/admin/profile', icon: History },
+      ],
+    },
+    {
+      heading: 'SYSTEM CONFIG',
+      items: [
+        { name: 'Gala & SMTP Settings', href: '/admin/settings', icon: Settings },
+        { name: 'Admin Security Profile', href: '/admin/profile', icon: ShieldCheck },
+      ],
+    },
   ];
 
   if (loading) {
@@ -112,7 +156,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f5fa] flex flex-col md:flex-row transition-colors duration-200">
+    <div className="min-h-screen bg-[#f7f5fa] dark:bg-[#0e0517] flex flex-col md:flex-row transition-colors duration-200">
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div
@@ -123,15 +167,15 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed md:sticky top-0 left-0 z-50 h-screen w-64 bg-[#2b083e] text-white flex flex-col justify-between transition-transform duration-300 ease-in-out border-r border-purple-900/40 shadow-xl ${
+        className={`fixed md:sticky top-0 left-0 z-50 h-screen w-64 sm:w-72 bg-[#260636] text-white flex flex-col justify-between transition-transform duration-300 ease-in-out border-r border-purple-900/50 shadow-2xl overflow-y-auto ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
-        <div>
+        <div className="flex-1 flex flex-col">
           {/* Brand Header */}
-          <div className="p-5 border-b border-purple-900/60 flex items-center justify-between">
+          <div className="p-4 sm:p-5 border-b border-purple-900/60 bg-[#1e052c] flex items-center justify-between">
             <Link href="/admin/dashboard" className="flex items-center space-x-3 group">
-              <div className="w-10 h-10 relative bg-amber-400/10 rounded-lg p-1 border border-amber-400/30 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 relative bg-amber-400/10 rounded-xl p-1.5 border border-amber-400/40 flex items-center justify-center shrink-0 shadow-xs">
                 <Image
                   src="/images/unity101-logo.png"
                   alt="Unity 101"
@@ -141,11 +185,16 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                 />
               </div>
               <div>
-                <h1 className="font-serif-brand font-bold text-sm tracking-wider text-amber-400 group-hover:text-amber-300 transition-colors">
-                  UNITY 101
-                </h1>
+                <div className="flex items-center space-x-1.5">
+                  <h1 className="font-serif-brand font-bold text-sm tracking-wider text-amber-400 group-hover:text-amber-300 transition-colors">
+                    UNITY 101
+                  </h1>
+                  <span className="text-[9px] bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded font-mono font-bold">
+                    20Y
+                  </span>
+                </div>
                 <p className="text-[10px] text-purple-200 tracking-wider uppercase font-semibold">
-                  Event Management
+                  Community Radio Events
                 </p>
               </div>
             </Link>
@@ -159,34 +208,101 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             </button>
           </div>
 
-          {/* Navigation links */}
-          <nav className="p-4 space-y-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname === item.href || (item.href !== '/admin/dashboard' && pathname.startsWith(item.href));
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
-                    isActive
-                      ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold shadow-md shadow-amber-600/30'
-                      : 'text-purple-200 hover:bg-purple-900/50 hover:text-white'
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-slate-950' : 'text-purple-300'}`} />
-                  <span>{item.name}</span>
-                </Link>
-              );
-            })}
+          {/* Quick Action Button: Add New Guest */}
+          <div className="px-4 pt-4 pb-2">
+            <Link
+              href="/admin/registrations"
+              onClick={() => setSidebarOpen(false)}
+              className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 text-xs font-bold py-2.5 px-3 rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>+ Register New Guest</span>
+            </Link>
+          </div>
+
+          {/* Categorized Navigation links */}
+          <nav className="p-3 space-y-4 flex-1">
+            {navSections.map((section) => (
+              <div key={section.heading} className="space-y-1">
+                <p className="px-3 text-[10px] font-bold text-purple-300/60 uppercase tracking-widest">
+                  {section.heading}
+                </p>
+                {section.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href !== '/admin/dashboard' && pathname.startsWith(item.href) && !item.href.includes('?'));
+
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setSidebarOpen(false)}
+                      className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all ${
+                        isActive
+                          ? 'bg-gradient-to-r from-[#5a1682] to-[#481268] text-white border border-amber-400/40 shadow-md font-bold'
+                          : 'text-purple-200 hover:bg-purple-900/40 hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2.5 truncate">
+                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-amber-400' : 'text-purple-300'}`} />
+                        <span className="truncate">{item.name}</span>
+                      </div>
+                      {item.badge !== undefined && (
+                        <span className="text-[10px] bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded-full shadow-xs shrink-0">
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
+
+            {/* Quick Export Action */}
+            <div className="pt-2">
+              <a
+                href="/api/admin/export"
+                download
+                className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-amber-300 bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/20 transition-all cursor-pointer"
+              >
+                <div className="flex items-center space-x-2.5">
+                  <Download className="w-4 h-4 text-amber-400" />
+                  <span>Download Full CSV</span>
+                </div>
+                <span className="text-[9px] uppercase tracking-wider bg-amber-400/20 px-1.5 py-0.5 rounded font-mono">
+                  LIVE
+                </span>
+              </a>
+            </div>
           </nav>
+
+          {/* Mini Station Status Widget in Sidebar */}
+          <div className="m-3 p-3 rounded-xl bg-[#1c0429] border border-purple-900/60 text-xs">
+            <div className="flex items-center justify-between text-purple-300 mb-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider">Venue Milestone</span>
+              <span className="text-[10px] font-mono text-amber-400 font-bold">{guestCount} / 500</span>
+            </div>
+            <div className="w-full bg-purple-950 rounded-full h-1.5 overflow-hidden">
+              <div
+                className="bg-gradient-to-r from-amber-400 to-amber-500 h-full rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(100, Math.max(3, (guestCount / 500) * 100))}%` }}
+              />
+            </div>
+            <div className="flex items-center justify-between mt-2 pt-2 border-t border-purple-900/40 text-[10px] text-purple-300">
+              <span className="flex items-center space-x-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                <span className="text-emerald-300 font-medium">101.1 FM Live</span>
+              </span>
+              <span className="text-slate-400">Aiven Cloud</span>
+            </div>
+          </div>
         </div>
 
         {/* User Card & Logout */}
-        <div className="p-4 border-t border-purple-900/60 bg-[#220532]">
-          <div className="flex items-center space-x-3 mb-3 px-2 py-1">
-            <div className="w-8 h-8 rounded-full bg-purple-800 border border-purple-600 flex items-center justify-center text-amber-300 font-bold text-xs uppercase shrink-0">
+        <div className="p-3.5 border-t border-purple-900/60 bg-[#1e052c] shrink-0">
+          <div className="flex items-center space-x-2.5 mb-2.5 px-1.5 py-1">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-400 to-amber-300 text-slate-950 font-bold text-xs flex items-center justify-center uppercase shrink-0 shadow-xs">
               {currentUser?.name ? currentUser.name.charAt(0) : 'A'}
             </div>
             <div className="truncate flex-1">
@@ -199,7 +315,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             <Link
               href="/register"
               target="_blank"
-              className="inline-flex items-center justify-center space-x-1 py-1.5 px-2 rounded-lg bg-purple-900/60 hover:bg-purple-800 text-purple-200 hover:text-white text-[11px] font-medium transition-colors"
+              className="inline-flex items-center justify-center space-x-1 py-1.5 px-2 rounded-lg bg-purple-900/50 hover:bg-purple-800 text-purple-200 hover:text-white text-[11px] font-medium transition-colors"
             >
               <ExternalLink className="w-3 h-3" />
               <span>Public Form</span>
@@ -258,7 +374,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
             <div className="hidden sm:flex items-center space-x-2 bg-purple-50 dark:bg-purple-950/80 border border-purple-200/70 dark:border-purple-800 text-purple-900 dark:text-purple-200 px-3 py-1 rounded-full text-xs font-medium">
               <Radio className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
-              <span>Unity 101 Radio 99.8 FM</span>
+              <span>Unity 101 Radio 101.1 FM</span>
             </div>
 
             <div className="flex items-center space-x-1.5 bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 px-2.5 py-1 rounded-full text-[11px] font-semibold">
