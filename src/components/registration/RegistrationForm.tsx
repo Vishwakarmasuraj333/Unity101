@@ -87,33 +87,30 @@ export default function RegistrationForm() {
 
   return (
     <div className="relative w-full max-w-xl mx-auto px-4 py-6 sm:py-10">
-      {/* Side Decorative Mandala SVGs with Warm Golden Glow */}
-      <div className="pointer-events-none absolute -left-28 sm:-left-36 top-1/4 w-60 h-60 text-amber-400 opacity-25 -z-10 select-none filter drop-shadow-[0_0_25px_rgba(245,158,11,0.4)]">
+      {/* Side Decorative Golden Flower (Mandala) Ornaments with Radiant Gold Glow */}
+      <div className="pointer-events-none absolute -left-24 sm:-left-36 top-1/6 sm:top-1/4 w-64 sm:w-84 h-64 sm:h-84 opacity-80 sm:opacity-90 -z-10 select-none filter drop-shadow-[0_0_35px_rgba(245,196,81,0.7)] drop-shadow-[0_0_12px_rgba(255,243,176,0.85)] transition-all">
         <Image
           src="/images/mandala-pattern.svg"
           alt=""
-          width={240}
-          height={240}
+          width={336}
+          height={336}
           className="w-full h-full rotate-45"
           priority
         />
       </div>
-      <div className="pointer-events-none absolute -right-28 sm:-right-36 bottom-1/4 w-68 h-68 text-amber-400 opacity-25 -z-10 select-none filter drop-shadow-[0_0_25px_rgba(245,158,11,0.4)]">
+      <div className="pointer-events-none absolute -right-24 sm:-right-36 bottom-1/6 sm:bottom-1/4 w-72 sm:w-92 h-72 sm:h-92 opacity-80 sm:opacity-90 -z-10 select-none filter drop-shadow-[0_0_35px_rgba(245,196,81,0.7)] drop-shadow-[0_0_12px_rgba(255,243,176,0.85)] transition-all">
         <Image
           src="/images/mandala-pattern.svg"
           alt=""
-          width={272}
-          height={272}
+          width={368}
+          height={368}
           className="w-full h-full -rotate-12"
           priority
         />
       </div>
 
-      {/* Main Registration Card with Elegant Gold Border & Shadow */}
-      <div className="bg-white rounded-3xl shadow-[0_25px_70px_-15px_rgba(0,0,0,0.55),0_10px_35px_-10px_rgba(245,158,11,0.25)] border-2 border-amber-400/60 overflow-hidden transition-all duration-300 relative">
-        {/* Top Gold Foil Accent Bar */}
-        <div className="h-2 w-full bg-gradient-to-r from-amber-600 via-amber-300 to-amber-600 shadow-xs" />
-
+      {/* Main Registration Card */}
+      <div className="bg-white rounded-2xl shadow-xl shadow-purple-950/10 border border-purple-100/60 overflow-hidden transition-all duration-300">
         {/* Card Header with Unity 101 Logo & 20th Anniversary */}
         <div className="pt-8 pb-4 px-6 sm:px-10 text-center flex flex-col items-center">
           <div className="w-48 sm:w-56 h-auto relative mb-3">
@@ -127,9 +124,9 @@ export default function RegistrationForm() {
             />
           </div>
 
-          {/* Royal Purple & Gold Pill "Register Below" */}
+          {/* Purple Pill "Register Below" */}
           <div className="mt-1 mb-3">
-            <span className="inline-block bg-gradient-to-r from-[#3e085c] to-[#28053e] text-amber-300 border border-amber-400/50 text-xs sm:text-sm font-bold tracking-wider py-1.5 px-7 rounded-full shadow-sm">
+            <span className="inline-block bg-[#481268] text-white text-xs sm:text-sm font-medium tracking-wide py-1.5 px-7 rounded-full shadow-sm">
               Register Below
             </span>
           </div>
@@ -477,10 +474,10 @@ export default function RegistrationForm() {
       </div>
 
       {/* Footer Branding Credit */}
-      <div className="mt-8 text-center text-xs text-purple-200/80">
+      <div className="mt-8 text-center text-xs text-slate-500">
         <p>© 2026 Unity 101 Community Radio. 20 Years of Broadcasting Excellence.</p>
-        <div className="mt-2 flex justify-center space-x-4 text-purple-300/70">
-          <a href="/admin/login" className="text-amber-400 hover:text-amber-300 font-semibold transition-colors">
+        <div className="mt-2 flex justify-center space-x-4 text-slate-500">
+          <a href="/admin/login" className="hover:text-purple-700 transition-colors">
             Admin Portal
           </a>
           <span>•</span>

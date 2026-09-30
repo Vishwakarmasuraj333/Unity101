@@ -2,7 +2,6 @@ import React from 'react';
 import Image from 'next/image';
 import RegistrationForm from '@/components/registration/RegistrationForm';
 import { Metadata } from 'next';
-import { Sparkles } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Guest Registration | 20th Anniversary Gala Celebration',
@@ -63,56 +62,39 @@ export default function RegisterPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdEvent) }}
       />
-      <main className="min-h-screen bg-gradient-to-b from-[#180426] via-[#24083a] to-[#12031c] relative flex flex-col justify-start items-center overflow-x-hidden selection:bg-amber-400 selection:text-slate-950">
-        {/* Ambient Golden Spotlights */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[850px] max-w-full h-[450px] bg-gradient-to-b from-amber-400/20 via-amber-500/5 to-transparent rounded-full blur-3xl pointer-events-none -z-0" />
-        <div className="absolute top-1/3 -left-32 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-3xl pointer-events-none -z-0" />
-        <div className="absolute bottom-12 right-0 w-[550px] h-[450px] bg-amber-500/15 rounded-full blur-3xl pointer-events-none -z-0" />
-
-        {/* Top Royal Purple Brand Banner with Shimmering Gold Accents */}
-        <div className="w-full h-48 sm:h-56 bg-gradient-to-r from-[#1c042d] via-[#33084d] to-[#1c042d] relative overflow-hidden flex flex-col items-center justify-start pt-5 border-b border-amber-400/35 shadow-2xl">
-          {/* Top Gold Shimmer Line */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
-
-          {/* Left Mandala Watermark with Golden Aura */}
-          <div className="absolute -left-12 -top-12 w-64 h-64 text-amber-400 opacity-20 select-none pointer-events-none filter drop-shadow-[0_0_20px_rgba(245,158,11,0.35)]">
+      <main className="min-h-screen bg-[#f7f5fa] relative flex flex-col justify-start items-center">
+        {/* Top Royal Purple Brand Banner with Clearly Visible Golden Flowers (Mandalas) */}
+        <div className="w-full h-44 sm:h-52 bg-[#3e085c] relative overflow-hidden flex items-start justify-center shadow-md">
+          {/* Left Golden Flower (Mandala) Watermark - Mast & Visible */}
+          <div className="absolute -left-10 sm:-left-12 -top-10 sm:-top-12 w-64 sm:w-76 h-64 sm:h-76 opacity-85 select-none pointer-events-none filter drop-shadow-[0_0_25px_rgba(245,196,81,0.6)]">
             <Image
               src="/images/mandala-pattern.svg"
               alt=""
-              width={256}
-              height={256}
+              width={304}
+              height={304}
               className="w-full h-full"
               priority
             />
           </div>
 
-          {/* Right Mandala Watermark with Golden Aura */}
-          <div className="absolute -right-12 -top-12 w-64 h-64 text-amber-400 opacity-20 select-none pointer-events-none filter drop-shadow-[0_0_20px_rgba(245,158,11,0.35)]">
+          {/* Right Golden Flower (Mandala) Watermark - Mast & Visible */}
+          <div className="absolute -right-10 sm:-right-12 -top-10 sm:-top-12 w-64 sm:w-76 h-64 sm:h-76 opacity-85 select-none pointer-events-none filter drop-shadow-[0_0_25px_rgba(245,196,81,0.6)]">
             <Image
               src="/images/mandala-pattern.svg"
               alt=""
-              width={256}
-              height={256}
+              width={304}
+              height={304}
               className="w-full h-full rotate-90"
               priority
             />
           </div>
 
-          {/* Golden Gala Announcement Badge */}
-          <div className="relative z-10 inline-flex items-center space-x-2.5 px-4 sm:px-5 py-1.5 rounded-full bg-gradient-to-r from-amber-950/80 via-amber-900/50 to-amber-950/80 border border-amber-400/60 shadow-[0_0_30px_rgba(245,158,11,0.35)] backdrop-blur-md">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse shrink-0" />
-            <span className="bg-gradient-to-r from-amber-200 via-amber-300 to-amber-100 bg-clip-text text-transparent text-xs sm:text-[13px] font-extrabold tracking-wider uppercase drop-shadow-sm">
-              20th Anniversary Community Gala • Official Guest Portal
-            </span>
-            <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse shrink-0 hidden sm:inline-block" />
-          </div>
-
-          {/* Center decorative glow */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-amber-500/5 to-black/30 pointer-events-none" />
+          {/* Center subtle glow */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/20 to-black/20 pointer-events-none" />
         </div>
 
         {/* Main Registration Form Container with Negative Top Margin for Layered Look */}
-        <div className="w-full -mt-34 sm:-mt-38 z-10 mb-14">
+        <div className="w-full -mt-36 sm:-mt-40 z-10 mb-12">
           <RegistrationForm />
         </div>
       </main>
