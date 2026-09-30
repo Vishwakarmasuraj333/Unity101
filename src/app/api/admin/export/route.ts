@@ -129,7 +129,7 @@ export async function GET(req: NextRequest) {
       // Banner Row 1: Title
       sheet.mergeCells('A1:N1');
       const titleCell = sheet.getCell('A1');
-      titleCell.value = 'UNITY 101 COMMUNITY RADIO (99.8 FM) — OFFICIAL GUEST REGISTER';
+      titleCell.value = 'UNITY 101 COMMUNITY RADIO — OFFICIAL GALA GUEST REGISTER';
       titleCell.font = { name: 'Calibri', size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
       titleCell.fill = {
         type: 'pattern',
@@ -296,6 +296,7 @@ export async function GET(req: NextRequest) {
         });
         col.width = Math.max(maxLen + 4, 12);
       });
+      sheet.autoFilter = 'A4:N4';
 
       // Sheet 2: Catering & Event Summary
       const summarySheet = workbook.addWorksheet('Catering & Event Summary');
@@ -374,7 +375,7 @@ export async function GET(req: NextRequest) {
       doc.setTextColor(245, 158, 11);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(16);
-      doc.text('UNITY 101 COMMUNITY RADIO 99.8 FM', 28, 28);
+      doc.text('UNITY 101 COMMUNITY RADIO', 28, 28);
 
       doc.setTextColor(255, 255, 255);
       doc.setFont('helvetica', 'normal');
@@ -390,12 +391,12 @@ export async function GET(req: NextRequest) {
 
       // Build Table Data
       const tableHeaders = [
-        ['Ref', 'Guest Name', 'Town', 'Postcode', 'Mobile Phone', 'Email Address', 'Meal Choice', 'Status', 'Date'],
+        ['Ref ID', 'Guest Name', 'Town / City', 'Postcode', 'Mobile Phone', 'Email Address', 'Meal Choice', 'Status', 'Date'],
       ];
 
       const tableBody = rows.map((r) => [
         `#${String(r.id).padStart(4, '0')}`,
-        `${r.first_name} ${r.last_name}`,
+        `${r.first_name} ${r.last_name}`.trim(),
         r.town || '—',
         r.post_code || '—',
         r.mobile || '—',
@@ -417,6 +418,7 @@ export async function GET(req: NextRequest) {
           textColor: [15, 23, 42],
           lineColor: [226, 232, 240],
           lineWidth: 0.5,
+          overflow: 'linebreak',
         },
         headStyles: {
           fillColor: [72, 18, 104], // #481268
@@ -429,15 +431,15 @@ export async function GET(req: NextRequest) {
           fillColor: [248, 250, 252], // #f8fafc
         },
         columnStyles: {
-          0: { cellWidth: 42, halign: 'center', fontStyle: 'bold', textColor: [72, 18, 104] },
-          1: { cellWidth: 110, fontStyle: 'bold' },
+          0: { cellWidth: 50, halign: 'center', fontStyle: 'bold', textColor: [72, 18, 104] },
+          1: { cellWidth: 115, fontStyle: 'bold' },
           2: { cellWidth: 80 },
-          3: { cellWidth: 55 },
+          3: { cellWidth: 55, halign: 'center' },
           4: { cellWidth: 85 },
-          5: { cellWidth: 140 },
-          6: { cellWidth: 80, halign: 'center' },
-          7: { cellWidth: 65, halign: 'center', fontStyle: 'bold' },
-          8: { cellWidth: 60, halign: 'center' },
+          5: { cellWidth: 155 },
+          6: { cellWidth: 85, halign: 'center' },
+          7: { cellWidth: 70, halign: 'center', fontStyle: 'bold' },
+          8: { cellWidth: 65, halign: 'center' },
         },
         didParseCell: (data) => {
           // Highlight Food
@@ -467,7 +469,7 @@ export async function GET(req: NextRequest) {
           doc.setFontSize(8);
           doc.setTextColor(148, 163, 184);
           doc.text(
-            'Unity 101 Community Radio • Confidential Official Gala Guest Manifest • 99.8 FM On Air',
+            'Unity 101 Community Radio • Confidential Official Gala Guest Manifest',
             28,
             pageHeight - 16
           );
@@ -489,32 +491,99 @@ export async function GET(req: NextRequest) {
     }
 
     // -------------------------------------------------------------------------
-    // 3. CSV EXPORT (.csv) - Default
+    // 3. XML EXPORT (.xml)
+    // -------------------------------------------------------------------------
+    if (format === 'xml') {
+      const escapeXml = (unsafe?: unknown): string => {
+        if (unsafe === null || unsafe === undefined) return '';
+        return String(unsafe)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&apos;');
+      };
+
+      const xmlRows = rows
+        .map((r) => {
+          const refCode = `U101-${String(r.id).padStart(5, '0')}`;
+          return `    <Guest>
+      <Id>${r.id}</Id>
+      <Reference>${refCode}</Reference>
+      <FirstName>${escapeXml(r.first_name)}</FirstName>
+      <LastName>${escapeXml(r.last_name)}</LastName>
+      <FullName>${escapeXml(`${r.first_name} ${r.last_name}`.trim())}</FullName>
+      <Address>${escapeXml(r.address)}</Address>
+      <Town>${escapeXml(r.town)}</Town>
+      <Postcode>${escapeXml(r.post_code)}</Postcode>
+      <Email>${escapeXml(r.email)}</Email>
+      <Mobile>${escapeXml(r.mobile)}</Mobile>
+      <FoodPreference>${escapeXml(r.food_preference)}</FoodPreference>
+      <GDPRConsent>${r.gdpr_consent ? 'true' : 'false'}</GDPRConsent>
+      <Status>${escapeXml(r.status || 'new')}</Status>
+      <Notes>${escapeXml(r.notes || '')}</Notes>
+      <RegistrationDate>${r.created_at ? new Date(r.created_at).toISOString() : ''}</RegistrationDate>
+    </Guest>`;
+        })
+        .join('\n');
+
+      const xmlOutput = `<?xml version="1.0" encoding="UTF-8"?>
+<Unity101GuestManifest generated="${new Date().toISOString()}" total="${totalCount}">
+  <Summary>
+    <TotalGuests>${totalCount}</TotalGuests>
+    <Confirmed>${confirmedCount}</Confirmed>
+    <Pending>${newCount}</Pending>
+    <Cancelled>${cancelledCount}</Cancelled>
+    <Vegetarian>${vegCount}</Vegetarian>
+    <NonVegetarian>${nonVegCount}</NonVegetarian>
+  </Summary>
+  <Guests>
+${xmlRows}
+  </Guests>
+</Unity101GuestManifest>`;
+
+      const filename = `unity101_registrations_${dateStr}.xml`;
+
+      return new NextResponse(xmlOutput, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/xml; charset=utf-8',
+          'Content-Disposition': `attachment; filename="${filename}"`,
+          'Cache-Control': 'no-store',
+        },
+      });
+    }
+
+    // -------------------------------------------------------------------------
+    // 4. CSV EXPORT (.csv) - Default
     // -------------------------------------------------------------------------
     const headers = [
       'Registration ID',
+      'Reference Code',
       'First Name',
       'Last Name',
       'Full Name',
-      'Address',
-      'Town',
-      'Post Code',
-      'Email',
+      'Street Address',
+      'Town / City',
+      'Postcode',
+      'Email Address',
       'Mobile Phone',
-      'Food Preference',
+      'Meal Choice',
       'GDPR Consent',
       'Status',
-      'Notes',
-      'Registered Date',
+      'Admin Notes',
+      'Registration Date',
       'Last Updated',
     ];
 
     const csvLines = [headers.map(escapeCsvField).join(',')];
 
     for (const r of rows) {
+      const refCode = `U101-${String(r.id).padStart(5, '0')}`;
       csvLines.push(
         [
           r.id,
+          refCode,
           r.first_name,
           r.last_name,
           `${r.first_name} ${r.last_name}`.trim(),
@@ -527,8 +596,8 @@ export async function GET(req: NextRequest) {
           r.gdpr_consent ? 'Yes' : 'No',
           r.status,
           r.notes || '',
-          r.created_at,
-          r.updated_at,
+          r.created_at ? new Date(r.created_at).toLocaleString('en-GB') : '',
+          r.updated_at ? new Date(r.updated_at).toLocaleString('en-GB') : '',
         ]
           .map(escapeCsvField)
           .join(',')

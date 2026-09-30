@@ -30,6 +30,9 @@ import {
   Clock,
   User,
   ChevronDown,
+  FileSpreadsheet,
+  FileText,
+  FileDown,
 } from 'lucide-react';
 import { Registration } from '@/types';
 
@@ -80,6 +83,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
   // Header Dropdown States
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
 
   const notificationsRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -254,7 +258,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
           {/* Brand Header */}
           <div className="p-4 border-b border-purple-900/60 bg-[#160624] flex items-center justify-between">
             <Link href="/admin/dashboard" className="flex items-center space-x-3 group overflow-hidden">
-              <div className="w-9 h-9 relative bg-amber-400/10 rounded-xl p-1.5 border border-amber-400/40 flex items-center justify-center shrink-0 shadow-xs">
+              <div className="w-9 h-9 relative bg-white/10 rounded-xl p-1.5 border border-amber-400/50 flex items-center justify-center shrink-0 shadow-xs">
                 <Image
                   src="/images/unity101-logo.png"
                   alt="Unity 101"
@@ -265,16 +269,11 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
               </div>
               {!isCollapsed && (
                 <div className="truncate">
-                  <div className="flex items-center space-x-1.5">
-                    <h1 className="font-serif-brand font-bold text-sm tracking-wider text-amber-400 group-hover:text-amber-300 transition-colors">
-                      UNITY 101
-                    </h1>
-                    <span className="text-[9px] bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded font-mono font-bold">
-                      GALA
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-purple-200 tracking-wider uppercase font-semibold">
-                    Community Radio 99.8 FM
+                  <h1 className="font-serif-brand font-extrabold text-sm tracking-wider text-amber-300 group-hover:text-amber-200 transition-colors drop-shadow-xs">
+                    UNITY 101
+                  </h1>
+                  <p className="text-[11px] text-white tracking-wider uppercase font-bold drop-shadow-xs">
+                    Community Radio
                   </p>
                 </div>
               )}
@@ -346,53 +345,131 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
               </div>
             ))}
 
-            {/* Quick Export Hub */}
+            {/* Quick Export Manifest Dropdown */}
             <div className="pt-2">
               {!isCollapsed ? (
-                <div className="p-2.5 rounded-xl bg-white/5 border border-purple-800/40 space-y-1.5">
-                  <div className="flex items-center justify-between text-[10px] font-bold text-purple-200 uppercase tracking-wider px-1">
-                    <span className="flex items-center space-x-1.5">
-                      <Download className="w-3.5 h-3.5 text-purple-300" />
-                      <span>Download Manifest</span>
-                    </span>
-                    <span className="bg-purple-900/80 text-purple-200 border border-purple-700/60 px-1.5 py-0.5 rounded text-[8px] font-mono">LIVE</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-1.5 pt-1">
-                    <a
-                      href="/api/admin/export?format=excel"
-                      download
-                      title="Download Formatted Excel (.xlsx)"
-                      className="py-1.5 px-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/80 border border-purple-800/80 text-purple-200 hover:text-white text-[10px] font-bold text-center transition-all cursor-pointer flex items-center justify-center space-x-0.5"
-                    >
-                      <span>.XLSX</span>
-                    </a>
-                    <a
-                      href="/api/admin/export?format=pdf"
-                      download
-                      title="Download Official PDF (.pdf)"
-                      className="py-1.5 px-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/80 border border-purple-800/80 text-purple-200 hover:text-white text-[10px] font-bold text-center transition-all cursor-pointer flex items-center justify-center space-x-0.5"
-                    >
-                      <span>.PDF</span>
-                    </a>
-                    <a
-                      href="/api/admin/export?format=csv"
-                      download
-                      title="Download Universal CSV (.csv)"
-                      className="py-1.5 px-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/80 border border-purple-800/80 text-purple-200 hover:text-white text-[10px] font-bold text-center transition-all cursor-pointer flex items-center justify-center space-x-0.5"
-                    >
-                      <span>.CSV</span>
-                    </a>
-                  </div>
+                <div className="rounded-xl border border-purple-800/60 bg-[#160624]/90 overflow-hidden shadow-md">
+                  <button
+                    onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
+                    type="button"
+                    className="w-full flex items-center justify-between p-2.5 text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Download className="w-4 h-4 text-amber-400" />
+                      <span className="text-xs font-bold tracking-wide">Download Manifest</span>
+                    </div>
+                    <div className="flex items-center space-x-1.5">
+                      <span className="bg-amber-400/20 text-amber-300 border border-amber-400/40 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold">
+                        LIVE
+                      </span>
+                      <ChevronDown
+                        className={`w-3.5 h-3.5 text-purple-200 transition-transform duration-200 ${
+                          exportDropdownOpen ? 'rotate-180 text-amber-400' : ''
+                        }`}
+                      />
+                    </div>
+                  </button>
+
+                  {exportDropdownOpen && (
+                    <div className="p-2 border-t border-purple-900/60 bg-black/25 space-y-1.5 animate-in fade-in duration-150">
+                      <a
+                        href="/api/admin/export?format=excel"
+                        download
+                        className="flex items-center justify-between p-2 rounded-lg bg-white/5 hover:bg-white/15 text-slate-100 hover:text-white border border-purple-800/40 text-xs font-semibold transition-all cursor-pointer group"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <FileSpreadsheet className="w-4 h-4 text-emerald-400 shrink-0" />
+                          <div className="text-left">
+                            <p className="font-bold text-white text-[11px] group-hover:text-amber-300 transition-colors">
+                              Excel Manifest
+                            </p>
+                            <p className="text-[9.5px] text-purple-200">Table & food summary</p>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-700/60">
+                          .XLSX
+                        </span>
+                      </a>
+
+                      <a
+                        href="/api/admin/export?format=pdf"
+                        download
+                        className="flex items-center justify-between p-2 rounded-lg bg-white/5 hover:bg-white/15 text-slate-100 hover:text-white border border-purple-800/40 text-xs font-semibold transition-all cursor-pointer group"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <FileText className="w-4 h-4 text-rose-400 shrink-0" />
+                          <div className="text-left">
+                            <p className="font-bold text-white text-[11px] group-hover:text-amber-300 transition-colors">
+                              Official PDF
+                            </p>
+                            <p className="text-[9.5px] text-purple-200">Printable guest list</p>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-rose-950/80 text-rose-300 border border-rose-700/60">
+                          .PDF
+                        </span>
+                      </a>
+
+                      <a
+                        href="/api/admin/export?format=csv"
+                        download
+                        className="flex items-center justify-between p-2 rounded-lg bg-white/5 hover:bg-white/15 text-slate-100 hover:text-white border border-purple-800/40 text-xs font-semibold transition-all cursor-pointer group"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <FileDown className="w-4 h-4 text-amber-400 shrink-0" />
+                          <div className="text-left">
+                            <p className="font-bold text-white text-[11px] group-hover:text-amber-300 transition-colors">
+                              Universal CSV
+                            </p>
+                            <p className="text-[9.5px] text-purple-200">Raw database rows</p>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-purple-950/80 text-purple-300 border border-purple-700/60">
+                          .CSV
+                        </span>
+                      </a>
+                    </div>
+                  )}
                 </div>
               ) : (
-                <a
-                  href="/api/admin/export?format=excel"
-                  download
-                  title="Export Excel Manifest"
-                  className="flex items-center justify-center p-2 rounded-xl text-purple-200 bg-purple-900/40 hover:bg-purple-900/70 border border-purple-700/50 transition-all cursor-pointer"
-                >
-                  <Download className="w-4 h-4 text-purple-300" />
-                </a>
+                <div className="relative">
+                  <button
+                    onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
+                    type="button"
+                    title="Export Manifests"
+                    className="w-full flex items-center justify-center p-2 rounded-xl text-purple-200 bg-purple-900/40 hover:bg-purple-900/70 border border-purple-700/50 transition-all cursor-pointer"
+                  >
+                    <Download className="w-4 h-4 text-amber-400" />
+                  </button>
+                  {exportDropdownOpen && (
+                    <div className="absolute left-full ml-2 bottom-0 w-44 bg-[#160624] border border-purple-800/80 rounded-xl p-1.5 shadow-2xl z-50 space-y-1">
+                      <a
+                        href="/api/admin/export?format=excel"
+                        download
+                        className="flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-white hover:bg-white/10 text-xs font-bold"
+                      >
+                        <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Excel (.xlsx)</span>
+                      </a>
+                      <a
+                        href="/api/admin/export?format=pdf"
+                        download
+                        className="flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-white hover:bg-white/10 text-xs font-bold"
+                      >
+                        <FileText className="w-3.5 h-3.5 text-rose-400" />
+                        <span>PDF (.pdf)</span>
+                      </a>
+                      <a
+                        href="/api/admin/export?format=csv"
+                        download
+                        className="flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-white hover:bg-white/10 text-xs font-bold"
+                      >
+                        <FileDown className="w-3.5 h-3.5 text-amber-400" />
+                        <span>CSV (.csv)</span>
+                      </a>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </nav>
@@ -456,7 +533,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
             {/* Left Header Title & Logo */}
             <div className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 relative rounded-xl bg-amber-400/10 border border-amber-400/30 p-1 flex items-center justify-center shrink-0 shadow-xs">
+              <div className="w-8 h-8 relative rounded-xl bg-purple-100 dark:bg-purple-950/80 border border-purple-300 dark:border-purple-800 p-1 flex items-center justify-center shrink-0 shadow-xs">
                 <Image
                   src="/images/unity101-logo.png"
                   alt="Unity 101"
@@ -466,11 +543,11 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                 />
               </div>
               <div>
-                <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight flex items-center space-x-1.5">
-                  <span>{title}</span>
+                <h2 className="text-sm sm:text-base font-extrabold text-slate-950 dark:text-white tracking-tight">
+                  {title}
                 </h2>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 hidden sm:block font-medium">
-                  Unity 101 Community Radio Portal
+                <p className="text-[11px] text-purple-900 dark:text-purple-300 hidden sm:block font-bold">
+                  Unity 101 Community Radio
                 </p>
               </div>
             </div>
@@ -601,58 +678,32 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
               )}
             </div>
 
-            {/* Segmented Light / Dark Mode Toggle Switch (Clear active state) */}
-            <div
+            {/* Minimalist Icon-Only Light / Dark Mode Toggle */}
+            <button
               onClick={toggleTheme}
-              className="flex items-center p-0.5 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 cursor-pointer shadow-xs select-none"
-              title={isDarkMode ? 'Active: Dark Mode (Click to switch to Light Mode)' : 'Active: Light Mode (Click to switch to Dark Mode)'}
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/90 dark:hover:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-700 transition-all cursor-pointer shadow-xs"
+              title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              aria-label="Toggle Theme"
             >
-              <div
-                className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold transition-all ${
-                  !isDarkMode
-                    ? 'bg-white text-purple-950 shadow-xs border border-slate-200/50'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <Sun className="w-3.5 h-3.5 text-amber-500" />
-                <span className="hidden sm:inline">Light</span>
-              </div>
-              <div
-                className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold transition-all ${
-                  isDarkMode
-                    ? 'bg-[#161e31] text-amber-300 shadow-xs border border-slate-700/60'
-                    : 'text-slate-500 hover:text-slate-800'
-                }`}
-              >
-                <Moon className="w-3.5 h-3.5 text-amber-400" />
-                <span className="hidden sm:inline">Dark</span>
-              </div>
-            </div>
-
-            {/* Radio Station Badge */}
-            <div className="hidden xl:flex items-center space-x-2 bg-purple-950/40 border border-purple-800/60 text-purple-200 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-xs">
-              <Radio className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-              <span>Unity 101 Radio 99.8 FM</span>
-            </div>
-
-            {/* System Status Pill */}
-            <div className="hidden lg:flex items-center space-x-1.5 bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold shadow-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-              <span>System Connected</span>
-            </div>
+              {isDarkMode ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-purple-900" />
+              )}
+            </button>
 
             {/* Profile Avatar & Header Dropdown Menu */}
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className={`flex items-center space-x-2 p-1 pl-1.5 pr-2 rounded-xl transition-all text-xs font-semibold cursor-pointer border ${
+                className={`flex items-center space-x-1.5 p-1.5 rounded-xl transition-all text-xs font-semibold cursor-pointer border ${
                   userDropdownOpen
-                    ? 'bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600'
-                    : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 border-transparent hover:border-slate-200 dark:hover:border-slate-700'
+                    ? 'bg-slate-100 dark:bg-slate-800 border-purple-500 dark:border-purple-600 ring-2 ring-purple-400/20'
+                    : 'bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-300 dark:border-slate-700'
                 }`}
                 title="Admin Account Profile"
               >
-                <div className="w-7 h-7 relative rounded-lg bg-amber-400/20 border border-amber-400/40 p-0.5 flex items-center justify-center shrink-0 shadow-xs">
+                <div className="w-7 h-7 relative rounded-lg bg-purple-100 dark:bg-purple-900/40 border border-purple-300 dark:border-purple-700/60 p-0.5 flex items-center justify-center shrink-0 shadow-xs">
                   <Image
                     src="/images/unity101-logo.png"
                     alt="Unity 101 Admin"
@@ -661,15 +712,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                     className="object-contain"
                   />
                 </div>
-                <div className="hidden sm:flex flex-col text-left leading-tight max-w-[120px]">
-                  <span className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                    {currentUser?.name || 'Unity 101 Admin'}
-                  </span>
-                  <span className="text-[10px] text-purple-400 dark:text-purple-300 font-bold uppercase tracking-wider">
-                    Super Admin
-                  </span>
-                </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                <ChevronDown className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
               </button>
 
               {userDropdownOpen && (
@@ -742,16 +785,6 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                 </div>
               )}
             </div>
-
-            {/* Direct Header Sign Out Button */}
-            <button
-              onClick={handleLogout}
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-900/30 hover:bg-purple-900/60 text-purple-200 hover:text-white border border-purple-700/50 text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-95 shrink-0"
-              title="Sign Out from Admin Portal"
-            >
-              <LogOut className="w-3.5 h-3.5 text-purple-300" />
-              <span className="hidden sm:inline">Sign Out</span>
-            </button>
           </div>
         </header>
 

@@ -140,87 +140,87 @@ export default function AdminDashboardPage() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
             {/* Total Registrations */}
-            <div className="bg-white rounded-xl p-4 border border-purple-100/80 shadow-xs hover:shadow-lg hover:-translate-y-0.5 hover:border-purple-300 transition-all duration-300 group">
+            <div className="bg-white dark:bg-[#111625] rounded-xl p-4 border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-lg hover:-translate-y-0.5 hover:border-purple-400 dark:hover:border-purple-600 transition-all duration-300 group">
               <div className="flex items-center justify-between text-slate-500 mb-2">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-600">Total</span>
-                <div className="w-7 h-7 rounded-lg bg-purple-50 group-hover:bg-[#481268] group-hover:text-white text-[#481268] flex items-center justify-center transition-colors">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">Total</span>
+                <div className="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-950/80 group-hover:bg-[#481268] group-hover:text-white text-[#481268] dark:text-purple-300 flex items-center justify-center transition-colors">
                   <Users className="w-3.5 h-3.5" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-slate-900 font-serif-brand">
+              <p className="text-2xl font-bold text-slate-900 dark:text-white font-serif-brand">
                 {metrics?.totalRegistrations ?? 0}
               </p>
-              <p className="text-[10px] text-slate-400 mt-1">Active database guests</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Active database guests</p>
             </div>
 
             {/* New / Pending */}
-            <div className="bg-white rounded-xl p-4 border border-purple-100/80 shadow-xs hover:shadow-lg hover:-translate-y-0.5 hover:border-blue-300 transition-all duration-300 group">
+            <div className="bg-white dark:bg-[#111625] rounded-xl p-4 border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-lg hover:-translate-y-0.5 hover:border-purple-400 dark:hover:border-purple-600 transition-all duration-300 group">
               <div className="flex items-center justify-between text-slate-500 mb-2">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-blue-700">New</span>
-                <div className="w-7 h-7 rounded-lg bg-blue-50 group-hover:bg-blue-600 group-hover:text-white text-blue-600 flex items-center justify-center transition-colors">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-purple-700 dark:text-purple-300">New</span>
+                <div className="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-950/80 group-hover:bg-[#481268] group-hover:text-white text-purple-700 dark:text-purple-300 flex items-center justify-center transition-colors">
                   <Clock className="w-3.5 h-3.5" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-blue-600 font-serif-brand">
+              <p className="text-2xl font-bold text-slate-900 dark:text-white font-serif-brand">
                 {metrics?.newRegistrations ?? 0}
               </p>
-              <p className="text-[10px] text-slate-400 mt-1">Pending review</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Pending review</p>
             </div>
 
             {/* Confirmed */}
-            <div className="bg-white rounded-xl p-4 border border-purple-100/80 shadow-xs hover:shadow-lg hover:-translate-y-0.5 hover:border-emerald-300 transition-all duration-300 group">
+            <div className="bg-white dark:bg-[#111625] rounded-xl p-4 border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-lg hover:-translate-y-0.5 hover:border-purple-400 dark:hover:border-purple-600 transition-all duration-300 group">
               <div className="flex items-center justify-between text-slate-500 mb-2">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-700">Confirmed</span>
-                <div className="w-7 h-7 rounded-lg bg-emerald-50 group-hover:bg-emerald-600 group-hover:text-white text-emerald-600 flex items-center justify-center transition-colors">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">Confirmed</span>
+                <div className="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-950/80 group-hover:bg-[#481268] group-hover:text-white text-[#481268] dark:text-purple-300 flex items-center justify-center transition-colors">
                   <CheckCircle className="w-3.5 h-3.5" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-emerald-600 font-serif-brand">
+              <p className="text-2xl font-bold text-slate-900 dark:text-white font-serif-brand">
                 {metrics?.confirmedRegistrations ?? 0}
               </p>
-              <p className="text-[10px] text-slate-400 mt-1">Invite approved</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Invite approved</p>
             </div>
 
             {/* Cancelled */}
-            <div className="bg-white rounded-xl p-4 border border-purple-100/80 shadow-xs hover:shadow-lg hover:-translate-y-0.5 hover:border-red-300 transition-all duration-300 group">
+            <div className="bg-white dark:bg-[#111625] rounded-xl p-4 border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-lg hover:-translate-y-0.5 hover:border-purple-400 dark:hover:border-purple-600 transition-all duration-300 group">
               <div className="flex items-center justify-between text-slate-500 mb-2">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-red-700">Cancelled</span>
-                <div className="w-7 h-7 rounded-lg bg-red-50 group-hover:bg-red-600 group-hover:text-white text-red-600 flex items-center justify-center transition-colors">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Cancelled</span>
+                <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 group-hover:bg-slate-700 group-hover:text-white text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors">
                   <XCircle className="w-3.5 h-3.5" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-red-600 font-serif-brand">
+              <p className="text-2xl font-bold text-slate-700 dark:text-slate-300 font-serif-brand">
                 {metrics?.cancelledRegistrations ?? 0}
               </p>
-              <p className="text-[10px] text-slate-400 mt-1">Declined or withdrawn</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Declined or withdrawn</p>
             </div>
 
             {/* Veg Food */}
-            <div className="bg-white rounded-xl p-4 border border-purple-100/80 shadow-xs hover:shadow-lg hover:-translate-y-0.5 hover:border-amber-300 transition-all duration-300 group">
+            <div className="bg-white dark:bg-[#111625] rounded-xl p-4 border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-lg hover:-translate-y-0.5 hover:border-purple-400 dark:hover:border-purple-600 transition-all duration-300 group">
               <div className="flex items-center justify-between text-slate-500 mb-2">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-amber-700">Veg Meal</span>
-                <div className="w-7 h-7 rounded-lg bg-amber-50 group-hover:bg-amber-600 group-hover:text-white text-amber-600 flex items-center justify-center transition-colors">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-purple-700 dark:text-purple-300">Veg Meal</span>
+                <div className="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-950/80 group-hover:bg-[#481268] group-hover:text-white text-[#481268] dark:text-purple-300 flex items-center justify-center transition-colors">
                   <Salad className="w-3.5 h-3.5" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-amber-600 font-serif-brand">
+              <p className="text-2xl font-bold text-slate-900 dark:text-white font-serif-brand">
                 {metrics?.vegFoodCount ?? 0}
               </p>
-              <p className="text-[10px] text-slate-400 mt-1">Vegetarian catering</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Vegetarian catering</p>
             </div>
 
             {/* Non Veg Food */}
-            <div className="bg-white rounded-xl p-4 border border-purple-100/80 shadow-xs hover:shadow-lg hover:-translate-y-0.5 hover:border-orange-300 transition-all duration-300 group">
+            <div className="bg-white dark:bg-[#111625] rounded-xl p-4 border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-lg hover:-translate-y-0.5 hover:border-purple-400 dark:hover:border-purple-600 transition-all duration-300 group">
               <div className="flex items-center justify-between text-slate-500 mb-2">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-orange-700">Non Veg</span>
-                <div className="w-7 h-7 rounded-lg bg-orange-50 group-hover:bg-orange-600 group-hover:text-white text-orange-600 flex items-center justify-center transition-colors">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">Non Veg</span>
+                <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 group-hover:bg-[#481268] group-hover:text-white text-slate-700 dark:text-slate-300 flex items-center justify-center transition-colors">
                   <Drumstick className="w-3.5 h-3.5" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-orange-600 font-serif-brand">
+              <p className="text-2xl font-bold text-slate-900 dark:text-white font-serif-brand">
                 {metrics?.nonVegFoodCount ?? 0}
               </p>
-              <p className="text-[10px] text-slate-400 mt-1">Non-veg catering</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Non-veg catering</p>
             </div>
           </div>
         )}
@@ -248,15 +248,15 @@ export default function AdminDashboardPage() {
         {/* Main 2-Column Content: Recent Registrations & Operations */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Recent Registrations Table (2 Cols) */}
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-purple-100/80 p-5 shadow-xs hover:shadow-md transition-shadow">
+          <div className="lg:col-span-2 bg-white dark:bg-[#111625] rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
-                <Calendar className="w-4 h-4 text-[#481268]" />
-                <h3 className="font-bold text-slate-900 text-sm">Latest Guest Registrations</h3>
+                <Calendar className="w-4 h-4 text-[#481268] dark:text-purple-400" />
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Latest Guest Registrations</h3>
               </div>
               <Link
                 href="/admin/registrations"
-                className="text-xs font-semibold text-[#481268] hover:text-amber-600 flex items-center space-x-1 group"
+                className="text-xs font-semibold text-[#481268] dark:text-purple-300 hover:text-purple-600 dark:hover:text-purple-200 flex items-center space-x-1 group"
               >
                 <span>View all ({metrics?.totalRegistrations ?? 0})</span>
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -271,7 +271,7 @@ export default function AdminDashboardPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-slate-100 text-slate-400 uppercase text-[10px] tracking-wider">
+                    <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 uppercase text-[10px] tracking-wider">
                       <th className="pb-2.5 font-semibold">Name</th>
                       <th className="pb-2.5 font-semibold">Email</th>
                       <th className="pb-2.5 font-semibold">Mobile</th>
@@ -281,24 +281,24 @@ export default function AdminDashboardPage() {
                       <th className="pb-2.5 font-semibold text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                     {recentRegistrations.map((reg) => (
-                      <tr key={reg.id} className="hover:bg-purple-50/40 transition-colors">
+                      <tr key={reg.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
                         <td className="py-3">
-                          <p className="font-semibold text-slate-900">{reg.first_name} {reg.last_name}</p>
-                          <span className="text-[10px] text-slate-400">#{reg.id}</span>
+                          <p className="font-semibold text-slate-900 dark:text-white">{reg.first_name} {reg.last_name}</p>
+                          <span className="text-[10px] text-purple-700 dark:text-purple-400 font-mono font-bold">#{reg.id}</span>
                         </td>
-                        <td className="py-3 text-slate-600 font-mono text-[11px]">
+                        <td className="py-3 text-slate-800 dark:text-slate-200 font-mono text-[11px]">
                           {reg.email}
                         </td>
-                        <td className="py-3 text-slate-600 font-mono text-[11px]">
+                        <td className="py-3 text-slate-700 dark:text-slate-300 font-mono text-[11px]">
                           {reg.mobile}
                         </td>
                         <td className="py-3">
                           <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${
                             reg.food_preference === 'Veg Food'
-                              ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                              : 'bg-orange-100 text-orange-800 border border-orange-200'
+                              ? 'bg-purple-100 dark:bg-purple-950/80 text-purple-900 dark:text-purple-200 border border-purple-200/80 dark:border-purple-800/80'
+                              : 'bg-slate-100 dark:bg-slate-800/80 text-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                           }`}>
                             {reg.food_preference}
                           </span>
@@ -306,21 +306,21 @@ export default function AdminDashboardPage() {
                         <td className="py-3">
                           <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
                             reg.status === 'confirmed'
-                              ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                              ? 'bg-purple-50 dark:bg-purple-950/80 text-purple-900 dark:text-purple-200 border border-purple-300 dark:border-purple-700'
                               : reg.status === 'cancelled'
-                              ? 'bg-red-100 text-red-800 border border-red-200'
-                              : 'bg-blue-100 text-blue-800 border border-blue-200'
+                              ? 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
+                              : 'bg-purple-100 dark:bg-purple-900/40 text-purple-900 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
                           }`}>
                             {reg.status}
                           </span>
                         </td>
-                        <td className="py-3 text-slate-500 text-[11px] whitespace-nowrap">
+                        <td className="py-3 text-slate-600 dark:text-slate-400 text-[11px] whitespace-nowrap">
                           {new Date(reg.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
                         </td>
                         <td className="py-3 text-right">
                           <Link
                             href={`/admin/registrations/${reg.id}`}
-                            className="inline-flex items-center space-x-1 text-slate-500 hover:text-[#481268] hover:bg-purple-50 px-2 py-1 rounded-lg transition-colors font-semibold text-[11px]"
+                            className="inline-flex items-center space-x-1 text-slate-600 dark:text-slate-400 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-950/40 px-2 py-1 rounded-lg transition-colors font-semibold text-[11px]"
                             title="View Registration Details"
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -338,49 +338,49 @@ export default function AdminDashboardPage() {
           {/* Quick Actions & Recent Activity (1 Col) */}
           <div className="space-y-6">
             {/* Quick Actions Card */}
-            <div className="bg-white rounded-2xl border border-purple-100/80 p-5 shadow-xs hover:shadow-md transition-shadow">
-              <h3 className="font-bold text-slate-900 text-sm mb-3">Event Operations</h3>
+            <div className="bg-white dark:bg-[#111625] rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs hover:shadow-md transition-shadow">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm mb-3">Event Operations</h3>
               <div className="space-y-2">
                 <Link
                   href="/admin/registrations"
-                  className="w-full flex items-center justify-between p-3 rounded-xl bg-purple-50/70 hover:bg-purple-100 text-purple-950 font-semibold text-xs transition-colors group"
+                  className="w-full flex items-center justify-between p-3 rounded-xl bg-purple-50/70 hover:bg-purple-100 dark:bg-purple-950/40 dark:hover:bg-purple-900/60 text-purple-950 dark:text-purple-200 font-semibold text-xs transition-colors group border border-purple-200/50 dark:border-purple-800/60"
                 >
                   <div className="flex items-center space-x-2">
-                    <Plus className="w-4 h-4 text-purple-800" />
+                    <Plus className="w-4 h-4 text-purple-800 dark:text-purple-300" />
                     <span>Manage All Registrations</span>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-purple-700 group-hover:translate-x-0.5 transition-transform" />
+                  <ArrowRight className="w-3.5 h-3.5 text-purple-700 dark:text-purple-300 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
 
                 <button
                   onClick={handleExportAll}
-                  className="w-full flex items-center justify-between p-3 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 font-semibold text-xs transition-colors group cursor-pointer"
+                  className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-[#161e31] dark:hover:bg-slate-800 text-slate-900 dark:text-slate-200 font-semibold text-xs transition-colors group cursor-pointer border border-slate-200 dark:border-slate-700"
                 >
                   <div className="flex items-center space-x-2">
-                    <Download className="w-4 h-4 text-amber-700" />
+                    <Download className="w-4 h-4 text-purple-700 dark:text-purple-400" />
                     <span>Download Full CSV Export</span>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-amber-700 group-hover:translate-x-0.5 transition-transform" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                 </button>
 
                 <Link
                   href="/admin/trash"
-                  className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold text-xs transition-colors group"
+                  className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-[#161e31] dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold text-xs transition-colors group border border-slate-200 dark:border-slate-700"
                 >
                   <div className="flex items-center space-x-2">
-                    <History className="w-4 h-4 text-slate-600" />
+                    <History className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                     <span>Trash & Recovery ({metrics?.trashCount ?? 0})</span>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-0.5 transition-transform" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
               </div>
             </div>
 
             {/* Audit Logs Card */}
-            <div className="bg-white rounded-2xl border border-purple-100/80 p-5 shadow-xs hover:shadow-md transition-shadow">
+            <div className="bg-white dark:bg-[#111625] rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-xs hover:shadow-md transition-shadow">
               <div className="flex items-center space-x-2 mb-3">
-                <History className="w-4 h-4 text-[#481268]" />
-                <h3 className="font-bold text-slate-900 text-sm">System Audit Activity</h3>
+                <History className="w-4 h-4 text-[#481268] dark:text-purple-400" />
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">System Audit Activity</h3>
               </div>
 
               {recentLogs.length === 0 ? (
@@ -388,10 +388,10 @@ export default function AdminDashboardPage() {
               ) : (
                 <div className="space-y-3">
                   {recentLogs.map((log) => (
-                    <div key={log.id} className="text-xs border-l-2 border-[#481268] pl-2.5 py-0.5">
-                      <p className="text-slate-800 font-medium leading-snug">{log.description}</p>
-                      <p className="text-[10px] text-slate-400 mt-0.5">
-                        {new Date(log.created_at).toLocaleString()} • <span className="font-semibold text-purple-900">{log.action}</span>
+                    <div key={log.id} className="text-xs border-l-2 border-[#481268] dark:border-purple-500 pl-2.5 py-0.5">
+                      <p className="text-slate-800 dark:text-slate-200 font-medium leading-snug">{log.description}</p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                        {new Date(log.created_at).toLocaleString()} • <span className="font-semibold text-purple-900 dark:text-purple-300">{log.action}</span>
                       </p>
                     </div>
                   ))}
