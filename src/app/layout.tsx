@@ -41,11 +41,23 @@ export const metadata: Metadata = {
     siteName: 'Unity 101 Community Radio',
     locale: 'en_GB',
     type: 'website',
+    images: [
+      {
+        url: '/images/unity101-logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Unity 101 Community Radio 20th Anniversary Gala',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Unity 101 Community Radio - Event Registration',
     description: 'Official guest registration for Unity 101 Community Radio 20th Anniversary Gala.',
+    images: ['/images/unity101-logo.png'],
+  },
+  alternates: {
+    canonical: 'https://unity101.org/register',
   },
   robots: {
     index: true,

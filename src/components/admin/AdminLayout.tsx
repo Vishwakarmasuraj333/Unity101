@@ -91,12 +91,14 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
   // Sync theme with localStorage & system preference
   useEffect(() => {
     const saved = localStorage.getItem('unity101_admin_theme');
-    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      setIsDarkMode(true);
+    const isDark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    setIsDarkMode(isDark);
+    if (isDark) {
       document.documentElement.classList.add('dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
     } else {
-      setIsDarkMode(false);
       document.documentElement.classList.remove('dark');
+      document.documentElement.setAttribute('data-theme', 'light');
     }
 
     const savedCollapsed = localStorage.getItem('unity101_sidebar_collapsed');
@@ -124,9 +126,11 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
       const next = !prev;
       if (next) {
         document.documentElement.classList.add('dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
         localStorage.setItem('unity101_admin_theme', 'dark');
       } else {
         document.documentElement.classList.remove('dark');
+        document.documentElement.setAttribute('data-theme', 'light');
         localStorage.setItem('unity101_admin_theme', 'light');
       }
       return next;
@@ -521,14 +525,14 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header Bar */}
-        <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#0d121f]/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 px-3 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between shadow-xs transition-colors">
+        <header className="sticky top-0 z-30 bg-white dark:bg-[#0d121f] border-b border-slate-200 dark:border-slate-800 px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between shadow-xs transition-colors">
           <div className="flex items-center space-x-2.5 sm:space-x-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="md:hidden text-slate-700 dark:text-slate-200 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer border border-slate-200 dark:border-slate-700"
+              className="md:hidden text-slate-800 dark:text-slate-100 p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors cursor-pointer border border-slate-300 dark:border-slate-700"
               aria-label="Open sidebar"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-5 h-5 text-slate-800 dark:text-slate-100" />
             </button>
 
             {/* Left Header Title & Logo */}
@@ -553,7 +557,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             </div>
           </div>
 
-          {/* Right Header Controls: Notification Feed, Theme Switcher, Radio Badges, Profile & Sign Out */}
+          {/* Right Header Controls: Notification Feed, Theme Switcher, Profile */}
           <div className="flex items-center space-x-2 sm:space-x-3">
             {/* Live Registration Notifications Dropdown */}
             <div className="relative" ref={notificationsRef}>
@@ -561,13 +565,13 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
                 className={`relative p-2 rounded-xl border transition-all cursor-pointer shadow-xs ${
                   notificationsOpen
-                    ? 'bg-purple-100 dark:bg-purple-950/80 text-purple-900 dark:text-amber-400 border-purple-300 dark:border-purple-700 ring-2 ring-purple-400/30'
-                    : 'bg-slate-100 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700'
+                    ? 'bg-purple-100 dark:bg-purple-950 text-purple-900 dark:text-amber-400 border-purple-300 dark:border-purple-700 ring-2 ring-purple-400/30'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700 border-slate-300 dark:border-slate-700'
                 }`}
                 title="Registration Alerts & Live Activity"
                 aria-label="Notifications"
               >
-                <Bell className="w-4 h-4" />
+                <Bell className="w-4 h-4 text-slate-800 dark:text-slate-100" />
                 {unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-amber-500 text-slate-950 font-extrabold text-[9px] shadow-sm animate-pulse">
                     {unreadCount}
@@ -699,7 +703,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                 className={`flex items-center space-x-1.5 p-1.5 rounded-xl transition-all text-xs font-semibold cursor-pointer border ${
                   userDropdownOpen
                     ? 'bg-slate-100 dark:bg-slate-800 border-purple-500 dark:border-purple-600 ring-2 ring-purple-400/20'
-                    : 'bg-slate-50 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-300 dark:border-slate-700'
+                    : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border-slate-300 dark:border-slate-700'
                 }`}
                 title="Admin Account Profile"
               >
