@@ -5,17 +5,17 @@
   --primary-purple: #481268;
   --primary-purple-dark: #320a4b;
   --primary-purple-light: #5d1785;
-  --unity-gold: #e5a910;
-  --unity-gold-dark: #c48b04;
-  --unity-gold-light: #f6c84c;
-  --unity-bg: #f8f6fb;
-  --foreground: #1c1917;
+  --unity-gold: #f59e0b;
+  --unity-gold-dark: #d97706;
+  --unity-gold-light: #fbbf24;
+  --unity-bg: #f8fafc;
+  --foreground: #0f172a;
 }
 
 body {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   color: var(--foreground);
-  background-color: #ffffff;
+  background-color: #f8fafc;
 }
 
 .font-script {
@@ -32,95 +32,96 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f1f5;
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #c3b5d1;
+  background: #cbd5e1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #9076ab;
+  background: #94a3b8;
 }
 
 html.dark ::-webkit-scrollbar-track {
-  background: #140820;
+  background: #0b0f19;
 }
 html.dark ::-webkit-scrollbar-thumb {
-  background: #481e6e;
+  background: #1e293b;
 }
 html.dark ::-webkit-scrollbar-thumb:hover {
-  background: #6b21a8;
+  background: #334155;
 }
 
 /* ========================================================
-   HIGH-CONTRAST PROFESSIONAL DARK THEME SYSTEM
+   EXECUTIVE HIGH-CONTRAST PROFESSIONAL DARK THEME SYSTEM
+   Clean Slate/Charcoal SaaS Design with Gold & Royal Accents
    ======================================================== */
 html.dark, .dark {
-  --unity-bg: #0e0517;
-  --foreground: #f8f5fc;
+  --unity-bg: #090d16;
+  --foreground: #f8fafc;
   color-scheme: dark;
 }
 
 html.dark body {
-  background-color: #0e0517 !important;
-  color: #f8f5fc !important;
+  background-color: #090d16 !important;
+  color: #f8fafc !important;
 }
 
 /* Top Header Bar */
 html.dark header {
-  background-color: #1a082b !important;
-  border-bottom-color: #3b1458 !important;
+  background-color: #0d121f !important;
+  border-bottom-color: #1e293b !important;
 }
 
 html.dark header h2,
 html.dark header h2 span {
-  color: #fbf8fe !important;
+  color: #ffffff !important;
 }
 
-/* Cards & Surfaces */
+/* Cards & Surfaces - Deep Executive Slate (Not saturated purple) */
 html.dark .bg-white,
 html.dark [class*="bg-white/"] {
-  background-color: #170a26 !important;
-  color: #f8f5fc !important;
-  border-color: #3d165f !important;
+  background-color: #111625 !important;
+  color: #f8fafc !important;
+  border-color: #1e293b !important;
 }
 
 html.dark .bg-slate-50,
 html.dark [class*="bg-slate-50"] {
-  background-color: #12071f !important;
-  border-color: #351354 !important;
+  background-color: #0d121f !important;
+  border-color: #1e293b !important;
 }
 
 html.dark .bg-\[\#f7f5fa\] {
-  background-color: #0e0517 !important;
+  background-color: #090d16 !important;
 }
 
-/* Typography Overrides for Dark Mode */
+/* Typography Overrides for Dark Mode - High Contrast Crisp Text */
 html.dark .text-slate-900 {
   color: #ffffff !important;
 }
 
 html.dark .text-slate-800 {
-  color: #f3ecf8 !important;
+  color: #f1f5f9 !important;
 }
 
 html.dark .text-slate-700 {
-  color: #e5d9f0 !important;
+  color: #e2e8f0 !important;
 }
 
 html.dark .text-slate-600 {
-  color: #d1c0e3 !important;
+  color: #cbd5e1 !important;
 }
 
 html.dark .text-slate-500 {
-  color: #bfa8d6 !important;
+  color: #94a3b8 !important;
 }
 
 html.dark .text-slate-400 {
-  color: #9d83ba !important;
+  color: #64748b !important;
 }
 
-/* Borders */
+/* Clean Professional Slate Borders */
 html.dark .border-slate-100,
 html.dark .border-slate-200,
 html.dark .border-slate-200\/70,
@@ -131,85 +132,86 @@ html.dark .border-purple-200,
 html.dark .border-purple-200\/60,
 html.dark .border-purple-200\/70,
 html.dark .border-purple-200\/80 {
-  border-color: #3d165f !important;
+  border-color: #1e293b !important;
 }
 
 /* Inputs, Selects, Buttons */
 html.dark input,
 html.dark select,
 html.dark textarea {
-  background-color: #13071f !important;
+  background-color: #090d16 !important;
   color: #ffffff !important;
-  border-color: #481e6e !important;
+  border-color: #243147 !important;
 }
 
 html.dark input::placeholder,
 html.dark textarea::placeholder {
-  color: #8c71a8 !important;
+  color: #64748b !important;
 }
 
 html.dark input:focus,
 html.dark select:focus,
 html.dark textarea:focus {
   border-color: #f59e0b !important;
+  outline: none !important;
 }
 
 /* Buttons in Dark Mode */
 html.dark button.bg-slate-100,
 html.dark .bg-slate-100 {
-  background-color: #2b1142 !important;
-  color: #f8f5fc !important;
-  border-color: #4a1d73 !important;
+  background-color: #161e31 !important;
+  color: #f8fafc !important;
+  border-color: #243147 !important;
 }
 
 html.dark button.bg-slate-100:hover,
 html.dark .bg-slate-100:hover {
-  background-color: #3b175c !important;
+  background-color: #1e293b !important;
 }
 
 /* Table Specific High Contrast in Dark Mode */
 html.dark table thead,
 html.dark table thead tr,
 html.dark thead.bg-slate-50 {
-  background-color: #11051c !important;
-  color: #e5d9f0 !important;
-  border-bottom: 2px solid #3d165f !important;
+  background-color: #0d121f !important;
+  color: #f8fafc !important;
+  border-bottom: 2px solid #1e293b !important;
 }
 
 html.dark table thead th {
-  color: #d1c0e3 !important;
+  color: #e2e8f0 !important;
   font-weight: 700 !important;
 }
 
 html.dark tbody.divide-slate-100 > tr,
 html.dark table tbody tr {
-  border-bottom: 1px solid #280f3e !important;
+  border-bottom: 1px solid #192032 !important;
 }
 
 html.dark table tbody tr:hover {
-  background-color: #220e36 !important;
+  background-color: #161e31 !important;
 }
 
 /* Ref Tags in Dark Mode */
 html.dark td.font-mono.font-bold {
-  color: #fcd34d !important; /* Bright Gold */
+  color: #fbbf24 !important; /* Bright Gold */
 }
 
 /* Action Icons */
 html.dark td .p-1\.5.text-slate-400 {
-  color: #bfa8d6 !important;
+  color: #94a3b8 !important;
 }
 
 html.dark td .p-1\.5.text-slate-400:hover {
-  color: #fcd34d !important;
-  background-color: #3b175c !important;
+  color: #fbbf24 !important;
+  background-color: #1e293b !important;
 }
 
 /* Header Badges */
 html.dark header .bg-purple-50 {
-  background-color: #280e3c !important;
-  color: #f8f5fc !important;
-  border-color: #4c1d75 !important;
+  background-color: #191b2c !important;
+  color: #e2e8f0 !important;
+  border-color: #2d3748 !important;
 }
 
 html.dark header .bg-emerald-50 {
@@ -222,19 +224,19 @@ html.dark header .bg-emerald-50 {
    CHARTS & DIAGRAMS IN DARK MODE
    ======================================================== */
 html.dark svg circle[stroke="#f1f1f5"] {
-  stroke: #260e3a !important;
+  stroke: #161e31 !important;
 }
 
 html.dark svg circle[stroke="#e2e8f0"] {
-  stroke: #3b1458 !important;
+  stroke: #1e293b !important;
 }
 
 html.dark svg line {
-  stroke: #3b1458 !important;
+  stroke: #1e293b !important;
 }
 
 html.dark svg text {
-  fill: #f4eff9 !important;
+  fill: #f8fafc !important;
 }
 
 html.dark svg text.fill-slate-700 {
@@ -243,17 +245,17 @@ html.dark svg text.fill-slate-700 {
 
 html.dark svg text.fill-slate-400,
 html.dark svg text.fill-slate-300 {
-  fill: #bfa8d6 !important;
+  fill: #94a3b8 !important;
 }
 
 html.dark .bg-slate-200,
 html.dark .bg-slate-200\/70,
 html.dark .bg-slate-200\/80 {
-  background-color: #29103e !important;
+  background-color: #1e293b !important;
 }
 
 html.dark .bg-purple-100 {
-  background-color: #3b1458 !important;
+  background-color: #2e104e !important;
   color: #fde68a !important;
 }
 
@@ -286,6 +288,6 @@ html.dark .bg-blue-100 {
 }
 
 html.dark .bg-gradient-to-br.from-white {
-  background: linear-gradient(135deg, #170a26 0%, #1e0933 50%, #140523 100%) !important;
-  border-color: #3d165f !important;
+  background: #111625 !important;
+  border-color: #1e293b !important;
 }

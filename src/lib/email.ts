@@ -139,9 +139,14 @@ function generateGuestConfirmationHtml(data: RegistrationEmailData): string {
                   <td style="font-size: 13px; font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0; padding: 10px 14px;">Mobile Phone:</td>
                   <td style="font-size: 13px; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding: 10px 14px;">${data.mobile}</td>
                 </tr>
+                ${data.address ? `
+                <tr>
+                  <td style="font-size: 13px; font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0; padding: 10px 14px;">Street Address:</td>
+                  <td style="font-size: 13px; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding: 10px 14px;">${data.address}</td>
+                </tr>` : ''}
                 ${data.town ? `
                 <tr>
-                  <td style="font-size: 13px; font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0; padding: 10px 14px;">Location:</td>
+                  <td style="font-size: 13px; font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0; padding: 10px 14px;">Town & Postcode:</td>
                   <td style="font-size: 13px; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding: 10px 14px;">${data.town}${data.post_code ? `, ${data.post_code}` : ''}</td>
                 </tr>` : ''}
                 <tr>
@@ -270,24 +275,92 @@ export async function sendAdminNewRegistrationAlertEmail(
     });
 
     const refCode = `U101-${String(data.id).padStart(5, '0')}`;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://unity101.vercel.app';
+    const isVeg = data.food_preference?.toLowerCase().includes('veg') && !data.food_preference?.toLowerCase().includes('non');
+    const foodBadgeColor = isVeg ? '#166534' : '#991b1b';
+    const foodBadgeBg = isVeg ? '#dcfce7' : '#fee2e2';
+
     const info = await transporter.sendMail({
       from: config.from,
       to: config.adminAlertEmail,
-      subject: `New Guest Registered: ${data.first_name} ${data.last_name} [${refCode}]`,
-      text: `A new registration has been received:\n\nName: ${data.first_name} ${data.last_name}\nEmail: ${data.email}\nMobile: ${data.mobile}\nFood Preference: ${data.food_preference}\nReference: ${refCode}`,
+      subject: `[Unity 101 Admin Alert] New Guest Registered: ${data.first_name} ${data.last_name} (${refCode})`,
+      text: `A new registration has been received for the Unity 101 20th Anniversary Gala:\n\nReference: ${refCode}\nGuest Name: ${data.first_name} ${data.last_name}\nEmail: ${data.email}\nMobile: ${data.mobile}\nStreet Address: ${data.address || 'Not provided'}\nTown / City: ${data.town || 'Not provided'}\nPostcode: ${data.post_code || 'Not provided'}\nFood Preference: ${data.food_preference}\n\nView Guest in Admin Portal: ${appUrl}/admin/registrations/${data.id}`,
       html: `
-        <div style="font-family: sans-serif; padding: 20px; color: #1e293b;">
-          <h2 style="color: #481268;">New Guest Registration Received</h2>
-          <p>A new guest has registered on the Unity 101 portal:</p>
-          <ul>
-            <li><strong>Reference:</strong> ${refCode}</li>
-            <li><strong>Guest Name:</strong> ${data.first_name} ${data.last_name}</li>
-            <li><strong>Email:</strong> ${data.email}</li>
-            <li><strong>Phone:</strong> ${data.mobile}</li>
-            <li><strong>Food Choice:</strong> ${data.food_preference}</li>
-          </ul>
-          <p><a href="/admin/registrations/${data.id}" style="color: #481268; font-weight: bold;">View in Admin Portal &rarr;</a></p>
-        </div>
+        <!DOCTYPE html>
+        <html>
+        <head><meta charset="utf-8"></head>
+        <body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a;">
+          <table role="presentation" width="100%" style="background-color: #f1f5f9; padding: 24px 12px;">
+            <tr>
+              <td align="center">
+                <table role="presentation" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td style="background: linear-gradient(135deg, #1e052c 0%, #3b0e54 100%); padding: 24px; color: #ffffff; text-align: left;">
+                      <span style="background-color: #f59e0b; color: #0f172a; font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; letter-spacing: 1px;">Admin Notification</span>
+                      <h2 style="margin: 8px 0 0 0; font-size: 20px; font-weight: 800; color: #ffffff;">New Guest Registration Received</h2>
+                      <p style="margin: 4px 0 0 0; font-size: 13px; color: #e9d5ff;">Unity 101 Community Radio • 20th Anniversary Celebration</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 24px;">
+                      <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+                        <span style="font-size: 12px; color: #64748b; font-weight: 600;">Reference Code:</span>
+                        <span style="font-size: 14px; font-weight: 800; color: #481268; font-family: monospace;">${refCode}</span>
+                      </div>
+
+                      <table role="presentation" width="100%" style="font-size: 13px; line-height: 1.6; border-collapse: collapse; margin-bottom: 24px;">
+                        <tr>
+                          <td style="padding: 8px 0; color: #64748b; width: 35%; border-bottom: 1px solid #f1f5f9;">Guest Name:</td>
+                          <td style="padding: 8px 0; color: #0f172a; font-weight: 700; border-bottom: 1px solid #f1f5f9;">${data.first_name} ${data.last_name}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Email Address:</td>
+                          <td style="padding: 8px 0; color: #0f172a; font-weight: 600; border-bottom: 1px solid #f1f5f9;"><a href="mailto:${data.email}" style="color: #481268; text-decoration: none;">${data.email}</a></td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Mobile Phone:</td>
+                          <td style="padding: 8px 0; color: #0f172a; font-weight: 600; border-bottom: 1px solid #f1f5f9;"><a href="tel:${data.mobile}" style="color: #481268; text-decoration: none;">${data.mobile}</a></td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Street Address:</td>
+                          <td style="padding: 8px 0; color: #0f172a; font-weight: 600; border-bottom: 1px solid #f1f5f9;">${data.address || 'Not specified'}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Town / City:</td>
+                          <td style="padding: 8px 0; color: #0f172a; font-weight: 600; border-bottom: 1px solid #f1f5f9;">${data.town || 'Not specified'}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Postcode:</td>
+                          <td style="padding: 8px 0; color: #0f172a; font-weight: 700; border-bottom: 1px solid #f1f5f9; text-transform: uppercase;">${data.post_code || 'Not specified'}</td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 8px 0; color: #64748b;">Food Preference:</td>
+                          <td style="padding: 8px 0;">
+                            <span style="background-color: ${foodBadgeBg}; color: ${foodBadgeColor}; padding: 3px 10px; border-radius: 9999px; font-weight: 700; font-size: 12px;">
+                              ${data.food_preference}
+                            </span>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <div style="text-align: center; padding-top: 10px;">
+                        <a href="${appUrl}/admin/registrations/${data.id}" target="_blank" style="display: inline-block; background: #481268; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; font-size: 13px; box-shadow: 0 2px 6px rgba(72,18,104,0.3);">
+                          Open Registration #${data.id} in Admin &rarr;
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 16px 24px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center; font-size: 11px; color: #94a3b8;">
+                      Unity 101 Community Radio • 20th Anniversary Gala Admin System
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
       `,
     });
 

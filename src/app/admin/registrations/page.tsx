@@ -715,32 +715,36 @@ export default function RegistrationsManagementPage() {
         {/* Delete Confirmation Modal */}
         {deleteConfirmItem && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-red-100">
+            <div className="bg-white dark:bg-[#111625] rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800">
               <div className="flex items-center space-x-3 text-red-600 mb-3">
-                <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
-                  <Trash2 className="w-5 h-5 text-red-600" />
+                <div className="w-10 h-10 rounded-full bg-red-50 dark:bg-red-950/60 flex items-center justify-center shrink-0">
+                  <Trash2 className="w-5 h-5 text-red-600 dark:text-red-400" />
                 </div>
-                <h3 className="text-base font-bold text-slate-900">Move Registration to Trash?</h3>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">Delete Guest Registration</h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Record will be safely archived</p>
+                </div>
               </div>
-              <p className="text-xs text-slate-600 mb-4 leading-relaxed">
-                Are you sure you want to move the registration for{' '}
-                <span className="font-bold text-slate-800">
+              <p className="text-xs text-slate-600 dark:text-slate-300 mb-5 leading-relaxed">
+                Are you sure you want to delete the registration for{' '}
+                <span className="font-bold text-slate-900 dark:text-white">
                   {deleteConfirmItem.first_name} {deleteConfirmItem.last_name}
                 </span>{' '}
-                (#{deleteConfirmItem.id}) to trash? You can recover it anytime from the Trash & Recovery section.
+                (#{deleteConfirmItem.id})? It will be moved to <strong className="text-purple-700 dark:text-purple-300">Trash & Archival</strong> where it can be restored or permanently purged.
               </p>
               <div className="flex justify-end space-x-2">
                 <button
                   onClick={() => setDeleteConfirmItem(null)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors"
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteRegistration}
-                  className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors shadow-sm"
+                  className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-all shadow-sm cursor-pointer flex items-center space-x-1.5"
                 >
-                  Move to Trash
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Delete Registration</span>
                 </button>
               </div>
             </div>

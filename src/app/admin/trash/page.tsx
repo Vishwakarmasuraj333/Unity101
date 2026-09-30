@@ -152,12 +152,12 @@ export default function TrashRecoveryPage() {
         )}
 
         {/* Notice Banner */}
-        <div className="bg-amber-50 border border-amber-200/80 rounded-2xl p-4 text-xs text-amber-900 flex items-start space-x-3">
-          <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+        <div className="bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 rounded-2xl p-4 text-xs text-amber-900 dark:text-amber-200 flex items-start space-x-3">
+          <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
           <div>
-            <p className="font-bold text-amber-950">Safety Recovery Chamber</p>
-            <p className="text-amber-800 leading-relaxed mt-0.5">
-              Deleted registrations are retained safely in this trash view. You can restore them back to the active directory anytime, or permanently purge them from the MySQL database.
+            <p className="font-bold text-amber-950 dark:text-amber-100 text-sm">Archived Guest Records</p>
+            <p className="text-amber-800 dark:text-amber-300 leading-relaxed mt-0.5">
+              Registrations removed from the active directory are kept here for recovery. You can restore them to the live event roster anytime, or permanently remove them from the database.
             </p>
           </div>
         </div>

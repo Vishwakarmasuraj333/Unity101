@@ -21,6 +21,8 @@ import {
   Laptop,
 } from 'lucide-react';
 
+import Image from 'next/image';
+
 export default function AdminProfilePage() {
   const [profile, setProfile] = useState({
     name: '',
@@ -162,8 +164,14 @@ export default function AdminProfilePage() {
             {/* Profile Identity Card */}
             <div className="bg-gradient-to-br from-[#2f0846] via-[#481268] to-[#5d1785] text-white rounded-2xl p-6 shadow-xl border border-purple-800/50 relative overflow-hidden flex flex-col items-center text-center">
               <div className="relative mb-4">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-amber-400 to-amber-200 text-slate-950 font-serif-brand font-bold text-3xl flex items-center justify-center shadow-lg shadow-amber-400/20 border-2 border-amber-300">
-                  {profile.name ? profile.name.charAt(0).toUpperCase() : 'A'}
+                <div className="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur p-2.5 border-2 border-amber-400/60 shadow-xl shadow-amber-400/10 flex items-center justify-center">
+                  <Image
+                    src="/images/unity101-logo.png"
+                    alt="Unity 101 Admin Profile"
+                    width={56}
+                    height={56}
+                    className="object-contain"
+                  />
                 </div>
                 <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-[#2f0846] flex items-center justify-center" title="Online & Authenticated">
                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
