@@ -198,7 +198,7 @@ export default function RegistrationForm() {
                 <input
                   type="text"
                   id="first_name"
-                  placeholder="First Name (e.g. Suraj)"
+                  placeholder="First Name"
                   maxLength={50}
                   value={values.first_name || ''}
                   onChange={(e) => {
@@ -224,7 +224,7 @@ export default function RegistrationForm() {
                 <input
                   type="text"
                   id="last_name"
-                  placeholder="Last Name (e.g. Patel)"
+                  placeholder="Last Name"
                   maxLength={50}
                   value={values.last_name || ''}
                   onChange={(e) => {
@@ -252,7 +252,7 @@ export default function RegistrationForm() {
                   id="address"
                   maxLength={120}
                   {...register('address')}
-                  placeholder="Address (e.g. 10 St Mary's Road)"
+                  placeholder="Street Address (e.g. 12 High Street)"
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b transition-colors outline-none ${
                     errors.address
                       ? 'border-red-500 focus:border-red-600'
@@ -272,7 +272,7 @@ export default function RegistrationForm() {
                 <input
                   type="text"
                   id="town"
-                  placeholder="Town / City (e.g. Southampton)"
+                  placeholder="Town or City (e.g. Southampton)"
                   maxLength={50}
                   value={values.town || ''}
                   onChange={(e) => {
@@ -331,7 +331,7 @@ export default function RegistrationForm() {
                     const sanitized = e.target.value.trim().toLowerCase();
                     setValue('email', sanitized, { shouldValidate: true });
                   }}
-                  placeholder="Email (e.g. suraj.patel@gmail.com)"
+                  placeholder="Email Address (e.g. guest@example.com)"
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b transition-colors outline-none ${
                     errors.email
                       ? 'border-red-500 focus:border-red-600'

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
 import {
@@ -12,6 +12,7 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Filter,
   CheckCircle,
   XCircle,
@@ -20,6 +21,8 @@ import {
   Loader2,
   AlertCircle,
   FileSpreadsheet,
+  Printer,
+  FileText,
 } from 'lucide-react';
 import { Registration, FoodPreference, RegistrationStatus } from '@/types';
 
@@ -44,6 +47,10 @@ export default function RegistrationsManagementPage() {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [bulkActionLoading, setBulkActionLoading] = useState(false);
 
+  // Export dropdown state
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const exportMenuRef = useRef<HTMLDivElement>(null);
+
   // Modals
   const [viewingItem, setViewingItem] = useState<Registration | null>(null);
   const [editingItem, setEditingItem] = useState<Registration | null>(null);
@@ -57,6 +64,17 @@ export default function RegistrationsManagementPage() {
     setToastMessage({ type, text });
     setTimeout(() => setToastMessage(null), 4000);
   };
+
+  // Close export menu on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(event.target as Node)) {
+        setExportMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Debounce search
   useEffect(() => {
@@ -180,9 +198,11 @@ export default function RegistrationsManagementPage() {
     }
   };
 
-  // Export filtered CSV or selected CSV
-  const handleExport = (onlySelected = false) => {
+  // Export filtered or selected records in real CSV, Excel (.xlsx), or PDF format
+  const handleExport = (format: 'csv' | 'excel' | 'pdf' = 'csv', onlySelected = false) => {
+    setExportMenuOpen(false);
     const params = new URLSearchParams();
+    params.set('format', format);
     if (onlySelected && selectedIds.length > 0) {
       params.set('ids', selectedIds.join(','));
     } else {
@@ -238,16 +258,78 @@ export default function RegistrationsManagementPage() {
               )}
             </div>
 
-            {/* Actions */}
+            {/* Actions: Multi-format Export Dropdown & Add Guest */}
             <div className="flex items-center space-x-2 shrink-0">
-              <button
-                onClick={() => handleExport(false)}
-                className="inline-flex items-center space-x-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold py-2 px-3.5 rounded-xl border border-slate-200/80 dark:border-slate-700 transition-all cursor-pointer shadow-xs"
-                title="Export filtered records to CSV"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Export CSV</span>
-              </button>
+              {/* Multi-Format Export Dropdown */}
+              <div className="relative" ref={exportMenuRef}>
+                <button
+                  onClick={() => setExportMenuOpen(!exportMenuOpen)}
+                  className="inline-flex items-center space-x-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold py-2 px-3.5 rounded-xl border border-slate-200/80 dark:border-slate-700 transition-all cursor-pointer shadow-xs"
+                  title="Download and export registrations"
+                >
+                  <Download className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Export</span>
+                  <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${exportMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {exportMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-[#111625] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-2 z-50 animate-in fade-in slide-in-from-top-2 text-xs space-y-1">
+                    <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800/80 mb-1">
+                      Choose Export Format
+                    </div>
+                    <button
+                      onClick={() => handleExport('excel', false)}
+                      className="w-full flex items-start space-x-2.5 p-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-left transition-colors cursor-pointer group"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 font-bold">
+                        <FileSpreadsheet className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                          Excel Spreadsheet (.xlsx)
+                        </div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                          Full formatted tables & catering summary sheet
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => handleExport('pdf', false)}
+                      className="w-full flex items-start space-x-2.5 p-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/40 text-left transition-colors cursor-pointer group"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400 flex items-center justify-center shrink-0 mt-0.5 font-bold">
+                        <Printer className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-slate-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400">
+                          PDF Master Manifest (.pdf)
+                        </div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                          Print-ready official register with gala branding
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => handleExport('csv', false)}
+                      className="w-full flex items-start space-x-2.5 p-2 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-950/40 text-left transition-colors cursor-pointer group"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-400 flex items-center justify-center shrink-0 mt-0.5 font-bold">
+                        <Download className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400">
+                          CSV Data File (.csv)
+                        </div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                          Universal comma-separated text format
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
 
               <button
                 onClick={() => setIsAddModalOpen(true)}
@@ -347,7 +429,7 @@ export default function RegistrationsManagementPage() {
 
         {/* Bulk Action Ribbon */}
         {selectedIds.length > 0 && (
-          <div className="bg-purple-950 text-white rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 shadow-md animate-in fade-in">
+          <div className="bg-purple-950 dark:bg-[#150a22] text-white rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 shadow-md border border-purple-800/80 animate-in fade-in">
             <div className="text-xs font-medium">
               <span className="font-bold text-amber-400">{selectedIds.length}</span> registration(s) selected
             </div>
@@ -355,35 +437,59 @@ export default function RegistrationsManagementPage() {
               <button
                 onClick={() => handleBulkAction('confirm')}
                 disabled={bulkActionLoading}
-                className="bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-semibold py-1.5 px-3 rounded-lg transition-colors"
+                className="bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-semibold py-1.5 px-3 rounded-lg transition-colors cursor-pointer"
               >
                 Mark Confirmed
               </button>
               <button
                 onClick={() => handleBulkAction('cancel')}
                 disabled={bulkActionLoading}
-                className="bg-red-600 hover:bg-red-500 text-white text-[11px] font-semibold py-1.5 px-3 rounded-lg transition-colors"
+                className="bg-red-600 hover:bg-red-500 text-white text-[11px] font-semibold py-1.5 px-3 rounded-lg transition-colors cursor-pointer"
               >
                 Mark Cancelled
               </button>
-              <button
-                onClick={() => handleExport(true)}
-                disabled={bulkActionLoading}
-                className="bg-purple-800 hover:bg-purple-700 text-amber-300 text-[11px] font-semibold py-1.5 px-3 rounded-lg transition-colors inline-flex items-center space-x-1"
-              >
-                <FileSpreadsheet className="w-3 h-3" />
-                <span>Export Selected</span>
-              </button>
+
+              {/* Bulk Multi-Format Exports */}
+              <div className="flex items-center space-x-1 border-l border-r border-purple-800/80 px-2">
+                <button
+                  onClick={() => handleExport('excel', true)}
+                  disabled={bulkActionLoading}
+                  className="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 text-[11px] font-bold py-1.5 px-2.5 rounded-lg transition-colors inline-flex items-center space-x-1 cursor-pointer border border-emerald-700/60"
+                  title="Export selected records to Excel (.xlsx)"
+                >
+                  <FileSpreadsheet className="w-3 h-3 text-emerald-400" />
+                  <span>Excel</span>
+                </button>
+                <button
+                  onClick={() => handleExport('pdf', true)}
+                  disabled={bulkActionLoading}
+                  className="bg-red-900/80 hover:bg-red-800 text-red-200 text-[11px] font-bold py-1.5 px-2.5 rounded-lg transition-colors inline-flex items-center space-x-1 cursor-pointer border border-red-700/60"
+                  title="Export selected records to PDF (.pdf)"
+                >
+                  <Printer className="w-3 h-3 text-red-400" />
+                  <span>PDF</span>
+                </button>
+                <button
+                  onClick={() => handleExport('csv', true)}
+                  disabled={bulkActionLoading}
+                  className="bg-purple-800 hover:bg-purple-700 text-amber-300 text-[11px] font-bold py-1.5 px-2.5 rounded-lg transition-colors inline-flex items-center space-x-1 cursor-pointer border border-purple-700/60"
+                  title="Export selected records to CSV (.csv)"
+                >
+                  <Download className="w-3 h-3 text-amber-400" />
+                  <span>CSV</span>
+                </button>
+              </div>
+
               <button
                 onClick={() => handleBulkAction('soft_delete')}
                 disabled={bulkActionLoading}
-                className="bg-slate-800 hover:bg-slate-700 text-red-300 text-[11px] font-semibold py-1.5 px-3 rounded-lg transition-colors"
+                className="bg-slate-800 hover:bg-slate-700 text-red-300 text-[11px] font-semibold py-1.5 px-3 rounded-lg transition-colors cursor-pointer"
               >
                 Move to Trash
               </button>
               <button
                 onClick={() => setSelectedIds([])}
-                className="text-slate-400 hover:text-white text-[11px] underline ml-1"
+                className="text-slate-400 hover:text-white text-[11px] underline ml-1 cursor-pointer"
               >
                 Clear
               </button>
@@ -573,115 +679,136 @@ export default function RegistrationsManagementPage() {
           </div>
         </div>
 
-        {/* View Modal */}
+        {/* View Registration Modal */}
         {viewingItem && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in">
-            <div className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-purple-100">
-              <div className="bg-[#481268] text-white p-5 flex items-center justify-between">
+            <div className="bg-white dark:bg-[#111625] rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-[#2f0846] via-[#481268] to-[#5d1785] text-white p-5 flex items-center justify-between border-b border-purple-800/60">
                 <div>
-                  <span className="text-amber-400 font-mono text-xs font-semibold">
-                    REGISTRATION #{viewingItem.id}
-                  </span>
-                  <h3 className="font-bold text-lg font-serif-brand">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-amber-400 font-mono text-xs font-bold">
+                      REGISTRATION #{viewingItem.id}
+                    </span>
+                    <span className="text-[10px] bg-amber-400/20 text-amber-300 px-1.5 py-0.5 rounded font-mono font-bold">
+                      GALA GUEST
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-lg font-serif-brand text-white mt-0.5">
                     {viewingItem.first_name} {viewingItem.last_name}
                   </h3>
                 </div>
                 <button
                   onClick={() => setViewingItem(null)}
-                  className="text-purple-200 hover:text-white p-1"
+                  className="text-purple-200 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                  aria-label="Close"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
+              {/* Body */}
               <div className="p-6 space-y-4 text-xs">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <span className="text-slate-400 block mb-0.5">Email Address</span>
-                    <p className="font-semibold text-slate-800">{viewingItem.email}</p>
+                    <span className="text-slate-400 dark:text-slate-400 block mb-0.5">Email Address</span>
+                    <p className="font-semibold text-slate-900 dark:text-white break-all">{viewingItem.email}</p>
                   </div>
                   <div>
-                    <span className="text-slate-400 block mb-0.5">Mobile Phone</span>
-                    <p className="font-semibold text-slate-800 font-mono">{viewingItem.mobile}</p>
+                    <span className="text-slate-400 dark:text-slate-400 block mb-0.5">Mobile Phone</span>
+                    <p className="font-semibold text-slate-900 dark:text-white font-mono">{viewingItem.mobile}</p>
                   </div>
                 </div>
 
-                <div className="border-t border-slate-100 pt-3">
-                  <span className="text-slate-400 block mb-0.5">Postal Address</span>
-                  <p className="font-semibold text-slate-800">{viewingItem.address}</p>
-                  <p className="text-slate-600">
-                    {viewingItem.town}, <span className="font-mono uppercase">{viewingItem.post_code}</span>
+                <div className="border-t border-slate-100 dark:border-slate-800 pt-3">
+                  <span className="text-slate-400 dark:text-slate-400 block mb-0.5">Postal Address</span>
+                  <p className="font-semibold text-slate-900 dark:text-white">{viewingItem.address}</p>
+                  <p className="text-slate-600 dark:text-slate-300">
+                    {viewingItem.town}, <span className="font-mono uppercase font-bold text-slate-800 dark:text-amber-400">{viewingItem.post_code}</span>
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-3">
+                <div className="grid grid-cols-2 gap-4 border-t border-slate-100 dark:border-slate-800 pt-3">
                   <div>
-                    <span className="text-slate-400 block mb-0.5">Food Choice</span>
+                    <span className="text-slate-400 dark:text-slate-400 block mb-1">Catering Choice</span>
                     <span
-                      className={`inline-block px-2.5 py-1 rounded-full font-semibold ${
+                      className={`inline-block px-2.5 py-1 rounded-full font-bold text-[11px] ${
                         viewingItem.food_preference === 'Veg Food'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-orange-100 text-orange-800'
+                          ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-900 dark:text-amber-300 border border-amber-300/40'
+                          : 'bg-red-100 dark:bg-red-950/80 text-red-900 dark:text-red-300 border border-red-300/40'
                       }`}
                     >
                       {viewingItem.food_preference}
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block mb-0.5">Current Status</span>
+                    <span className="text-slate-400 dark:text-slate-400 block mb-1">Guest Status</span>
                     <span
-                      className={`inline-block px-2.5 py-1 rounded-full font-semibold ${
+                      className={`inline-block px-2.5 py-1 rounded-full font-bold text-[11px] ${
                         viewingItem.status === 'confirmed'
-                          ? 'bg-emerald-100 text-emerald-800'
+                          ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300/40'
                           : viewingItem.status === 'cancelled'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-blue-100 text-blue-800'
+                          ? 'bg-red-100 dark:bg-red-950/80 text-red-800 dark:text-red-300 border border-red-300/40'
+                          : 'bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 border border-blue-300/40'
                       }`}
                     >
-                      {viewingItem.status}
+                      {viewingItem.status.toUpperCase()}
                     </span>
                   </div>
                 </div>
 
-                <div className="border-t border-slate-100 pt-3">
-                  <span className="text-slate-400 block mb-0.5">GDPR Marketing Consent</span>
-                  <p className="text-slate-700 font-medium">
-                    {viewingItem.gdpr_consent ? '✓ Explicit Consent Granted' : '✗ Not Consented'}
+                <div className="border-t border-slate-100 dark:border-slate-800 pt-3">
+                  <span className="text-slate-400 dark:text-slate-400 block mb-0.5">GDPR Marketing Consent</span>
+                  <p className="text-slate-800 dark:text-slate-200 font-medium">
+                    {viewingItem.gdpr_consent ? '✓ Explicit Consent Granted (GDPR Compliant)' : '✗ Not Consented'}
                   </p>
                 </div>
 
                 {viewingItem.notes && (
-                  <div className="border-t border-slate-100 pt-3">
-                    <span className="text-slate-400 block mb-0.5">Admin Notes</span>
-                    <p className="text-slate-700 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                  <div className="border-t border-slate-100 dark:border-slate-800 pt-3">
+                    <span className="text-slate-400 dark:text-slate-400 block mb-0.5">Admin & Table Notes</span>
+                    <p className="text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-[#161e31] p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
                       {viewingItem.notes}
                     </p>
                   </div>
                 )}
 
-                <div className="border-t border-slate-100 pt-3 text-[11px] text-slate-400 flex justify-between">
+                <div className="border-t border-slate-100 dark:border-slate-800 pt-3 text-[11px] text-slate-400 dark:text-slate-500 flex justify-between">
                   <span>Registered: {new Date(viewingItem.created_at).toLocaleString()}</span>
                   <span>Updated: {new Date(viewingItem.updated_at).toLocaleString()}</span>
                 </div>
               </div>
 
-              <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-2">
-                <button
-                  onClick={() => {
-                    const item = viewingItem;
-                    setViewingItem(null);
-                    setEditingItem(item);
-                  }}
-                  className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold px-4 py-2 rounded-xl text-xs transition-colors"
+              {/* Footer */}
+              <div className="p-4 bg-slate-50 dark:bg-[#0d121f] border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <a
+                  href={`/api/admin/export?format=pdf&ids=${viewingItem.id}`}
+                  download
+                  className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/50 dark:hover:bg-red-900/60 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-800/60 font-bold text-xs transition-colors cursor-pointer"
+                  title="Download Official Guest PDF Manifest"
                 >
-                  Edit Guest
-                </button>
-                <button
-                  onClick={() => setViewingItem(null)}
-                  className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-4 py-2 rounded-xl text-xs transition-colors"
-                >
-                  Close
-                </button>
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>Download PDF</span>
+                </a>
+
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => {
+                      const item = viewingItem;
+                      setViewingItem(null);
+                      setEditingItem(item);
+                    }}
+                    className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition-colors cursor-pointer"
+                  >
+                    Edit Guest
+                  </button>
+                  <button
+                    onClick={() => setViewingItem(null)}
+                    className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold px-4 py-2 rounded-xl text-xs transition-colors cursor-pointer"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -827,7 +954,7 @@ function EditGuestModal({
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in">
-      <div className="bg-white dark:bg-[#1a082b] rounded-2xl max-w-xl w-full overflow-hidden shadow-2xl border border-purple-100 dark:border-purple-800 max-h-[92vh] flex flex-col">
+      <div className="bg-white dark:bg-[#111625] rounded-2xl max-w-xl w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 max-h-[92vh] flex flex-col">
         <div className="bg-gradient-to-r from-[#2f0846] via-[#481268] to-[#5d1785] text-white p-4 px-6 flex items-center justify-between border-b border-purple-800/60">
           <div>
             <div className="flex items-center space-x-1.5 mb-0.5">
@@ -836,7 +963,7 @@ function EditGuestModal({
                 Edit Guest Registration #{registration.id}
               </h3>
             </div>
-            <p className="text-[11px] text-purple-200">Updating live records in verified MySQL database</p>
+            <p className="text-[11px] text-purple-200">Updating live records in verified database</p>
           </div>
           <button onClick={onClose} className="text-purple-300 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
             <X className="w-5 h-5" />
@@ -853,8 +980,8 @@ function EditGuestModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
-                First Name <span className="text-amber-500">*</span>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">
+                First Name <span className="text-rose-500 font-bold ml-0.5">*</span>
               </label>
               <input
                 type="text"
@@ -862,13 +989,13 @@ function EditGuestModal({
                 value={formData.first_name}
                 onChange={(e) => setFormData({ ...formData, first_name: e.target.value.replace(/[^a-zA-Z\s'-]/g, '') })}
                 required
-                placeholder="e.g. Suraj"
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+                placeholder="Enter first name"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
-                Last Name <span className="text-amber-500">*</span>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">
+                Last Name <span className="text-rose-500 font-bold ml-0.5">*</span>
               </label>
               <input
                 type="text"
@@ -876,15 +1003,15 @@ function EditGuestModal({
                 value={formData.last_name}
                 onChange={(e) => setFormData({ ...formData, last_name: e.target.value.replace(/[^a-zA-Z\s'-]/g, '') })}
                 required
-                placeholder="e.g. Patel"
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+                placeholder="Enter last name"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
-              Street Address <span className="text-amber-500">*</span>
+            <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">
+              Street Address <span className="text-rose-500 font-bold ml-0.5">*</span>
             </label>
             <input
               type="text"
@@ -892,15 +1019,15 @@ function EditGuestModal({
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               required
-              placeholder="e.g. 10 St Mary's Road"
-              className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+              placeholder="Enter street address (e.g. 14 High Street)"
+              className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
-                Town / City <span className="text-amber-500">*</span>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">
+                Town / City <span className="text-rose-500 font-bold ml-0.5">*</span>
               </label>
               <input
                 type="text"
@@ -908,13 +1035,13 @@ function EditGuestModal({
                 value={formData.town}
                 onChange={(e) => setFormData({ ...formData, town: e.target.value.replace(/[^a-zA-Z\s'-]/g, '') })}
                 required
-                placeholder="e.g. Southampton"
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+                placeholder="Enter town or city"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
-                Postcode <span className="text-amber-500">*</span>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">
+                Postcode <span className="text-rose-500 font-bold ml-0.5">*</span>
               </label>
               <input
                 type="text"
@@ -923,15 +1050,15 @@ function EditGuestModal({
                 onChange={(e) => setFormData({ ...formData, post_code: e.target.value.toUpperCase().replace(/[^A-Z0-9 ]/g, '') })}
                 required
                 placeholder="e.g. SO14 0AY"
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl uppercase bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl uppercase bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
-                Email Address <span className="text-amber-500">*</span>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">
+                Email Address <span className="text-rose-500 font-bold ml-0.5">*</span>
               </label>
               <input
                 type="email"
@@ -939,13 +1066,13 @@ function EditGuestModal({
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value.trim().toLowerCase() })}
                 required
-                placeholder="e.g. suraj.patel@gmail.com"
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+                placeholder="guest.email@example.com"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
-                Mobile Phone (10–15 digits) <span className="text-amber-500">*</span>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">
+                Mobile Phone (10–15 digits) <span className="text-rose-500 font-bold ml-0.5">*</span>
               </label>
               <input
                 type="tel"
@@ -954,33 +1081,33 @@ function EditGuestModal({
                 onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/[^0-9+\s]/g, '') })}
                 required
                 placeholder="e.g. 07700 900123"
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">Food Preference</label>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">Food Preference</label>
               <select
                 value={formData.food_preference}
                 onChange={(e) =>
                   setFormData({ ...formData, food_preference: e.target.value as FoodPreference })
                 }
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 transition-colors"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 cursor-pointer"
               >
                 <option value="Veg Food">Veg Food (Vegetarian)</option>
                 <option value="Non Veg Food">Non Veg Food</option>
               </select>
             </div>
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">Status</label>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">Status</label>
               <select
                 value={formData.status}
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value as RegistrationStatus })
                 }
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 transition-colors"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 cursor-pointer"
               >
                 <option value="confirmed">Confirmed</option>
                 <option value="new">New (Pending Review)</option>
@@ -990,21 +1117,21 @@ function EditGuestModal({
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">Notes / Table Allocation</label>
+            <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">Notes / Table Allocation</label>
             <textarea
               rows={2}
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="e.g. VIP guest, Table #4, vegetarian Jain diet, seated with Community Radio Trustees..."
-              className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+              placeholder="Table allocation, dietary notes, or guest requests..."
+              className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
             />
           </div>
 
-          <div className="pt-3 flex justify-end space-x-2 border-t border-slate-100 dark:border-purple-900/60">
+          <div className="pt-3 flex justify-end space-x-2 border-t border-slate-100 dark:border-slate-800">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-purple-700/80 bg-slate-100 dark:bg-purple-900/40 hover:bg-slate-200 dark:hover:bg-purple-800 text-slate-700 dark:text-purple-200 font-semibold text-xs transition-all cursor-pointer"
+              className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition-all cursor-pointer"
             >
               Cancel
             </button>
@@ -1095,7 +1222,7 @@ function AddGuestModal({
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in">
-      <div className="bg-white dark:bg-[#1a082b] rounded-2xl max-w-xl w-full overflow-hidden shadow-2xl border border-purple-100 dark:border-purple-800 max-h-[92vh] flex flex-col">
+      <div className="bg-white dark:bg-[#111625] rounded-2xl max-w-xl w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 max-h-[92vh] flex flex-col">
         {/* Header */}
         <div className="bg-gradient-to-r from-[#2f0846] via-[#481268] to-[#5d1785] text-white p-4 px-6 flex items-center justify-between border-b border-purple-800/60">
           <div>
@@ -1103,7 +1230,7 @@ function AddGuestModal({
               <span className="w-2 h-2 rounded-full bg-amber-400" />
               <h3 className="font-bold text-sm tracking-wide text-white">Add New Guest Registration</h3>
             </div>
-            <p className="text-[11px] text-purple-200">Recorded directly to verified MySQL database</p>
+            <p className="text-[11px] text-purple-200">Recorded directly to verified database</p>
           </div>
           <button
             onClick={onClose}
@@ -1123,8 +1250,8 @@ function AddGuestModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
-                First Name <span className="text-amber-500">*</span>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">
+                First Name <span className="text-rose-500 font-bold ml-0.5">*</span>
               </label>
               <input
                 type="text"
@@ -1132,13 +1259,13 @@ function AddGuestModal({
                 value={formData.first_name}
                 onChange={(e) => setFormData({ ...formData, first_name: e.target.value.replace(/[^a-zA-Z\s'-]/g, '') })}
                 required
-                placeholder="e.g. Suraj"
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+                placeholder="Enter first name"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
-                Last Name <span className="text-amber-500">*</span>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">
+                Last Name <span className="text-rose-500 font-bold ml-0.5">*</span>
               </label>
               <input
                 type="text"
@@ -1146,15 +1273,15 @@ function AddGuestModal({
                 value={formData.last_name}
                 onChange={(e) => setFormData({ ...formData, last_name: e.target.value.replace(/[^a-zA-Z\s'-]/g, '') })}
                 required
-                placeholder="e.g. Patel"
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+                placeholder="Enter last name"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
-              Street Address <span className="text-amber-500">*</span>
+            <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">
+              Street Address <span className="text-rose-500 font-bold ml-0.5">*</span>
             </label>
             <input
               type="text"
@@ -1162,15 +1289,15 @@ function AddGuestModal({
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               required
-              placeholder="e.g. 10 St Mary's Road"
-              className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+              placeholder="Enter street address (e.g. 14 High Street)"
+              className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
-                Town / City <span className="text-amber-500">*</span>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">
+                Town / City <span className="text-rose-500 font-bold ml-0.5">*</span>
               </label>
               <input
                 type="text"
@@ -1178,13 +1305,13 @@ function AddGuestModal({
                 value={formData.town}
                 onChange={(e) => setFormData({ ...formData, town: e.target.value.replace(/[^a-zA-Z\s'-]/g, '') })}
                 required
-                placeholder="e.g. Southampton"
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+                placeholder="Enter town or city"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
-                Postcode <span className="text-amber-500">*</span>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">
+                Postcode <span className="text-rose-500 font-bold ml-0.5">*</span>
               </label>
               <input
                 type="text"
@@ -1193,15 +1320,15 @@ function AddGuestModal({
                 onChange={(e) => setFormData({ ...formData, post_code: e.target.value.toUpperCase().replace(/[^A-Z0-9 ]/g, '') })}
                 required
                 placeholder="e.g. SO14 0AY"
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl uppercase bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl uppercase bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
-                Email Address <span className="text-amber-500">*</span>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">
+                Email Address <span className="text-rose-500 font-bold ml-0.5">*</span>
               </label>
               <input
                 type="email"
@@ -1209,13 +1336,13 @@ function AddGuestModal({
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value.trim().toLowerCase() })}
                 required
-                placeholder="e.g. suraj.patel@gmail.com"
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+                placeholder="guest.email@example.com"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
-                Mobile Phone (10–15 digits) <span className="text-amber-500">*</span>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">
+                Mobile Phone (10–15 digits) <span className="text-rose-500 font-bold ml-0.5">*</span>
               </label>
               <input
                 type="tel"
@@ -1224,33 +1351,33 @@ function AddGuestModal({
                 onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/[^0-9+\s]/g, '') })}
                 required
                 placeholder="e.g. 07700 900123"
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">Food Preference</label>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">Food Preference</label>
               <select
                 value={formData.food_preference}
                 onChange={(e) =>
                   setFormData({ ...formData, food_preference: e.target.value as FoodPreference })
                 }
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 transition-colors"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 cursor-pointer"
               >
                 <option value="Veg Food">Veg Food (Vegetarian)</option>
                 <option value="Non Veg Food">Non Veg Food</option>
               </select>
             </div>
             <div>
-              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">Initial Status</label>
+              <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">Initial Status</label>
               <select
                 value={formData.status}
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value as RegistrationStatus })
                 }
-                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 transition-colors"
+                className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 cursor-pointer"
               >
                 <option value="confirmed">Confirmed</option>
                 <option value="new">New (Pending Review)</option>
@@ -1260,21 +1387,21 @@ function AddGuestModal({
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">Notes / Table Allocation</label>
+            <label className="font-semibold text-slate-700 dark:text-slate-200 block mb-1">Notes / Table Allocation</label>
             <textarea
               rows={2}
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="e.g. VIP guest, Table #4, vegetarian Jain diet, seated with Community Radio Trustees..."
-              className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
+              placeholder="Table allocation, dietary notes, or guest requests..."
+              className="w-full p-2.5 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-[#161e31] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#161e31] transition-colors"
             />
           </div>
 
-          <div className="pt-3 flex justify-end space-x-2 border-t border-slate-100 dark:border-purple-900/60">
+          <div className="pt-3 flex justify-end space-x-2 border-t border-slate-100 dark:border-slate-800">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-purple-700/80 bg-slate-100 dark:bg-purple-900/40 hover:bg-slate-200 dark:hover:bg-purple-800 text-slate-700 dark:text-purple-200 font-semibold text-xs transition-all cursor-pointer"
+              className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs transition-all cursor-pointer"
             >
               Cancel
             </button>

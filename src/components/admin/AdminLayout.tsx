@@ -217,7 +217,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     {
       heading: 'SYSTEM CONFIG',
       items: [
-        { name: 'Gala & SMTP Settings', href: '/admin/settings', icon: Settings },
+        { name: 'System & Mail Configuration', href: '/admin/settings', icon: Settings },
         { name: 'Admin Security Profile', href: '/admin/profile', icon: ShieldCheck },
       ],
     },
@@ -300,7 +300,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
               title="Add New Guest"
             >
               <Plus className="w-4 h-4 shrink-0" />
-              {!isCollapsed && <span>+ Add New Guest</span>}
+              {!isCollapsed && <span>Add New Guest</span>}
             </Link>
           </div>
 
@@ -309,7 +309,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             {navSections.map((section) => (
               <div key={section.heading} className="space-y-1">
                 {!isCollapsed && (
-                  <p className="px-3 text-[10px] font-bold text-purple-300/50 uppercase tracking-widest">
+                  <p className="px-3 text-[10.5px] font-bold text-amber-400 uppercase tracking-widest">
                     {section.heading}
                   </p>
                 )}
@@ -325,14 +325,14 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                       href={item.href}
                       onClick={() => setSidebarOpen(false)}
                       title={item.name}
-                      className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all ${
+                      className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs tracking-wide transition-all ${
                         isActive
-                          ? 'bg-gradient-to-r from-[#5a1682] to-[#481268] text-white border border-amber-400/40 shadow-md font-bold'
-                          : 'text-purple-200 hover:bg-white/10 hover:text-white'
+                          ? 'bg-gradient-to-r from-[#5a1682] to-[#481268] text-white border border-amber-400/50 shadow-md font-bold'
+                          : 'text-slate-200 hover:bg-white/10 hover:text-white font-medium'
                       } ${isCollapsed ? 'justify-center px-2' : ''}`}
                     >
                       <div className="flex items-center space-x-2.5 truncate">
-                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-amber-400' : 'text-purple-300'}`} />
+                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-amber-400' : 'text-slate-300'}`} />
                         {!isCollapsed && <span className="truncate">{item.name}</span>}
                       </div>
                       {!isCollapsed && item.badge !== undefined && (
@@ -346,56 +346,56 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
               </div>
             ))}
 
-            {/* Quick Export Action */}
+            {/* Quick Export Hub */}
             <div className="pt-2">
-              <a
-                href="/api/admin/export"
-                download
-                title="Export Verified Guest CSV"
-                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-amber-300 bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/20 transition-all cursor-pointer ${
-                  isCollapsed ? 'justify-center px-2' : ''
-                }`}
-              >
-                <div className="flex items-center space-x-2.5">
-                  <Download className="w-4 h-4 text-amber-400 shrink-0" />
-                  {!isCollapsed && <span>Export Guest CSV</span>}
+              {!isCollapsed ? (
+                <div className="p-2.5 rounded-xl bg-white/5 border border-purple-800/40 space-y-1.5">
+                  <div className="flex items-center justify-between text-[10px] font-bold text-amber-300 uppercase tracking-wider px-1">
+                    <span className="flex items-center space-x-1">
+                      <Download className="w-3 h-3 text-amber-400" />
+                      <span>Download Manifest</span>
+                    </span>
+                    <span className="bg-amber-400/20 text-amber-300 px-1 py-0.5 rounded text-[8px] font-mono">LIVE</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1 pt-1">
+                    <a
+                      href="/api/admin/export?format=excel"
+                      download
+                      title="Download Formatted Excel (.xlsx)"
+                      className="py-1.5 px-1 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-600/70 text-emerald-200 text-[10px] font-bold text-center transition-all cursor-pointer flex items-center justify-center space-x-0.5"
+                    >
+                      <span>.XLSX</span>
+                    </a>
+                    <a
+                      href="/api/admin/export?format=pdf"
+                      download
+                      title="Download Official PDF (.pdf)"
+                      className="py-1.5 px-1 rounded-lg bg-red-950/80 hover:bg-red-900 border border-red-600/70 text-red-200 text-[10px] font-bold text-center transition-all cursor-pointer flex items-center justify-center space-x-0.5"
+                    >
+                      <span>.PDF</span>
+                    </a>
+                    <a
+                      href="/api/admin/export?format=csv"
+                      download
+                      title="Download Universal CSV (.csv)"
+                      className="py-1.5 px-1 rounded-lg bg-purple-950/80 hover:bg-purple-900 border border-purple-600/70 text-purple-200 text-[10px] font-bold text-center transition-all cursor-pointer flex items-center justify-center space-x-0.5"
+                    >
+                      <span>.CSV</span>
+                    </a>
+                  </div>
                 </div>
-                {!isCollapsed && (
-                  <span className="text-[9px] uppercase tracking-wider bg-amber-400/20 px-1.5 py-0.5 rounded font-mono font-bold">
-                    LIVE
-                  </span>
-                )}
-              </a>
+              ) : (
+                <a
+                  href="/api/admin/export?format=excel"
+                  download
+                  title="Export Excel Manifest"
+                  className="flex items-center justify-center p-2 rounded-xl text-amber-300 bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/20 transition-all cursor-pointer"
+                >
+                  <Download className="w-4 h-4 text-amber-400" />
+                </a>
+              )}
             </div>
           </nav>
-
-          {/* Venue Capacity Meter Widget */}
-          {!isCollapsed && (
-            <div className="m-3 p-3 rounded-xl bg-[#140420] border border-purple-900/50 text-xs">
-              <div className="flex items-center justify-between text-purple-200 mb-1.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider flex items-center space-x-1">
-                  <Building className="w-3 h-3 text-amber-400" />
-                  <span>Venue Quota</span>
-                </span>
-                <span className="text-[10px] font-mono text-amber-400 font-bold">
-                  {guestCount} / 500 ({capacityPct}%)
-                </span>
-              </div>
-              <div className="w-full bg-purple-950 rounded-full h-1.5 overflow-hidden">
-                <div
-                  className="bg-gradient-to-r from-amber-400 to-amber-500 h-full rounded-full transition-all duration-500"
-                  style={{ width: `${Math.max(4, capacityPct)}%` }}
-                />
-              </div>
-              <div className="flex items-center justify-between mt-2 pt-2 border-t border-purple-900/40 text-[10px] text-purple-300">
-                <span className="flex items-center space-x-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-emerald-300 font-medium">99.8 FM On Air</span>
-                </span>
-                <span className="font-mono text-amber-300">{500 - guestCount} Remaining</span>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Sidebar Collapse Toggle & Bottom Card */}
@@ -404,37 +404,37 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
           <div className="hidden md:flex justify-end mb-2">
             <button
               onClick={toggleCollapse}
-              className="w-full py-1.5 px-2 rounded-lg bg-white/5 hover:bg-white/10 text-purple-300 hover:text-white text-[11px] font-semibold flex items-center justify-center space-x-1.5 transition-all cursor-pointer border border-purple-800/40"
+              className="w-full py-2 px-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-slate-100 hover:text-white text-xs font-semibold flex items-center justify-center space-x-1.5 transition-all cursor-pointer border border-white/20"
               title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
             >
               {isCollapsed ? (
-                <ChevronRight className="w-3.5 h-3.5 text-amber-400" />
+                <ChevronRight className="w-4 h-4 text-amber-400" />
               ) : (
                 <>
-                  <ChevronLeft className="w-3.5 h-3.5" />
+                  <ChevronLeft className="w-4 h-4 text-amber-400" />
                   <span>Collapse Menu</span>
                 </>
               )}
             </button>
           </div>
 
-          <div className={`grid gap-1.5 ${isCollapsed ? 'grid-cols-1' : 'grid-cols-2'}`}>
+          <div className={`grid gap-2 ${isCollapsed ? 'grid-cols-1' : 'grid-cols-2'}`}>
             <Link
               href="/register"
               target="_blank"
               title="Open Public Registration Form"
-              className="inline-flex items-center justify-center space-x-1 py-1.5 px-2 rounded-lg bg-purple-900/50 hover:bg-purple-800 text-purple-200 hover:text-white text-[11px] font-medium transition-colors"
+              className="inline-flex items-center justify-center space-x-1.5 py-2 px-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-100 hover:text-white text-xs font-semibold transition-colors border border-slate-700/60"
             >
-              <ExternalLink className="w-3 h-3" />
+              <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
               {!isCollapsed && <span>Public</span>}
             </Link>
 
             <button
               onClick={handleLogout}
               title="Secure Admin Logout"
-              className="inline-flex items-center justify-center space-x-1 py-1.5 px-2 rounded-lg bg-red-950/60 hover:bg-red-800 text-red-200 hover:text-white text-[11px] font-medium transition-colors cursor-pointer border border-red-800/40"
+              className="inline-flex items-center justify-center space-x-1.5 py-2 px-2 rounded-lg bg-red-950/70 hover:bg-red-900 text-red-200 hover:text-white text-xs font-semibold transition-colors cursor-pointer border border-red-700/60"
             >
-              <LogOut className="w-3 h-3" />
+              <LogOut className="w-3.5 h-3.5 text-red-400" />
               {!isCollapsed && <span>Logout</span>}
             </button>
           </div>
