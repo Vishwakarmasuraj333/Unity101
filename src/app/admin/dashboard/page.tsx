@@ -272,26 +272,27 @@ export default function AdminDashboardPage() {
                 <table className="w-full text-left text-xs">
                   <thead>
                     <tr className="border-b border-slate-100 text-slate-400 uppercase text-[10px] tracking-wider">
-                      <th className="pb-2.5 font-semibold">Ref</th>
-                      <th className="pb-2.5 font-semibold">Guest</th>
-                      <th className="pb-2.5 font-semibold">Town</th>
+                      <th className="pb-2.5 font-semibold">Name</th>
+                      <th className="pb-2.5 font-semibold">Email</th>
+                      <th className="pb-2.5 font-semibold">Mobile</th>
                       <th className="pb-2.5 font-semibold">Food</th>
                       <th className="pb-2.5 font-semibold">Status</th>
-                      <th className="pb-2.5 font-semibold text-right">Action</th>
+                      <th className="pb-2.5 font-semibold">Registered</th>
+                      <th className="pb-2.5 font-semibold text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {recentRegistrations.map((reg) => (
                       <tr key={reg.id} className="hover:bg-purple-50/40 transition-colors">
-                        <td className="py-3 font-mono font-semibold text-purple-900">
-                          #{reg.id}
-                        </td>
                         <td className="py-3">
                           <p className="font-semibold text-slate-900">{reg.first_name} {reg.last_name}</p>
-                          <p className="text-[11px] text-slate-400">{reg.email}</p>
+                          <span className="text-[10px] text-slate-400">#{reg.id}</span>
                         </td>
-                        <td className="py-3 text-slate-600">
-                          {reg.town} <span className="text-[10px] text-slate-400 uppercase font-mono">({reg.post_code})</span>
+                        <td className="py-3 text-slate-600 font-mono text-[11px]">
+                          {reg.email}
+                        </td>
+                        <td className="py-3 text-slate-600 font-mono text-[11px]">
+                          {reg.mobile}
                         </td>
                         <td className="py-3">
                           <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${
@@ -313,13 +314,17 @@ export default function AdminDashboardPage() {
                             {reg.status}
                           </span>
                         </td>
+                        <td className="py-3 text-slate-500 text-[11px] whitespace-nowrap">
+                          {new Date(reg.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                        </td>
                         <td className="py-3 text-right">
                           <Link
-                            href={`/admin/registrations`}
-                            className="inline-flex items-center text-slate-400 hover:text-[#481268] hover:bg-purple-50 p-1.5 rounded-lg transition-colors"
-                            title="Open Registration in Management"
+                            href={`/admin/registrations/${reg.id}`}
+                            className="inline-flex items-center space-x-1 text-slate-500 hover:text-[#481268] hover:bg-purple-50 px-2 py-1 rounded-lg transition-colors font-semibold text-[11px]"
+                            title="View Registration Details"
                           >
                             <Eye className="w-3.5 h-3.5" />
+                            <span>View</span>
                           </Link>
                         </td>
                       </tr>

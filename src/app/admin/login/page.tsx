@@ -7,8 +7,8 @@ import { Lock, Mail, Loader2, AlertCircle, ArrowRight } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('admin@unity101events.org');
-  const [password, setPassword] = useState('Admin@Unity101!2026');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 

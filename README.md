@@ -132,5 +132,12 @@ Visit the application:
 
 ---
 
-## 📜 License
-Developed for **Unity 101 Community Radio (99.8 FM)** Southampton, UK.
+## 📚 Detailed Documentation
+
+- **[Database Architecture & Setup Guide](file:///c:/Users/imdee/.gemini/antigravity-ide/scratch/unity101-registration/DATABASE_SETUP.md)**: MySQL table specifications, indexes, connection pooling, and migration steps.
+- **[Vercel & Aiven Cloud Deployment Guide](file:///c:/Users/imdee/.gemini/antigravity-ide/scratch/unity101-registration/DEPLOYMENT.md)**: Production deployment to Vercel with Aiven MySQL Free hosting and SSL configuration.
+
+---
+
+## 📜 License & Attribution
+Developed for **Unity 101 Community Radio (99.8 FM)** Southampton, UK. All Rights Reserved.

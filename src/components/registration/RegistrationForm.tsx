@@ -2,36 +2,12 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { CheckCircle2, AlertCircle, Loader2, ArrowRight, Sparkles, RefreshCw } from 'lucide-react';
-
-interface FormState {
-  first_name: string;
-  last_name: string;
-  address: string;
-  town: string;
-  post_code: string;
-  email: string;
-  mobile: string;
-  food_preference: 'Veg Food' | 'Non Veg Food' | '';
-  gdpr_consent: boolean;
-}
-
-const initialForm: FormState = {
-  first_name: '',
-  last_name: '',
-  address: '',
-  town: '',
-  post_code: '',
-  email: '',
-  mobile: '',
-  food_preference: '',
-  gdpr_consent: false,
-};
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CheckCircle2, AlertCircle, Loader2, ArrowRight, Sparkles, RefreshCw, Check } from 'lucide-react';
+import { RegistrationSchema, RegistrationFormData } from '@/lib/validation';
 
 export default function RegistrationForm() {
-  const [form, setForm] = useState<FormState>(initialForm);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionSuccess, setSubmissionSuccess] = useState<{
     id: number;
     first_name: string;
@@ -41,116 +17,72 @@ export default function RegistrationForm() {
   } | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const validate = (): boolean => {
-    const newErrors: Record<string, string> = {};
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<RegistrationFormData>({
+    resolver: zodResolver(RegistrationSchema),
+    defaultValues: {
+      first_name: '',
+      last_name: '',
+      address: '',
+      town: '',
+      post_code: '',
+      email: '',
+      mobile: '',
+      food_preference: undefined,
+      gdpr_consent: false as unknown as true,
+    },
+    mode: 'onChange', // Instant real-time feedback
+  });
 
-    if (!form.first_name.trim() || form.first_name.trim().length < 2) {
-      newErrors.first_name = 'First name must be at least 2 characters';
-    }
-    if (!form.last_name.trim() || form.last_name.trim().length < 2) {
-      newErrors.last_name = 'Last name must be at least 2 characters';
-    }
-    if (!form.address.trim() || form.address.trim().length < 3) {
-      newErrors.address = 'Street address is required';
-    }
-    if (!form.town.trim() || form.town.trim().length < 2) {
-      newErrors.town = 'Town / City is required';
-    }
-    if (!form.post_code.trim()) {
-      newErrors.post_code = 'Post code is required';
-    }
-    if (!form.email.trim() || !/^\S+@\S+\.\S+$/.test(form.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-    if (!form.mobile.trim() || form.mobile.replace(/\D/g, '').length < 8) {
-      newErrors.mobile = 'Please enter a valid mobile phone number';
-    }
-    if (!form.food_preference) {
-      newErrors.food_preference = 'Please select your food preference';
-    }
-    if (!form.gdpr_consent) {
-      newErrors.gdpr_consent = 'You must agree to the GDPR consent to register';
-    }
+  const selectedFood = watch('food_preference');
+  const values = watch();
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-    // Clear field-specific error as user types
-    if (errors[name]) {
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next[name];
-        return next;
-      });
-    }
-    if (serverError) setServerError(null);
-  };
-
-  const handleFoodSelect = (choice: 'Veg Food' | 'Non Veg Food') => {
-    setForm((prev) => ({ ...prev, food_preference: choice }));
-    if (errors.food_preference) {
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next['food_preference'];
-        return next;
-      });
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: RegistrationFormData) => {
     setServerError(null);
-
-    if (!validate()) {
-      return;
-    }
-
-    setIsSubmitting(true);
 
     try {
       const res = await fetch('/api/registrations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(data),
       });
 
-      const data = await res.json();
+      const responseData = await res.json();
 
       if (!res.ok) {
-        if (data.errors) {
-          const fieldErrors: Record<string, string> = {};
-          for (const key in data.errors) {
-            fieldErrors[key] = data.errors[key][0];
-          }
-          setErrors(fieldErrors);
-        }
-        setServerError(data.message || 'Registration failed. Please check the form.');
+        setServerError(responseData.message || 'Registration failed. Please correct the highlighted errors.');
         return;
       }
 
       // Success
-      setSubmissionSuccess(data.data);
-      setForm(initialForm);
+      setSubmissionSuccess(responseData.data);
+      reset();
     } catch (err) {
-      console.error(err);
+      console.error('Registration submission error:', err);
       setServerError('Unable to connect to the server. Please check your internet connection.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleResetForAnother = () => {
     setSubmissionSuccess(null);
-    setForm(initialForm);
-    setErrors({});
     setServerError(null);
+    reset({
+      first_name: '',
+      last_name: '',
+      address: '',
+      town: '',
+      post_code: '',
+      email: '',
+      mobile: '',
+      food_preference: undefined,
+      gdpr_consent: false as unknown as true,
+    });
   };
 
   return (
@@ -179,7 +111,6 @@ export default function RegistrationForm() {
 
       {/* Main Registration Card */}
       <div className="bg-white rounded-2xl shadow-xl shadow-purple-950/10 border border-purple-100/60 overflow-hidden transition-all duration-300">
-        
         {/* Card Header with Unity 101 Logo & 20th Anniversary */}
         <div className="pt-8 pb-4 px-6 sm:px-10 text-center flex flex-col items-center">
           <div className="w-48 sm:w-56 h-auto relative mb-3">
@@ -214,12 +145,12 @@ export default function RegistrationForm() {
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 mb-4 border border-emerald-200 shadow-inner">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
-              <h3 className="text-2xl font-bold text-[#481268] mb-2 font-serif-brand">
-                Registration Confirmed!
+              <h3 className="text-2xl font-bold text-[#481268] mb-1 font-serif-brand">
+                Registration completed successfully.
               </h3>
               <p className="text-sm text-slate-600 max-w-md mx-auto mb-6">
                 Thank you, <span className="font-semibold text-slate-800">{submissionSuccess.first_name} {submissionSuccess.last_name}</span>. 
-                Your registration has been saved to our database with reference:
+                Your verified guest registration has been safely recorded in our database.
               </p>
 
               <div className="bg-purple-50 border border-purple-200/80 rounded-xl p-4 max-w-sm mx-auto mb-6 text-left">
@@ -245,33 +176,36 @@ export default function RegistrationForm() {
 
               <button
                 onClick={handleResetForAnother}
-                className="inline-flex items-center justify-center space-x-2 bg-[#481268] hover:bg-[#380952] text-white text-xs font-semibold py-2.5 px-6 rounded-lg transition-all shadow-md active:scale-95"
+                className="inline-flex items-center justify-center space-x-2 bg-[#481268] hover:bg-[#380952] text-white text-xs font-semibold py-2.5 px-6 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>Register Another Guest</span>
               </button>
             </div>
           ) : (
-            /* Active Form */
-            <form onSubmit={handleSubmit} noValidate className="space-y-4">
-              
-              {/* Server-level error notice */}
+            /* Registration Form */
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+              {/* Server-Side Error Alert */}
               {serverError && (
-                <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs flex items-center space-x-2 animate-in fade-in">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  <span>{serverError}</span>
+                <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-800 flex items-start space-x-2.5 animate-in fade-in">
+                  <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                  <p className="leading-snug">{serverError}</p>
                 </div>
               )}
 
-              {/* First Name */}
+              {/* First Name - No numbers allowed */}
               <div className="space-y-1">
                 <input
                   type="text"
-                  name="first_name"
                   id="first_name"
-                  value={form.first_name}
-                  onChange={handleChange}
-                  placeholder="First Name"
+                  placeholder="First Name (letters only)"
+                  maxLength={50}
+                  value={values.first_name || ''}
+                  onChange={(e) => {
+                    // Filter out numbers in real time
+                    const sanitized = e.target.value.replace(/[0-9]/g, '');
+                    setValue('first_name', sanitized, { shouldValidate: true });
+                  }}
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b transition-colors outline-none ${
                     errors.first_name
                       ? 'border-red-500 focus:border-red-600'
@@ -279,19 +213,26 @@ export default function RegistrationForm() {
                   }`}
                 />
                 {errors.first_name && (
-                  <p className="text-[11px] text-red-600 font-medium">{errors.first_name}</p>
+                  <p className="text-[11px] text-red-600 font-medium flex items-center space-x-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>{errors.first_name.message}</span>
+                  </p>
                 )}
               </div>
 
-              {/* Last Name */}
+              {/* Last Name - No numbers allowed */}
               <div className="space-y-1">
                 <input
                   type="text"
-                  name="last_name"
                   id="last_name"
-                  value={form.last_name}
-                  onChange={handleChange}
-                  placeholder="Last Name"
+                  placeholder="Last Name (letters only)"
+                  maxLength={50}
+                  value={values.last_name || ''}
+                  onChange={(e) => {
+                    // Filter out numbers in real time
+                    const sanitized = e.target.value.replace(/[0-9]/g, '');
+                    setValue('last_name', sanitized, { shouldValidate: true });
+                  }}
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b transition-colors outline-none ${
                     errors.last_name
                       ? 'border-red-500 focus:border-red-600'
@@ -299,7 +240,10 @@ export default function RegistrationForm() {
                   }`}
                 />
                 {errors.last_name && (
-                  <p className="text-[11px] text-red-600 font-medium">{errors.last_name}</p>
+                  <p className="text-[11px] text-red-600 font-medium flex items-center space-x-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>{errors.last_name.message}</span>
+                  </p>
                 )}
               </div>
 
@@ -307,11 +251,10 @@ export default function RegistrationForm() {
               <div className="space-y-1">
                 <input
                   type="text"
-                  name="address"
                   id="address"
-                  value={form.address}
-                  onChange={handleChange}
-                  placeholder="Address"
+                  maxLength={120}
+                  {...register('address')}
+                  placeholder="Address (Street name and house number)"
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b transition-colors outline-none ${
                     errors.address
                       ? 'border-red-500 focus:border-red-600'
@@ -319,19 +262,25 @@ export default function RegistrationForm() {
                   }`}
                 />
                 {errors.address && (
-                  <p className="text-[11px] text-red-600 font-medium">{errors.address}</p>
+                  <p className="text-[11px] text-red-600 font-medium flex items-center space-x-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>{errors.address.message}</span>
+                  </p>
                 )}
               </div>
 
-              {/* Town */}
+              {/* Town - No numbers allowed */}
               <div className="space-y-1">
                 <input
                   type="text"
-                  name="town"
                   id="town"
-                  value={form.town}
-                  onChange={handleChange}
-                  placeholder="Town"
+                  placeholder="Town / City (e.g. Southampton)"
+                  maxLength={50}
+                  value={values.town || ''}
+                  onChange={(e) => {
+                    const sanitized = e.target.value.replace(/[0-9]/g, '');
+                    setValue('town', sanitized, { shouldValidate: true });
+                  }}
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b transition-colors outline-none ${
                     errors.town
                       ? 'border-red-500 focus:border-red-600'
@@ -339,19 +288,24 @@ export default function RegistrationForm() {
                   }`}
                 />
                 {errors.town && (
-                  <p className="text-[11px] text-red-600 font-medium">{errors.town}</p>
+                  <p className="text-[11px] text-red-600 font-medium flex items-center space-x-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>{errors.town.message}</span>
+                  </p>
                 )}
               </div>
 
-              {/* Post Code */}
+              {/* Post Code - Auto uppercase, max 10 chars */}
               <div className="space-y-1">
                 <input
                   type="text"
-                  name="post_code"
                   id="post_code"
-                  value={form.post_code}
-                  onChange={handleChange}
-                  placeholder="Post Code"
+                  placeholder="Post Code (e.g. SO14 0AY)"
+                  maxLength={10}
+                  value={values.post_code || ''}
+                  onChange={(e) => {
+                    setValue('post_code', e.target.value.toUpperCase(), { shouldValidate: true });
+                  }}
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b uppercase transition-colors outline-none ${
                     errors.post_code
                       ? 'border-red-500 focus:border-red-600'
@@ -359,19 +313,22 @@ export default function RegistrationForm() {
                   }`}
                 />
                 {errors.post_code && (
-                  <p className="text-[11px] text-red-600 font-medium">{errors.post_code}</p>
+                  <p className="text-[11px] text-red-600 font-medium flex items-center space-x-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>{errors.post_code.message}</span>
+                  </p>
                 )}
               </div>
 
-              {/* Email */}
+              {/* Email - Strict validation */}
               <div className="space-y-1">
                 <input
                   type="email"
-                  name="email"
                   id="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="Email"
+                  maxLength={100}
+                  autoComplete="email"
+                  {...register('email')}
+                  placeholder="Email (e.g. guest@example.com)"
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b transition-colors outline-none ${
                     errors.email
                       ? 'border-red-500 focus:border-red-600'
@@ -379,19 +336,26 @@ export default function RegistrationForm() {
                   }`}
                 />
                 {errors.email && (
-                  <p className="text-[11px] text-red-600 font-medium">{errors.email}</p>
+                  <p className="text-[11px] text-red-600 font-medium flex items-center space-x-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>{errors.email.message}</span>
+                  </p>
                 )}
               </div>
 
-              {/* Mobile */}
+              {/* Mobile - 10 to 15 digits only, maxLength 16 */}
               <div className="space-y-1">
                 <input
                   type="tel"
-                  name="mobile"
                   id="mobile"
-                  value={form.mobile}
-                  onChange={handleChange}
-                  placeholder="Mobile"
+                  placeholder="Mobile (e.g. 07700 900123)"
+                  maxLength={16}
+                  value={values.mobile || ''}
+                  onChange={(e) => {
+                    // Only allow digits, plus, spaces, dashes
+                    const sanitized = e.target.value.replace(/[^0-9+\s()-]/g, '');
+                    setValue('mobile', sanitized, { shouldValidate: true });
+                  }}
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b transition-colors outline-none ${
                     errors.mobile
                       ? 'border-red-500 focus:border-red-600'
@@ -399,7 +363,10 @@ export default function RegistrationForm() {
                   }`}
                 />
                 {errors.mobile && (
-                  <p className="text-[11px] text-red-600 font-medium">{errors.mobile}</p>
+                  <p className="text-[11px] text-red-600 font-medium flex items-center space-x-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>{errors.mobile.message}</span>
+                  </p>
                 )}
               </div>
 
@@ -411,10 +378,12 @@ export default function RegistrationForm() {
                   {/* Veg Food Choice */}
                   <label className="inline-flex items-center space-x-1.5 cursor-pointer select-none">
                     <input
-                      type="checkbox"
-                      checked={form.food_preference === 'Veg Food'}
-                      onChange={() => handleFoodSelect('Veg Food')}
-                      className="w-4 h-4 rounded text-amber-500 border-slate-300 focus:ring-amber-400"
+                      type="radio"
+                      name="food_preference_radio"
+                      value="Veg Food"
+                      checked={selectedFood === 'Veg Food'}
+                      onChange={() => setValue('food_preference', 'Veg Food', { shouldValidate: true })}
+                      className="w-4 h-4 text-amber-500 border-slate-300 focus:ring-amber-400"
                     />
                     <span className="font-medium text-[#d97706] hover:text-[#b45309]">
                       Veg Food
@@ -424,10 +393,12 @@ export default function RegistrationForm() {
                   {/* Non Veg Food Choice */}
                   <label className="inline-flex items-center space-x-1.5 cursor-pointer select-none">
                     <input
-                      type="checkbox"
-                      checked={form.food_preference === 'Non Veg Food'}
-                      onChange={() => handleFoodSelect('Non Veg Food')}
-                      className="w-4 h-4 rounded text-amber-500 border-slate-300 focus:ring-amber-400"
+                      type="radio"
+                      name="food_preference_radio"
+                      value="Non Veg Food"
+                      checked={selectedFood === 'Non Veg Food'}
+                      onChange={() => setValue('food_preference', 'Non Veg Food', { shouldValidate: true })}
+                      className="w-4 h-4 text-amber-500 border-slate-300 focus:ring-amber-400"
                     />
                     <span className="font-medium text-[#d97706] hover:text-[#b45309]">
                       Non Veg Food
@@ -435,8 +406,9 @@ export default function RegistrationForm() {
                   </label>
                 </div>
                 {errors.food_preference && (
-                  <p className="text-[11px] text-red-600 font-medium mt-1">
-                    {errors.food_preference}
+                  <p className="text-[11px] text-red-600 font-medium mt-1 flex items-center space-x-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>{errors.food_preference.message}</span>
                   </p>
                 )}
               </div>
@@ -453,10 +425,8 @@ export default function RegistrationForm() {
                 <label className="flex items-start space-x-2.5 cursor-pointer select-none">
                   <input
                     type="checkbox"
-                    name="gdpr_consent"
                     id="gdpr_consent"
-                    checked={form.gdpr_consent}
-                    onChange={handleChange}
+                    {...register('gdpr_consent')}
                     className="w-4 h-4 mt-0.5 rounded text-[#481268] border-slate-300 focus:ring-purple-700 shrink-0"
                   />
                   <span className="text-[11.5px] sm:text-xs leading-snug text-slate-600 font-normal">
@@ -464,18 +434,19 @@ export default function RegistrationForm() {
                   </span>
                 </label>
                 {errors.gdpr_consent && (
-                  <p className="text-[11px] text-red-600 font-medium mt-1">
-                    {errors.gdpr_consent}
+                  <p className="text-[11px] text-red-600 font-medium mt-1 flex items-center space-x-1">
+                    <AlertCircle className="w-3 h-3 shrink-0" />
+                    <span>{errors.gdpr_consent.message}</span>
                   </p>
                 )}
               </div>
 
-              {/* Two-Tone Submit Button as in Screenshot */}
+              {/* Two-Tone Submit Button as in Visual Reference */}
               <div className="pt-4">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="group inline-flex items-stretch shadow-md transition-all duration-200 active:scale-[0.99] disabled:opacity-75 disabled:pointer-events-none rounded overflow-hidden"
+                  className="group inline-flex items-stretch shadow-md transition-all duration-200 active:scale-[0.99] disabled:opacity-75 disabled:pointer-events-none rounded overflow-hidden cursor-pointer"
                 >
                   {/* Left Yellow/Gold Text Container */}
                   <div className="bg-[#f2b814] hover:bg-[#e0a708] px-5 sm:px-6 py-2.5 sm:py-3 text-slate-900 font-medium text-xs sm:text-sm tracking-normal flex items-center justify-center min-w-[200px] transition-colors">
@@ -495,11 +466,9 @@ export default function RegistrationForm() {
                   </div>
                 </button>
               </div>
-
             </form>
           )}
         </div>
-
       </div>
 
       {/* Footer Branding Credit */}

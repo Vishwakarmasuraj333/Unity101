@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import AdminLayout from '@/components/admin/AdminLayout';
 import {
   Search,
@@ -505,13 +506,13 @@ export default function RegistrationsManagementPage() {
                         </td>
                         <td className="py-3 px-4 text-right">
                           <div className="flex items-center justify-end space-x-1">
-                            <button
-                              onClick={() => setViewingItem(reg)}
-                              className="p-1.5 text-slate-400 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors"
-                              title="View Guest Details"
+                            <Link
+                              href={`/admin/registrations/${reg.id}`}
+                              className="p-1.5 text-slate-400 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors inline-flex items-center"
+                              title="View Registration Details"
                             >
                               <Eye className="w-3.5 h-3.5" />
-                            </button>
+                            </Link>
                             <button
                               onClick={() => setEditingItem(reg)}
                               className="p-1.5 text-slate-400 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-colors"
@@ -822,21 +823,23 @@ function EditGuestModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">First Name</label>
+              <label className="font-semibold text-slate-700 block mb-1">First Name (letters only)</label>
               <input
                 type="text"
+                maxLength={50}
                 value={formData.first_name}
-                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value.replace(/[0-9]/g, '') })}
                 required
                 className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Last Name</label>
+              <label className="font-semibold text-slate-700 block mb-1">Last Name (letters only)</label>
               <input
                 type="text"
+                maxLength={50}
                 value={formData.last_name}
-                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value.replace(/[0-9]/g, '') })}
                 required
                 className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
               />
@@ -847,6 +850,7 @@ function EditGuestModal({
             <label className="font-semibold text-slate-700 block mb-1">Street Address</label>
             <input
               type="text"
+              maxLength={120}
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               required
@@ -859,8 +863,9 @@ function EditGuestModal({
               <label className="font-semibold text-slate-700 block mb-1">Town / City</label>
               <input
                 type="text"
+                maxLength={50}
                 value={formData.town}
-                onChange={(e) => setFormData({ ...formData, town: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, town: e.target.value.replace(/[0-9]/g, '') })}
                 required
                 className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
               />
@@ -869,8 +874,9 @@ function EditGuestModal({
               <label className="font-semibold text-slate-700 block mb-1">Post Code</label>
               <input
                 type="text"
+                maxLength={10}
                 value={formData.post_code}
-                onChange={(e) => setFormData({ ...formData, post_code: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, post_code: e.target.value.toUpperCase() })}
                 required
                 className="w-full p-2 border border-slate-300 rounded-lg uppercase text-slate-800 focus:outline-none focus:border-[#481268]"
               />
@@ -882,6 +888,7 @@ function EditGuestModal({
               <label className="font-semibold text-slate-700 block mb-1">Email</label>
               <input
                 type="email"
+                maxLength={100}
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
@@ -889,11 +896,12 @@ function EditGuestModal({
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Mobile Phone</label>
+              <label className="font-semibold text-slate-700 block mb-1">Mobile Phone (10-15 digits)</label>
               <input
                 type="tel"
+                maxLength={16}
                 value={formData.mobile}
-                onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/[^0-9+\s()-]/g, '') })}
                 required
                 className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
               />
@@ -1035,22 +1043,24 @@ function AddGuestModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">First Name *</label>
+              <label className="font-semibold text-slate-700 block mb-1">First Name (letters only) *</label>
               <input
                 type="text"
+                maxLength={50}
                 value={formData.first_name}
-                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value.replace(/[0-9]/g, '') })}
                 required
                 placeholder="e.g. John"
                 className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Last Name *</label>
+              <label className="font-semibold text-slate-700 block mb-1">Last Name (letters only) *</label>
               <input
                 type="text"
+                maxLength={50}
                 value={formData.last_name}
-                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value.replace(/[0-9]/g, '') })}
                 required
                 placeholder="e.g. Smith"
                 className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
@@ -1062,6 +1072,7 @@ function AddGuestModal({
             <label className="font-semibold text-slate-700 block mb-1">Street Address *</label>
             <input
               type="text"
+              maxLength={120}
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               required
@@ -1072,11 +1083,12 @@ function AddGuestModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Town / City *</label>
+              <label className="font-semibold text-slate-700 block mb-1">Town / City (letters only) *</label>
               <input
                 type="text"
+                maxLength={50}
                 value={formData.town}
-                onChange={(e) => setFormData({ ...formData, town: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, town: e.target.value.replace(/[0-9]/g, '') })}
                 required
                 placeholder="e.g. Southampton"
                 className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
@@ -1086,8 +1098,9 @@ function AddGuestModal({
               <label className="font-semibold text-slate-700 block mb-1">Post Code *</label>
               <input
                 type="text"
+                maxLength={10}
                 value={formData.post_code}
-                onChange={(e) => setFormData({ ...formData, post_code: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, post_code: e.target.value.toUpperCase() })}
                 required
                 placeholder="e.g. SO14 1AW"
                 className="w-full p-2 border border-slate-300 rounded-lg uppercase text-slate-800 focus:outline-none focus:border-[#481268]"
@@ -1100,6 +1113,7 @@ function AddGuestModal({
               <label className="font-semibold text-slate-700 block mb-1">Email *</label>
               <input
                 type="email"
+                maxLength={100}
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
@@ -1108,13 +1122,14 @@ function AddGuestModal({
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Mobile Phone *</label>
+              <label className="font-semibold text-slate-700 block mb-1">Mobile Phone (10-15 digits) *</label>
               <input
                 type="tel"
+                maxLength={16}
                 value={formData.mobile}
-                onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/[^0-9+\s()-]/g, '') })}
                 required
-                placeholder="07123456789"
+                placeholder="07700900123"
                 className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
               />
             </div>

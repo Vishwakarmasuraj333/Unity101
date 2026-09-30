@@ -60,3 +60,76 @@ body {
   animation: spinSlowReverse 90s linear infinite;
 }
 
+/* Dark Theme System for Unity 101 Admin Portal */
+html.dark, .dark {
+  --unity-bg: #0d0615;
+  --foreground: #f4eff9;
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #0d0615;
+  color: #f4eff9;
+}
+
+html.dark .bg-white {
+  background-color: #170d24 !important;
+  color: #f4eff9 !important;
+  border-color: #381a54 !important;
+}
+
+html.dark .bg-slate-50, html.dark .bg-slate-50\/50, html.dark .bg-slate-50\/80 {
+  background-color: #130a1e !important;
+  border-color: #33154d !important;
+}
+
+html.dark .bg-\[\#f7f5fa\] {
+  background-color: #0b0512 !important;
+}
+
+html.dark .text-slate-900 {
+  color: #fbf8fe !important;
+}
+
+html.dark .text-slate-800 {
+  color: #eee6f5 !important;
+}
+
+html.dark .text-slate-700 {
+  color: #dfd4e8 !important;
+}
+
+html.dark .text-slate-600 {
+  color: #bfb0cf !important;
+}
+
+html.dark .text-slate-500 {
+  color: #9d8db0 !important;
+}
+
+html.dark .border-slate-100,
+html.dark .border-slate-200,
+html.dark .border-slate-200\/80,
+html.dark .border-purple-100,
+html.dark .border-purple-100\/80 {
+  border-color: #381a54 !important;
+}
+
+html.dark input, html.dark select, html.dark textarea {
+  background-color: #1b0f2a !important;
+  color: #f4eff9 !important;
+  border-color: #481e6e !important;
+}
+
+html.dark input:focus, html.dark select:focus, html.dark textarea:focus {
+  border-color: #f59e0b !important;
+}
+
+html.dark thead {
+  background-color: #150920 !important;
+  border-color: #381a54 !important;
+}
+
+html.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #2b1341 !important;
+}
