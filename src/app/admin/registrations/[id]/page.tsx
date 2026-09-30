@@ -41,12 +41,33 @@ export default function RegistrationDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const showToast = (type: 'success' | 'error', text: string) => {
     setToastMessage({ type, text });
     setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const handleResendEmail = async () => {
+    if (!registration) return;
+    setResendingEmail(true);
+    try {
+      const res = await fetch(`/api/admin/registrations/${id}/email`, {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast('success', data.message || 'Confirmation email dispatched successfully.');
+      } else {
+        showToast('error', data.message || 'Failed to dispatch email');
+      }
+    } catch {
+      showToast('error', 'Network error sending email');
+    } finally {
+      setResendingEmail(false);
+    }
   };
 
   const {
@@ -192,6 +213,20 @@ export default function RegistrationDetailsPage() {
           <div className="flex items-center space-x-2">
             {!isEditing && (
               <>
+                <button
+                  onClick={handleResendEmail}
+                  disabled={resendingEmail || actionLoading}
+                  className="inline-flex items-center space-x-1.5 bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 text-xs font-semibold py-2 px-3.5 rounded-xl shadow-xs transition-all cursor-pointer disabled:opacity-50"
+                  title="Resend official registration confirmation email"
+                >
+                  {resendingEmail ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-purple-700" />
+                  ) : (
+                    <Mail className="w-3.5 h-3.5 text-purple-700" />
+                  )}
+                  <span>Resend Email</span>
+                </button>
+
                 <button
                   onClick={() => setIsEditing(true)}
                   className="inline-flex items-center space-x-1.5 bg-white border border-slate-200 hover:border-purple-300 text-slate-800 text-xs font-semibold py-2 px-3.5 rounded-xl shadow-xs hover:text-purple-900 transition-all cursor-pointer"
