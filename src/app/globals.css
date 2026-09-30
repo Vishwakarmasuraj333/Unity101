@@ -217,3 +217,75 @@ html.dark header .bg-emerald-50 {
   color: #a7f3d0 !important;
   border-color: #047857 !important;
 }
+
+/* ========================================================
+   CHARTS & DIAGRAMS IN DARK MODE
+   ======================================================== */
+html.dark svg circle[stroke="#f1f1f5"] {
+  stroke: #260e3a !important;
+}
+
+html.dark svg circle[stroke="#e2e8f0"] {
+  stroke: #3b1458 !important;
+}
+
+html.dark svg line {
+  stroke: #3b1458 !important;
+}
+
+html.dark svg text {
+  fill: #f4eff9 !important;
+}
+
+html.dark svg text.fill-slate-700 {
+  fill: #fbbf24 !important;
+}
+
+html.dark svg text.fill-slate-400,
+html.dark svg text.fill-slate-300 {
+  fill: #bfa8d6 !important;
+}
+
+html.dark .bg-slate-200,
+html.dark .bg-slate-200\/70,
+html.dark .bg-slate-200\/80 {
+  background-color: #29103e !important;
+}
+
+html.dark .bg-purple-100 {
+  background-color: #3b1458 !important;
+  color: #fde68a !important;
+}
+
+html.dark .bg-emerald-50,
+html.dark .bg-emerald-100 {
+  background-color: #064e3b !important;
+  color: #a7f3d0 !important;
+  border-color: #047857 !important;
+}
+
+html.dark .bg-amber-50,
+html.dark .bg-amber-100 {
+  background-color: #451a03 !important;
+  color: #fde68a !important;
+  border-color: #78350f !important;
+}
+
+html.dark .bg-red-50,
+html.dark .bg-red-100 {
+  background-color: #450a0a !important;
+  color: #fca5a5 !important;
+  border-color: #7f1d1d !important;
+}
+
+html.dark .bg-blue-50,
+html.dark .bg-blue-100 {
+  background-color: #172554 !important;
+  color: #93c5fd !important;
+  border-color: #1e3a8a !important;
+}
+
+html.dark .bg-gradient-to-br.from-white {
+  background: linear-gradient(135deg, #170a26 0%, #1e0933 50%, #140523 100%) !important;
+  border-color: #3d165f !important;
+}
