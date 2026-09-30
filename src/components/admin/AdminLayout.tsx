@@ -33,6 +33,7 @@ import {
   FileSpreadsheet,
   FileText,
   FileDown,
+  Mail,
 } from 'lucide-react';
 import { Registration } from '@/types';
 
@@ -218,13 +219,15 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     {
       heading: 'REPORTS & DATA',
       items: [
-        { name: 'Trash & Archival', href: '/admin/trash', icon: Trash2 },
-        { name: 'System Activity Logs', href: '/admin/profile', icon: History },
+        { name: 'Exports & Manifests', href: '/admin/exports', icon: Download },
+        { name: 'Archived Directory', href: '/admin/trash', icon: Trash2 },
+        { name: 'System Activity Logs', href: '/admin/audit-logs', icon: History },
       ],
     },
     {
       heading: 'SYSTEM CONFIG',
       items: [
+        { name: 'Email Delivery & Logs', href: '/admin/email', icon: Mail },
         { name: 'System & Mail Configuration', href: '/admin/settings', icon: Settings },
         { name: 'Admin Security Profile', href: '/admin/profile', icon: ShieldCheck },
       ],
@@ -262,21 +265,21 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
           {/* Brand Header */}
           <div className="p-4 border-b border-purple-900/60 bg-[#160624] flex items-center justify-between">
             <Link href="/admin/dashboard" className="flex items-center space-x-3 group overflow-hidden">
-              <div className="w-9 h-9 relative bg-white/10 rounded-xl p-1.5 border border-amber-400/50 flex items-center justify-center shrink-0 shadow-xs">
+              <div className="w-11 h-11 relative bg-gradient-to-br from-amber-400/25 via-purple-900/50 to-black/70 rounded-2xl p-1.5 border-2 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.35)] flex items-center justify-center shrink-0">
                 <Image
                   src="/images/unity101-logo.png"
                   alt="Unity 101"
-                  width={32}
-                  height={32}
-                  className="object-contain"
+                  width={38}
+                  height={38}
+                  className="object-contain drop-shadow-md"
                 />
               </div>
               {!isCollapsed && (
                 <div className="truncate">
-                  <h1 className="font-serif-brand font-extrabold text-sm tracking-wider text-amber-300 group-hover:text-amber-200 transition-colors drop-shadow-xs">
+                  <h1 className="font-serif-brand font-black text-base tracking-widest text-amber-300 group-hover:text-amber-200 transition-colors drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                     UNITY 101
                   </h1>
-                  <p className="text-[11px] text-white tracking-wider uppercase font-bold drop-shadow-xs">
+                  <p className="text-[11px] text-amber-200/90 tracking-widest uppercase font-extrabold drop-shadow-xs">
                     Community Radio
                   </p>
                 </div>
@@ -432,6 +435,25 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                           .CSV
                         </span>
                       </a>
+
+                      <a
+                        href="/api/admin/export?format=xml"
+                        download
+                        className="flex items-center justify-between p-2 rounded-lg bg-white/5 hover:bg-white/15 text-slate-100 hover:text-white border border-purple-800/40 text-xs font-semibold transition-all cursor-pointer group"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <FileText className="w-4 h-4 text-cyan-400 shrink-0" />
+                          <div className="text-left">
+                            <p className="font-bold text-white text-[11px] group-hover:text-amber-300 transition-colors">
+                              XML Manifest
+                            </p>
+                            <p className="text-[9.5px] text-purple-200">Structured RFC data</p>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-700/60">
+                          .XML
+                        </span>
+                      </a>
                     </div>
                   )}
                 </div>
@@ -470,6 +492,14 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                       >
                         <FileDown className="w-3.5 h-3.5 text-amber-400" />
                         <span>CSV (.csv)</span>
+                      </a>
+                      <a
+                        href="/api/admin/export?format=xml"
+                        download
+                        className="flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-white hover:bg-white/10 text-xs font-bold"
+                      >
+                        <FileText className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>XML (.xml)</span>
                       </a>
                     </div>
                   )}
@@ -580,7 +610,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
               </button>
 
               {notificationsOpen && (
-                <div className="absolute right-0 sm:right-auto sm:left-auto mt-2 w-80 sm:w-96 bg-white dark:bg-[#111625] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="absolute right-0 mt-2 w-80 sm:w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-[#111625] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
                   {/* Dropdown Header */}
                   <div className="p-3.5 bg-gradient-to-r from-[#2f0846] to-[#481268] text-white flex items-center justify-between">
                     <div className="flex items-center space-x-2">
@@ -707,12 +737,12 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                 }`}
                 title="Admin Account Profile"
               >
-                <div className="w-7 h-7 relative rounded-lg bg-purple-100 dark:bg-purple-900/40 border border-purple-300 dark:border-purple-700/60 p-0.5 flex items-center justify-center shrink-0 shadow-xs">
+                <div className="w-8 h-8 relative rounded-xl bg-gradient-to-br from-amber-400/20 via-purple-900/40 to-black/60 border-2 border-amber-400/90 p-1 flex items-center justify-center shrink-0 shadow-xs">
                   <Image
                     src="/images/unity101-logo.png"
                     alt="Unity 101 Admin"
-                    width={22}
-                    height={22}
+                    width={24}
+                    height={24}
                     className="object-contain"
                   />
                 </div>
@@ -722,12 +752,12 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
               {userDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-68 bg-white dark:bg-[#111625] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 text-xs">
                   <div className="p-4 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50/80 dark:bg-[#0d121f] flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-xl bg-purple-900/40 border border-purple-700/60 p-1 flex items-center justify-center shrink-0 shadow-xs">
+                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400/25 via-purple-900/50 to-black/70 border-2 border-amber-400 p-1 flex items-center justify-center shrink-0 shadow-xs">
                       <Image
                         src="/images/unity101-logo.png"
                         alt="Unity 101"
-                        width={32}
-                        height={32}
+                        width={36}
+                        height={36}
                         className="object-contain"
                       />
                     </div>

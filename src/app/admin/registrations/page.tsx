@@ -198,8 +198,8 @@ export default function RegistrationsManagementPage() {
     }
   };
 
-  // Export filtered or selected records in real CSV, Excel (.xlsx), or PDF format
-  const handleExport = (format: 'csv' | 'excel' | 'pdf' = 'csv', onlySelected = false) => {
+  // Export filtered or selected records in real CSV, XML, Excel (.xlsx), or PDF format
+  const handleExport = (format: 'csv' | 'excel' | 'pdf' | 'xml' = 'csv', onlySelected = false) => {
     setExportMenuOpen(false);
     const params = new URLSearchParams();
     params.set('format', format);
@@ -324,6 +324,23 @@ export default function RegistrationsManagementPage() {
                         </div>
                         <div className="text-[10px] text-slate-500 dark:text-slate-400">
                           Universal comma-separated text format
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => handleExport('xml', false)}
+                      className="w-full flex items-start space-x-2.5 p-2 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-950/60 text-left transition-colors cursor-pointer group"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 mt-0.5 font-bold">
+                        <FileText className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-slate-900 dark:text-white group-hover:text-purple-700 dark:group-hover:text-purple-300">
+                          XML Structured Data (.xml)
+                        </div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                          RFC-valid &lt;Unity101GuestManifest&gt; format
                         </div>
                       </div>
                     </button>

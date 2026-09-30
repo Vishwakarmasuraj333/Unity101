@@ -410,11 +410,11 @@ export async function GET(req: NextRequest) {
         head: tableHeaders,
         body: tableBody,
         startY: 85,
-        margin: { left: 24, right: 24, bottom: 40 },
+        margin: { left: 20, right: 20, bottom: 40 },
         styles: {
           font: 'helvetica',
           fontSize: 8,
-          cellPadding: 4.5,
+          cellPadding: 3.5,
           textColor: [15, 23, 42],
           lineColor: [226, 232, 240],
           lineWidth: 0.5,
@@ -431,15 +431,15 @@ export async function GET(req: NextRequest) {
           fillColor: [248, 250, 252], // #f8fafc
         },
         columnStyles: {
-          0: { cellWidth: 50, halign: 'center', fontStyle: 'bold', textColor: [72, 18, 104] },
-          1: { cellWidth: 115, fontStyle: 'bold' },
-          2: { cellWidth: 80 },
-          3: { cellWidth: 55, halign: 'center' },
-          4: { cellWidth: 85 },
-          5: { cellWidth: 155 },
-          6: { cellWidth: 85, halign: 'center' },
-          7: { cellWidth: 70, halign: 'center', fontStyle: 'bold' },
-          8: { cellWidth: 65, halign: 'center' },
+          0: { cellWidth: 46, halign: 'center', fontStyle: 'bold', textColor: [72, 18, 104] },
+          1: { cellWidth: 105, fontStyle: 'bold' },
+          2: { cellWidth: 72 },
+          3: { cellWidth: 50, halign: 'center' },
+          4: { cellWidth: 80 },
+          5: { cellWidth: 140 },
+          6: { cellWidth: 78, halign: 'center' },
+          7: { cellWidth: 65, halign: 'center', fontStyle: 'bold' },
+          8: { cellWidth: 60, halign: 'center' },
         },
         didParseCell: (data) => {
           // Highlight Food
@@ -507,42 +507,42 @@ export async function GET(req: NextRequest) {
       const xmlRows = rows
         .map((r) => {
           const refCode = `U101-${String(r.id).padStart(5, '0')}`;
-          return `    <Guest>
-      <Id>${r.id}</Id>
-      <Reference>${refCode}</Reference>
-      <FirstName>${escapeXml(r.first_name)}</FirstName>
-      <LastName>${escapeXml(r.last_name)}</LastName>
-      <FullName>${escapeXml(`${r.first_name} ${r.last_name}`.trim())}</FullName>
-      <Address>${escapeXml(r.address)}</Address>
-      <Town>${escapeXml(r.town)}</Town>
-      <Postcode>${escapeXml(r.post_code)}</Postcode>
-      <Email>${escapeXml(r.email)}</Email>
-      <Mobile>${escapeXml(r.mobile)}</Mobile>
-      <FoodPreference>${escapeXml(r.food_preference)}</FoodPreference>
-      <GDPRConsent>${r.gdpr_consent ? 'true' : 'false'}</GDPRConsent>
-      <Status>${escapeXml(r.status || 'new')}</Status>
-      <Notes>${escapeXml(r.notes || '')}</Notes>
-      <RegistrationDate>${r.created_at ? new Date(r.created_at).toISOString() : ''}</RegistrationDate>
-    </Guest>`;
+          return `  <registration>
+    <id>${r.id}</id>
+    <registration_id>${refCode}</registration_id>
+    <first_name>${escapeXml(r.first_name)}</first_name>
+    <last_name>${escapeXml(r.last_name)}</last_name>
+    <full_name>${escapeXml(`${r.first_name} ${r.last_name}`.trim())}</full_name>
+    <address>${escapeXml(r.address)}</address>
+    <town>${escapeXml(r.town)}</town>
+    <post_code>${escapeXml(r.post_code)}</post_code>
+    <email>${escapeXml(r.email)}</email>
+    <mobile>${escapeXml(r.mobile)}</mobile>
+    <food_preference>${escapeXml(r.food_preference)}</food_preference>
+    <marketing_consent>${r.gdpr_consent ? 'true' : 'false'}</marketing_consent>
+    <consent_timestamp>${r.created_at ? new Date(r.created_at).toISOString() : ''}</consent_timestamp>
+    <status>${escapeXml(r.status || 'new')}</status>
+    <notes>${escapeXml(r.notes || '')}</notes>
+    <created_at>${r.created_at ? new Date(r.created_at).toISOString() : ''}</created_at>
+    <updated_at>${r.updated_at ? new Date(r.updated_at).toISOString() : ''}</updated_at>
+  </registration>`;
         })
         .join('\n');
 
       const xmlOutput = `<?xml version="1.0" encoding="UTF-8"?>
-<Unity101GuestManifest generated="${new Date().toISOString()}" total="${totalCount}">
-  <Summary>
-    <TotalGuests>${totalCount}</TotalGuests>
-    <Confirmed>${confirmedCount}</Confirmed>
-    <Pending>${newCount}</Pending>
-    <Cancelled>${cancelledCount}</Cancelled>
-    <Vegetarian>${vegCount}</Vegetarian>
-    <NonVegetarian>${nonVegCount}</NonVegetarian>
-  </Summary>
-  <Guests>
+<registrations total="${totalCount}" generated="${new Date().toISOString()}">
+  <summary>
+    <total_guests>${totalCount}</total_guests>
+    <confirmed_guests>${confirmedCount}</confirmed_guests>
+    <pending_guests>${newCount}</pending_guests>
+    <cancelled_guests>${cancelledCount}</cancelled_guests>
+    <vegetarian_meals>${vegCount}</vegetarian_meals>
+    <non_vegetarian_meals>${nonVegCount}</non_vegetarian_meals>
+  </summary>
 ${xmlRows}
-  </Guests>
-</Unity101GuestManifest>`;
+</registrations>`;
 
-      const filename = `unity101_registrations_${dateStr}.xml`;
+      const filename = `unity101-registrations-${dateStr}.xml`;
 
       return new NextResponse(xmlOutput, {
         status: 200,
@@ -559,21 +559,21 @@ ${xmlRows}
     // -------------------------------------------------------------------------
     const headers = [
       'Registration ID',
-      'Reference Code',
       'First Name',
       'Last Name',
       'Full Name',
-      'Street Address',
-      'Town / City',
-      'Postcode',
-      'Email Address',
-      'Mobile Phone',
-      'Meal Choice',
-      'GDPR Consent',
+      'Address',
+      'Town',
+      'Post Code',
+      'Email',
+      'Mobile',
+      'Food Preference',
+      'Marketing Consent',
+      'Consent Timestamp',
       'Status',
-      'Admin Notes',
-      'Registration Date',
-      'Last Updated',
+      'Notes',
+      'Created At',
+      'Updated At',
     ];
 
     const csvLines = [headers.map(escapeCsvField).join(',')];
@@ -582,7 +582,6 @@ ${xmlRows}
       const refCode = `U101-${String(r.id).padStart(5, '0')}`;
       csvLines.push(
         [
-          r.id,
           refCode,
           r.first_name,
           r.last_name,
@@ -594,7 +593,8 @@ ${xmlRows}
           r.mobile,
           r.food_preference,
           r.gdpr_consent ? 'Yes' : 'No',
-          r.status,
+          r.created_at ? new Date(r.created_at).toISOString() : '',
+          r.status || 'new',
           r.notes || '',
           r.created_at ? new Date(r.created_at).toLocaleString('en-GB') : '',
           r.updated_at ? new Date(r.updated_at).toLocaleString('en-GB') : '',
@@ -605,7 +605,7 @@ ${xmlRows}
     }
 
     const csvOutput = '\uFEFF' + csvLines.join('\r\n'); // Add UTF-8 BOM for Excel compatibility
-    const filename = `unity101_registrations_${dateStr}.csv`;
+    const filename = `unity101-registrations-${dateStr}.csv`;
 
     return new NextResponse(csvOutput, {
       status: 200,

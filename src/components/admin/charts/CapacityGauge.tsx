@@ -66,20 +66,20 @@ export default function CapacityGauge({ capacity, loading }: CapacityGaugeProps)
 
       {/* Milestone checkpoints below track */}
       <div className="flex items-center justify-between mt-2.5 text-[11px]">
-        <span className="flex items-center space-x-1 text-slate-500">
-          <Users className="w-3 h-3 text-purple-600" />
-          <span>{remaining} seats remaining</span>
+        <span className="flex items-center space-x-1 text-slate-500 dark:text-slate-400">
+          <Users className="w-3 h-3 text-purple-600 dark:text-amber-400" />
+          <span>{remaining} Available Gala Seats</span>
         </span>
 
         {isNearlyFull ? (
-          <span className="flex items-center space-x-1 text-amber-700 font-semibold">
+          <span className="flex items-center space-x-1 text-amber-700 dark:text-amber-400 font-semibold">
             <AlertTriangle className="w-3 h-3 text-amber-500" />
-            <span>High demand — nearing venue limit</span>
+            <span>High Capacity • Nearing Final Seating</span>
           </span>
         ) : (
-          <span className="flex items-center space-x-1 text-emerald-700 font-semibold">
+          <span className="flex items-center space-x-1 text-emerald-700 dark:text-emerald-400 font-semibold">
             <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-            <span>Admissions open and welcoming</span>
+            <span>Official Guest Registration Active</span>
           </span>
         )}
       </div>

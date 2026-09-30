@@ -131,7 +131,7 @@ export default function TrashRecoveryPage() {
   };
 
   return (
-    <AdminLayout title="Trash & Recovery">
+    <AdminLayout title="Archived Guest Directory">
       <div className="space-y-5">
         {/* Toast */}
         {toastMessage && (
@@ -150,17 +150,6 @@ export default function TrashRecoveryPage() {
             <span>{toastMessage.text}</span>
           </div>
         )}
-
-        {/* Notice Banner */}
-        <div className="bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 rounded-2xl p-4 text-xs text-amber-900 dark:text-amber-200 flex items-start space-x-3">
-          <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-          <div>
-            <p className="font-bold text-amber-950 dark:text-amber-100 text-sm">Archived Guest Records</p>
-            <p className="text-amber-800 dark:text-amber-300 leading-relaxed mt-0.5">
-              Registrations removed from the active directory are kept here for recovery. You can restore them to the live event roster anytime, or permanently remove them from the database.
-            </p>
-          </div>
-        </div>
 
         {/* Search & Bulk Bar */}
         <div className="bg-white rounded-2xl border border-purple-100/80 p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -244,7 +233,7 @@ export default function TrashRecoveryPage() {
                   </tr>
                 ) : (
                   items.map((item) => (
-                    <tr key={item.id} className="hover:bg-red-50/20 transition-colors">
+                    <tr key={item.id} className="hover:bg-purple-50/20 dark:hover:bg-purple-950/20 transition-colors">
                       <td className="py-3 px-4">
                         <input
                           type="checkbox"
@@ -259,9 +248,9 @@ export default function TrashRecoveryPage() {
                           className="rounded border-slate-300 text-[#481268] focus:ring-purple-700"
                         />
                       </td>
-                      <td className="py-3 px-3 font-mono font-bold text-slate-700">#{item.id}</td>
+                      <td className="py-3 px-3 font-mono font-bold text-slate-700 dark:text-amber-400">#{item.id}</td>
                       <td className="py-3 px-3">
-                        <p className="font-bold text-slate-800 line-through">
+                        <p className="font-bold text-slate-800 dark:text-white">
                           {item.first_name} {item.last_name}
                         </p>
                         <p className="text-[11px] text-slate-400 truncate max-w-[160px]">{item.address}</p>
