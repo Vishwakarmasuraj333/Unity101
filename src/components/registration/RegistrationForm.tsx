@@ -193,17 +193,16 @@ export default function RegistrationForm() {
                 </div>
               )}
 
-              {/* First Name - No numbers allowed */}
+              {/* First Name - No numbers or symbols allowed */}
               <div className="space-y-1">
                 <input
                   type="text"
                   id="first_name"
-                  placeholder="First Name (letters only)"
+                  placeholder="First Name (e.g. Suraj)"
                   maxLength={50}
                   value={values.first_name || ''}
                   onChange={(e) => {
-                    // Filter out numbers in real time
-                    const sanitized = e.target.value.replace(/[0-9]/g, '');
+                    const sanitized = e.target.value.replace(/[^a-zA-Z\s'-]/g, '');
                     setValue('first_name', sanitized, { shouldValidate: true });
                   }}
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b transition-colors outline-none ${
@@ -220,17 +219,16 @@ export default function RegistrationForm() {
                 )}
               </div>
 
-              {/* Last Name - No numbers allowed */}
+              {/* Last Name - No numbers or symbols allowed */}
               <div className="space-y-1">
                 <input
                   type="text"
                   id="last_name"
-                  placeholder="Last Name (letters only)"
+                  placeholder="Last Name (e.g. Patel)"
                   maxLength={50}
                   value={values.last_name || ''}
                   onChange={(e) => {
-                    // Filter out numbers in real time
-                    const sanitized = e.target.value.replace(/[0-9]/g, '');
+                    const sanitized = e.target.value.replace(/[^a-zA-Z\s'-]/g, '');
                     setValue('last_name', sanitized, { shouldValidate: true });
                   }}
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b transition-colors outline-none ${
@@ -254,7 +252,7 @@ export default function RegistrationForm() {
                   id="address"
                   maxLength={120}
                   {...register('address')}
-                  placeholder="Address (Street name and house number)"
+                  placeholder="Address (e.g. 10 St Mary's Road)"
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b transition-colors outline-none ${
                     errors.address
                       ? 'border-red-500 focus:border-red-600'
@@ -278,7 +276,7 @@ export default function RegistrationForm() {
                   maxLength={50}
                   value={values.town || ''}
                   onChange={(e) => {
-                    const sanitized = e.target.value.replace(/[0-9]/g, '');
+                    const sanitized = e.target.value.replace(/[^a-zA-Z\s'-]/g, '');
                     setValue('town', sanitized, { shouldValidate: true });
                   }}
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b transition-colors outline-none ${
@@ -295,16 +293,17 @@ export default function RegistrationForm() {
                 )}
               </div>
 
-              {/* Post Code - Auto uppercase, max 10 chars */}
+              {/* Post Code - Auto uppercase, UK format */}
               <div className="space-y-1">
                 <input
                   type="text"
                   id="post_code"
-                  placeholder="Post Code (e.g. SO14 0AY)"
+                  placeholder="Postcode (e.g. SO14 0AY)"
                   maxLength={10}
                   value={values.post_code || ''}
                   onChange={(e) => {
-                    setValue('post_code', e.target.value.toUpperCase(), { shouldValidate: true });
+                    const sanitized = e.target.value.toUpperCase().replace(/[^A-Z0-9 ]/g, '');
+                    setValue('post_code', sanitized, { shouldValidate: true });
                   }}
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b uppercase transition-colors outline-none ${
                     errors.post_code
@@ -320,15 +319,19 @@ export default function RegistrationForm() {
                 )}
               </div>
 
-              {/* Email - Strict validation */}
+              {/* Email - Strict validation & no spaces */}
               <div className="space-y-1">
                 <input
                   type="email"
                   id="email"
                   maxLength={100}
                   autoComplete="email"
-                  {...register('email')}
-                  placeholder="Email (e.g. guest@example.com)"
+                  value={values.email || ''}
+                  onChange={(e) => {
+                    const sanitized = e.target.value.trim().toLowerCase();
+                    setValue('email', sanitized, { shouldValidate: true });
+                  }}
+                  placeholder="Email (e.g. suraj.patel@gmail.com)"
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b transition-colors outline-none ${
                     errors.email
                       ? 'border-red-500 focus:border-red-600'
@@ -343,7 +346,7 @@ export default function RegistrationForm() {
                 )}
               </div>
 
-              {/* Mobile - 10 to 15 digits only, maxLength 16 */}
+              {/* Mobile - 10 to 15 digits only */}
               <div className="space-y-1">
                 <input
                   type="tel"
@@ -352,8 +355,7 @@ export default function RegistrationForm() {
                   maxLength={16}
                   value={values.mobile || ''}
                   onChange={(e) => {
-                    // Only allow digits, plus, spaces, dashes
-                    const sanitized = e.target.value.replace(/[^0-9+\s()-]/g, '');
+                    const sanitized = e.target.value.replace(/[^0-9+\s]/g, '');
                     setValue('mobile', sanitized, { shouldValidate: true });
                   }}
                   className={`w-full px-1 py-2 text-sm text-slate-800 placeholder-slate-400 bg-transparent border-b transition-colors outline-none ${

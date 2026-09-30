@@ -781,11 +781,31 @@ function EditGuestModal({
     setSaving(true);
     setError(null);
 
+    if (formData.first_name.trim().length < 2 || formData.last_name.trim().length < 2) {
+      setError('Please provide valid guest first and last names (minimum 2 characters).');
+      setSaving(false);
+      return;
+    }
+    if (formData.mobile.replace(/\D/g, '').length < 10) {
+      setError('Mobile phone number must contain at least 10 valid digits.');
+      setSaving(false);
+      return;
+    }
+
     try {
       const res = await fetch(`/api/admin/registrations/${registration.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          first_name: formData.first_name.trim(),
+          last_name: formData.last_name.trim(),
+          town: formData.town.trim(),
+          address: formData.address.trim(),
+          post_code: formData.post_code.trim().toUpperCase(),
+          email: formData.email.trim().toLowerCase(),
+          mobile: formData.mobile.trim(),
+        }),
       });
 
       const data = await res.json();
@@ -802,165 +822,192 @@ function EditGuestModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in">
-      <div className="bg-white rounded-2xl max-w-xl w-full overflow-hidden shadow-2xl border border-purple-100 max-h-[90vh] flex flex-col">
-        <div className="bg-[#481268] text-white p-4 px-6 flex items-center justify-between">
-          <h3 className="font-bold text-sm font-serif-brand">
-            Edit Guest Registration #{registration.id}
-          </h3>
-          <button onClick={onClose} className="text-purple-200 hover:text-white p-1">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in">
+      <div className="bg-white dark:bg-[#1a082b] rounded-2xl max-w-xl w-full overflow-hidden shadow-2xl border border-purple-100 dark:border-purple-800 max-h-[92vh] flex flex-col">
+        <div className="bg-gradient-to-r from-[#2f0846] via-[#481268] to-[#5d1785] text-white p-4 px-6 flex items-center justify-between border-b border-purple-800/60">
+          <div>
+            <div className="flex items-center space-x-1.5 mb-0.5">
+              <span className="w-2 h-2 rounded-full bg-amber-400" />
+              <h3 className="font-bold text-sm tracking-wide text-white">
+                Edit Guest Registration #{registration.id}
+              </h3>
+            </div>
+            <p className="text-[11px] text-purple-200">Updating live records in verified MySQL database</p>
+          </div>
+          <button onClick={onClose} className="text-purple-300 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 text-xs">
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-center space-x-2">
+            <div className="p-3 bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-300 flex items-center space-x-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">First Name (letters only)</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
+                First Name <span className="text-amber-500">*</span>
+              </label>
               <input
                 type="text"
                 maxLength={50}
                 value={formData.first_name}
-                onChange={(e) => setFormData({ ...formData, first_name: e.target.value.replace(/[0-9]/g, '') })}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value.replace(/[^a-zA-Z\s'-]/g, '') })}
                 required
-                className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+                placeholder="e.g. Suraj"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Last Name (letters only)</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
+                Last Name <span className="text-amber-500">*</span>
+              </label>
               <input
                 type="text"
                 maxLength={50}
                 value={formData.last_name}
-                onChange={(e) => setFormData({ ...formData, last_name: e.target.value.replace(/[0-9]/g, '') })}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value.replace(/[^a-zA-Z\s'-]/g, '') })}
                 required
-                className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+                placeholder="e.g. Patel"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 block mb-1">Street Address</label>
+            <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
+              Street Address <span className="text-amber-500">*</span>
+            </label>
             <input
               type="text"
               maxLength={120}
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               required
-              className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+              placeholder="e.g. 10 St Mary's Road"
+              className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Town / City</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
+                Town / City <span className="text-amber-500">*</span>
+              </label>
               <input
                 type="text"
                 maxLength={50}
                 value={formData.town}
-                onChange={(e) => setFormData({ ...formData, town: e.target.value.replace(/[0-9]/g, '') })}
+                onChange={(e) => setFormData({ ...formData, town: e.target.value.replace(/[^a-zA-Z\s'-]/g, '') })}
                 required
-                className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+                placeholder="e.g. Southampton"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Post Code</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
+                Postcode <span className="text-amber-500">*</span>
+              </label>
               <input
                 type="text"
                 maxLength={10}
                 value={formData.post_code}
-                onChange={(e) => setFormData({ ...formData, post_code: e.target.value.toUpperCase() })}
+                onChange={(e) => setFormData({ ...formData, post_code: e.target.value.toUpperCase().replace(/[^A-Z0-9 ]/g, '') })}
                 required
-                className="w-full p-2 border border-slate-300 rounded-lg uppercase text-slate-800 focus:outline-none focus:border-[#481268]"
+                placeholder="e.g. SO14 0AY"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl uppercase bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Email</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
+                Email Address <span className="text-amber-500">*</span>
+              </label>
               <input
                 type="email"
                 maxLength={100}
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value.trim().toLowerCase() })}
                 required
-                className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+                placeholder="e.g. suraj.patel@gmail.com"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Mobile Phone (10-15 digits)</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
+                Mobile Phone (10–15 digits) <span className="text-amber-500">*</span>
+              </label>
               <input
                 type="tel"
                 maxLength={16}
                 value={formData.mobile}
-                onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/[^0-9+\s()-]/g, '') })}
+                onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/[^0-9+\s]/g, '') })}
                 required
-                className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+                placeholder="e.g. 07700 900123"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Food Preference</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">Food Preference</label>
               <select
                 value={formData.food_preference}
                 onChange={(e) =>
                   setFormData({ ...formData, food_preference: e.target.value as FoodPreference })
                 }
-                className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 transition-colors"
               >
-                <option value="Veg Food">Veg Food</option>
+                <option value="Veg Food">Veg Food (Vegetarian)</option>
                 <option value="Non Veg Food">Non Veg Food</option>
               </select>
             </div>
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Status</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">Status</label>
               <select
                 value={formData.status}
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value as RegistrationStatus })
                 }
-                className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 transition-colors"
               >
-                <option value="new">New</option>
                 <option value="confirmed">Confirmed</option>
+                <option value="new">New (Pending Review)</option>
                 <option value="cancelled">Cancelled</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 block mb-1">Admin Notes</label>
+            <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">Notes / Table Allocation</label>
             <textarea
               rows={2}
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="e.g. VIP guest, dietary allergies, formal invite dispatched..."
-              className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+              placeholder="e.g. VIP guest, Table #4, vegetarian Jain diet, seated with Community Radio Trustees..."
+              className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
             />
           </div>
 
-          <div className="pt-2 flex justify-end space-x-2 border-t border-slate-100">
+          <div className="pt-3 flex justify-end space-x-2 border-t border-slate-100 dark:border-purple-900/60">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold"
+              className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-purple-700/80 bg-slate-100 dark:bg-purple-900/40 hover:bg-slate-200 dark:hover:bg-purple-800 text-slate-700 dark:text-purple-200 font-semibold text-xs transition-all cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2 rounded-xl bg-[#481268] hover:bg-[#380952] text-white font-bold transition-all shadow-sm flex items-center space-x-1"
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs shadow-md transition-all active:scale-[0.98] cursor-pointer flex items-center space-x-1.5"
             >
               {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : null}
               <span>Save Changes</span>
@@ -1000,11 +1047,33 @@ function AddGuestModal({
     setSaving(true);
     setError(null);
 
+    // Final client-side sanity check
+    if (formData.first_name.trim().length < 2 || formData.last_name.trim().length < 2) {
+      setError('Please provide valid guest first and last names (minimum 2 characters).');
+      setSaving(false);
+      return;
+    }
+    if (formData.mobile.replace(/\D/g, '').length < 10) {
+      setError('Mobile phone number must contain at least 10 valid digits.');
+      setSaving(false);
+      return;
+    }
+
     try {
       const res = await fetch('/api/admin/registrations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, gdpr_consent: true }),
+        body: JSON.stringify({
+          ...formData,
+          first_name: formData.first_name.trim(),
+          last_name: formData.last_name.trim(),
+          town: formData.town.trim(),
+          address: formData.address.trim(),
+          post_code: formData.post_code.trim().toUpperCase(),
+          email: formData.email.trim().toLowerCase(),
+          mobile: formData.mobile.trim(),
+          gdpr_consent: true,
+        }),
       });
 
       const data = await res.json();
@@ -1021,173 +1090,194 @@ function AddGuestModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in">
-      <div className="bg-white rounded-2xl max-w-xl w-full overflow-hidden shadow-2xl border border-purple-100 max-h-[90vh] flex flex-col">
-        <div className="bg-[#481268] text-white p-4 px-6 flex items-center justify-between">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in">
+      <div className="bg-white dark:bg-[#1a082b] rounded-2xl max-w-xl w-full overflow-hidden shadow-2xl border border-purple-100 dark:border-purple-800 max-h-[92vh] flex flex-col">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-[#2f0846] via-[#481268] to-[#5d1785] text-white p-4 px-6 flex items-center justify-between border-b border-purple-800/60">
           <div>
-            <h3 className="font-bold text-sm font-serif-brand">Add New Guest Registration</h3>
-            <p className="text-[10px] text-purple-200">Records directly to MySQL registrations database</p>
+            <div className="flex items-center space-x-1.5 mb-0.5">
+              <span className="w-2 h-2 rounded-full bg-amber-400" />
+              <h3 className="font-bold text-sm tracking-wide text-white">Add New Guest Registration</h3>
+            </div>
+            <p className="text-[11px] text-purple-200">Recorded directly to verified MySQL database</p>
           </div>
-          <button onClick={onClose} className="text-purple-200 hover:text-white p-1">
+          <button
+            onClick={onClose}
+            className="text-purple-300 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 text-xs">
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-center space-x-2">
+            <div className="p-3 bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-300 flex items-center space-x-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">First Name (letters only) *</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
+                First Name <span className="text-amber-500">*</span>
+              </label>
               <input
                 type="text"
                 maxLength={50}
                 value={formData.first_name}
-                onChange={(e) => setFormData({ ...formData, first_name: e.target.value.replace(/[0-9]/g, '') })}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value.replace(/[^a-zA-Z\s'-]/g, '') })}
                 required
-                placeholder="e.g. John"
-                className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+                placeholder="e.g. Suraj"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Last Name (letters only) *</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
+                Last Name <span className="text-amber-500">*</span>
+              </label>
               <input
                 type="text"
                 maxLength={50}
                 value={formData.last_name}
-                onChange={(e) => setFormData({ ...formData, last_name: e.target.value.replace(/[0-9]/g, '') })}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value.replace(/[^a-zA-Z\s'-]/g, '') })}
                 required
-                placeholder="e.g. Smith"
-                className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+                placeholder="e.g. Patel"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 block mb-1">Street Address *</label>
+            <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
+              Street Address <span className="text-amber-500">*</span>
+            </label>
             <input
               type="text"
               maxLength={120}
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               required
-              placeholder="e.g. 12 St. Mary Street"
-              className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+              placeholder="e.g. 10 St Mary's Road"
+              className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Town / City (letters only) *</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
+                Town / City <span className="text-amber-500">*</span>
+              </label>
               <input
                 type="text"
                 maxLength={50}
                 value={formData.town}
-                onChange={(e) => setFormData({ ...formData, town: e.target.value.replace(/[0-9]/g, '') })}
+                onChange={(e) => setFormData({ ...formData, town: e.target.value.replace(/[^a-zA-Z\s'-]/g, '') })}
                 required
                 placeholder="e.g. Southampton"
-                className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Post Code *</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
+                Postcode <span className="text-amber-500">*</span>
+              </label>
               <input
                 type="text"
                 maxLength={10}
                 value={formData.post_code}
-                onChange={(e) => setFormData({ ...formData, post_code: e.target.value.toUpperCase() })}
+                onChange={(e) => setFormData({ ...formData, post_code: e.target.value.toUpperCase().replace(/[^A-Z0-9 ]/g, '') })}
                 required
-                placeholder="e.g. SO14 1AW"
-                className="w-full p-2 border border-slate-300 rounded-lg uppercase text-slate-800 focus:outline-none focus:border-[#481268]"
+                placeholder="e.g. SO14 0AY"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl uppercase bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Email *</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
+                Email Address <span className="text-amber-500">*</span>
+              </label>
               <input
                 type="email"
                 maxLength={100}
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value.trim().toLowerCase() })}
                 required
-                placeholder="john.smith@example.com"
-                className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+                placeholder="e.g. suraj.patel@gmail.com"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
               />
             </div>
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Mobile Phone (10-15 digits) *</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">
+                Mobile Phone (10–15 digits) <span className="text-amber-500">*</span>
+              </label>
               <input
                 type="tel"
                 maxLength={16}
                 value={formData.mobile}
-                onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/[^0-9+\s()-]/g, '') })}
+                onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/[^0-9+\s]/g, '') })}
                 required
-                placeholder="07700900123"
-                className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+                placeholder="e.g. 07700 900123"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Food Preference</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">Food Preference</label>
               <select
                 value={formData.food_preference}
                 onChange={(e) =>
                   setFormData({ ...formData, food_preference: e.target.value as FoodPreference })
                 }
-                className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 transition-colors"
               >
-                <option value="Veg Food">Veg Food</option>
+                <option value="Veg Food">Veg Food (Vegetarian)</option>
                 <option value="Non Veg Food">Non Veg Food</option>
               </select>
             </div>
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Initial Status</label>
+              <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">Initial Status</label>
               <select
                 value={formData.status}
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value as RegistrationStatus })
                 }
-                className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+                className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white focus:outline-none focus:border-amber-400 transition-colors"
               >
                 <option value="confirmed">Confirmed</option>
-                <option value="new">New</option>
+                <option value="new">New (Pending Review)</option>
                 <option value="cancelled">Cancelled</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 block mb-1">Notes</label>
+            <label className="font-semibold text-slate-700 dark:text-purple-200 block mb-1">Notes / Table Allocation</label>
             <textarea
               rows={2}
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="Internal registration remarks..."
-              className="w-full p-2 border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-[#481268]"
+              placeholder="e.g. VIP guest, Table #4, vegetarian Jain diet, seated with Community Radio Trustees..."
+              className="w-full p-2.5 border border-slate-300 dark:border-purple-600/70 rounded-xl bg-slate-50 dark:bg-[#120520] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-purple-300/40 focus:outline-none focus:border-amber-400 focus:bg-white dark:focus:bg-[#17082a] transition-colors"
             />
           </div>
 
-          <div className="pt-2 flex justify-end space-x-2 border-t border-slate-100">
+          <div className="pt-3 flex justify-end space-x-2 border-t border-slate-100 dark:border-purple-900/60">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold"
+              className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-purple-700/80 bg-slate-100 dark:bg-purple-900/40 hover:bg-slate-200 dark:hover:bg-purple-800 text-slate-700 dark:text-purple-200 font-semibold text-xs transition-all cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2 rounded-xl bg-[#481268] hover:bg-[#380952] text-white font-bold transition-all shadow-sm flex items-center space-x-1"
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs shadow-md transition-all active:scale-[0.98] cursor-pointer flex items-center space-x-1.5"
             >
               {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : null}
               <span>Save Registration</span>
