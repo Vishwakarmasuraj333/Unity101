@@ -294,12 +294,12 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             <Link
               href="/admin/registrations"
               onClick={() => setSidebarOpen(false)}
-              className={`w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-2.5 rounded-xl shadow-md transition-all active:scale-[0.98] cursor-pointer ${
+              className={`w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-[#6b1b9a] to-[#481268] hover:from-[#7b1fa2] hover:to-[#581c87] text-white font-bold py-2.5 rounded-xl border border-purple-400/40 shadow-md transition-all active:scale-[0.98] cursor-pointer ${
                 isCollapsed ? 'px-2' : 'px-3 text-xs'
               }`}
               title="Add New Guest"
             >
-              <Plus className="w-4 h-4 shrink-0" />
+              <Plus className="w-4 h-4 shrink-0 text-amber-300" />
               {!isCollapsed && <span>Add New Guest</span>}
             </Link>
           </div>
@@ -309,7 +309,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             {navSections.map((section) => (
               <div key={section.heading} className="space-y-1">
                 {!isCollapsed && (
-                  <p className="px-3 text-[10.5px] font-bold text-amber-400 uppercase tracking-widest">
+                  <p className="px-3 text-[10.5px] font-bold text-purple-300/80 uppercase tracking-widest">
                     {section.heading}
                   </p>
                 )}
@@ -327,16 +327,16 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                       title={item.name}
                       className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs tracking-wide transition-all ${
                         isActive
-                          ? 'bg-gradient-to-r from-[#5a1682] to-[#481268] text-white border border-amber-400/50 shadow-md font-bold'
+                          ? 'bg-gradient-to-r from-[#5a1682] to-[#481268] text-white border border-purple-400/50 shadow-md font-bold'
                           : 'text-slate-200 hover:bg-white/10 hover:text-white font-medium'
                       } ${isCollapsed ? 'justify-center px-2' : ''}`}
                     >
                       <div className="flex items-center space-x-2.5 truncate">
-                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-amber-400' : 'text-slate-300'}`} />
+                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-amber-300' : 'text-slate-300'}`} />
                         {!isCollapsed && <span className="truncate">{item.name}</span>}
                       </div>
                       {!isCollapsed && item.badge !== undefined && (
-                        <span className="text-[10px] bg-amber-400 text-slate-950 font-bold px-1.5 py-0.5 rounded-full shadow-xs shrink-0">
+                        <span className="text-[10px] bg-purple-900/90 text-purple-200 border border-purple-700/60 font-bold px-2 py-0.5 rounded-full shadow-xs shrink-0 font-mono">
                           {item.badge}
                         </span>
                       )}
@@ -350,19 +350,19 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             <div className="pt-2">
               {!isCollapsed ? (
                 <div className="p-2.5 rounded-xl bg-white/5 border border-purple-800/40 space-y-1.5">
-                  <div className="flex items-center justify-between text-[10px] font-bold text-amber-300 uppercase tracking-wider px-1">
-                    <span className="flex items-center space-x-1">
-                      <Download className="w-3 h-3 text-amber-400" />
+                  <div className="flex items-center justify-between text-[10px] font-bold text-purple-200 uppercase tracking-wider px-1">
+                    <span className="flex items-center space-x-1.5">
+                      <Download className="w-3.5 h-3.5 text-purple-300" />
                       <span>Download Manifest</span>
                     </span>
-                    <span className="bg-amber-400/20 text-amber-300 px-1 py-0.5 rounded text-[8px] font-mono">LIVE</span>
+                    <span className="bg-purple-900/80 text-purple-200 border border-purple-700/60 px-1.5 py-0.5 rounded text-[8px] font-mono">LIVE</span>
                   </div>
-                  <div className="grid grid-cols-3 gap-1 pt-1">
+                  <div className="grid grid-cols-3 gap-1.5 pt-1">
                     <a
                       href="/api/admin/export?format=excel"
                       download
                       title="Download Formatted Excel (.xlsx)"
-                      className="py-1.5 px-1 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-600/70 text-emerald-200 text-[10px] font-bold text-center transition-all cursor-pointer flex items-center justify-center space-x-0.5"
+                      className="py-1.5 px-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/80 border border-purple-800/80 text-purple-200 hover:text-white text-[10px] font-bold text-center transition-all cursor-pointer flex items-center justify-center space-x-0.5"
                     >
                       <span>.XLSX</span>
                     </a>
@@ -370,7 +370,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                       href="/api/admin/export?format=pdf"
                       download
                       title="Download Official PDF (.pdf)"
-                      className="py-1.5 px-1 rounded-lg bg-red-950/80 hover:bg-red-900 border border-red-600/70 text-red-200 text-[10px] font-bold text-center transition-all cursor-pointer flex items-center justify-center space-x-0.5"
+                      className="py-1.5 px-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/80 border border-purple-800/80 text-purple-200 hover:text-white text-[10px] font-bold text-center transition-all cursor-pointer flex items-center justify-center space-x-0.5"
                     >
                       <span>.PDF</span>
                     </a>
@@ -378,7 +378,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                       href="/api/admin/export?format=csv"
                       download
                       title="Download Universal CSV (.csv)"
-                      className="py-1.5 px-1 rounded-lg bg-purple-950/80 hover:bg-purple-900 border border-purple-600/70 text-purple-200 text-[10px] font-bold text-center transition-all cursor-pointer flex items-center justify-center space-x-0.5"
+                      className="py-1.5 px-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/80 border border-purple-800/80 text-purple-200 hover:text-white text-[10px] font-bold text-center transition-all cursor-pointer flex items-center justify-center space-x-0.5"
                     >
                       <span>.CSV</span>
                     </a>
@@ -389,9 +389,9 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                   href="/api/admin/export?format=excel"
                   download
                   title="Export Excel Manifest"
-                  className="flex items-center justify-center p-2 rounded-xl text-amber-300 bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/20 transition-all cursor-pointer"
+                  className="flex items-center justify-center p-2 rounded-xl text-purple-200 bg-purple-900/40 hover:bg-purple-900/70 border border-purple-700/50 transition-all cursor-pointer"
                 >
-                  <Download className="w-4 h-4 text-amber-400" />
+                  <Download className="w-4 h-4 text-purple-300" />
                 </a>
               )}
             </div>
@@ -503,7 +503,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                   {/* Dropdown Header */}
                   <div className="p-3.5 bg-gradient-to-r from-[#2f0846] to-[#481268] text-white flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                      <span className="w-2 h-2 rounded-full bg-amber-400" />
                       <h4 className="font-bold text-xs tracking-wide">Registration Notifications</h4>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -515,7 +515,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                           Mark all read
                         </button>
                       )}
-                      <span className="text-[10px] bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full font-mono font-bold">
+                      <span className="text-[10px] bg-purple-900 text-purple-200 border border-purple-700/80 px-2 py-0.5 rounded-full font-mono font-bold">
                         Live
                       </span>
                     </div>
@@ -544,12 +544,12 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                           }}
                           className="p-3 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors flex items-start space-x-2.5 block group"
                         >
-                          <div className="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-950/80 text-[#481268] dark:text-amber-400 font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 border border-purple-200 dark:border-purple-800">
+                          <div className="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-950/80 text-[#481268] dark:text-purple-300 font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 border border-purple-200 dark:border-purple-800">
                             #{reg.id}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
-                              <p className="font-bold text-slate-900 dark:text-white truncate group-hover:text-purple-700 dark:group-hover:text-amber-300 transition-colors">
+                              <p className="font-bold text-slate-900 dark:text-white truncate group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
                                 {reg.first_name} {reg.last_name}
                               </p>
                               <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono shrink-0 ml-1">
@@ -558,11 +558,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                             </div>
                             <div className="flex items-center space-x-2 mt-1">
                               <span
-                                className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
-                                  reg.food_preference === 'Veg Food'
-                                    ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300'
-                                    : 'bg-red-100 text-red-900 dark:bg-red-950/80 dark:text-red-300'
-                                }`}
+                                className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-purple-100 text-purple-900 dark:bg-purple-950/80 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/80"
                               >
                                 {reg.food_preference}
                               </span>
@@ -574,10 +570,10 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                           <span
                             className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
                               reg.status === 'confirmed'
-                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                                ? 'bg-purple-900/60 text-purple-200 border border-purple-700'
                                 : reg.status === 'cancelled'
-                                ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300'
-                                : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
+                                ? 'bg-slate-800 text-slate-400 border border-slate-700'
+                                : 'bg-purple-950 text-purple-300 border border-purple-800'
                             }`}
                           >
                             {reg.status}
@@ -595,7 +591,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                     <Link
                       href="/admin/registrations"
                       onClick={() => setNotificationsOpen(false)}
-                      className="text-xs font-bold text-purple-700 dark:text-amber-400 hover:underline flex items-center space-x-1"
+                      className="text-xs font-bold text-purple-700 dark:text-purple-300 hover:underline flex items-center space-x-1"
                     >
                       <span>View All Registrations</span>
                       <span>&rarr;</span>
@@ -614,7 +610,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
               <div
                 className={`flex items-center space-x-1 px-2 py-1 rounded-lg text-xs font-bold transition-all ${
                   !isDarkMode
-                    ? 'bg-white text-amber-600 shadow-xs border border-slate-200/50'
+                    ? 'bg-white text-purple-950 shadow-xs border border-slate-200/50'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -634,14 +630,14 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             </div>
 
             {/* Radio Station Badge */}
-            <div className="hidden xl:flex items-center space-x-2 bg-gradient-to-r from-purple-50 to-amber-50/50 dark:from-purple-950/40 dark:to-slate-900 border border-purple-200/80 dark:border-purple-800/60 text-purple-900 dark:text-purple-200 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-xs">
-              <Radio className="w-3.5 h-3.5 text-amber-500 animate-pulse shrink-0" />
+            <div className="hidden xl:flex items-center space-x-2 bg-purple-950/40 border border-purple-800/60 text-purple-200 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-xs">
+              <Radio className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span>Unity 101 Radio 99.8 FM</span>
             </div>
 
             {/* System Status Pill */}
-            <div className="hidden lg:flex items-center space-x-1.5 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <div className="hidden lg:flex items-center space-x-1.5 bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
               <span>System Connected</span>
             </div>
 
@@ -669,7 +665,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                   <span className="text-xs font-bold text-slate-900 dark:text-white truncate">
                     {currentUser?.name || 'Unity 101 Admin'}
                   </span>
-                  <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider">
+                  <span className="text-[10px] text-purple-400 dark:text-purple-300 font-bold uppercase tracking-wider">
                     Super Admin
                   </span>
                 </div>
@@ -679,7 +675,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
               {userDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-68 bg-white dark:bg-[#111625] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 text-xs">
                   <div className="p-4 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50/80 dark:bg-[#0d121f] flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-xl bg-amber-400/20 border border-amber-400/40 p-1 flex items-center justify-center shrink-0 shadow-xs">
+                    <div className="w-10 h-10 rounded-xl bg-purple-900/40 border border-purple-700/60 p-1 flex items-center justify-center shrink-0 shadow-xs">
                       <Image
                         src="/images/unity101-logo.png"
                         alt="Unity 101"
@@ -695,7 +691,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                       <p className="text-slate-500 dark:text-slate-400 text-[11px] truncate">
                         {currentUser?.email || 'admin@unity101events.org'}
                       </p>
-                      <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-700 dark:text-amber-300 font-bold text-[9px] uppercase">
+                      <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-purple-900/30 text-purple-300 border border-purple-700/50 font-bold text-[9px] uppercase">
                         Super Administrator
                       </span>
                     </div>
@@ -707,7 +703,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                       onClick={() => setUserDropdownOpen(false)}
                       className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium"
                     >
-                      <ShieldCheck className="w-4 h-4 text-purple-600 dark:text-amber-400" />
+                      <ShieldCheck className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                       <span>Security & Profile</span>
                     </Link>
 
@@ -716,7 +712,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                       onClick={() => setUserDropdownOpen(false)}
                       className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium"
                     >
-                      <Settings className="w-4 h-4 text-purple-600 dark:text-amber-400" />
+                      <Settings className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                       <span>System Settings</span>
                     </Link>
 
@@ -737,7 +733,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                         setUserDropdownOpen(false);
                         handleLogout();
                       }}
-                      className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors font-bold cursor-pointer"
+                      className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl text-purple-300 hover:text-white hover:bg-purple-900/40 transition-colors font-bold cursor-pointer"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>Sign Out from Admin</span>
@@ -750,10 +746,10 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             {/* Direct Header Sign Out Button */}
             <button
               onClick={handleLogout}
-              className="inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/60 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/60 text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95 shrink-0"
-              title="Quick Sign Out from Admin Portal"
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-900/30 hover:bg-purple-900/60 text-purple-200 hover:text-white border border-purple-700/50 text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-95 shrink-0"
+              title="Sign Out from Admin Portal"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-3.5 h-3.5 text-purple-300" />
               <span className="hidden sm:inline">Sign Out</span>
             </button>
           </div>
