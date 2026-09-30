@@ -42,94 +42,178 @@ body {
   background: #9076ab;
 }
 
-@keyframes spinSlow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+html.dark ::-webkit-scrollbar-track {
+  background: #140820;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #481e6e;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #6b21a8;
 }
 
-@keyframes spinSlowReverse {
-  from { transform: rotate(360deg); }
-  to { transform: rotate(0deg); }
-}
-
-.animate-spin-slow {
-  animation: spinSlow 90s linear infinite;
-}
-
-.animate-spin-slow-reverse {
-  animation: spinSlowReverse 90s linear infinite;
-}
-
-/* Dark Theme System for Unity 101 Admin Portal */
+/* ========================================================
+   HIGH-CONTRAST PROFESSIONAL DARK THEME SYSTEM
+   ======================================================== */
 html.dark, .dark {
-  --unity-bg: #0d0615;
-  --foreground: #f4eff9;
+  --unity-bg: #0e0517;
+  --foreground: #f8f5fc;
   color-scheme: dark;
 }
 
 html.dark body {
-  background-color: #0d0615;
-  color: #f4eff9;
+  background-color: #0e0517 !important;
+  color: #f8f5fc !important;
 }
 
-html.dark .bg-white {
-  background-color: #170d24 !important;
-  color: #f4eff9 !important;
-  border-color: #381a54 !important;
+/* Top Header Bar */
+html.dark header {
+  background-color: #1a082b !important;
+  border-bottom-color: #3b1458 !important;
 }
 
-html.dark .bg-slate-50, html.dark .bg-slate-50\/50, html.dark .bg-slate-50\/80 {
-  background-color: #130a1e !important;
-  border-color: #33154d !important;
-}
-
-html.dark .bg-\[\#f7f5fa\] {
-  background-color: #0b0512 !important;
-}
-
-html.dark .text-slate-900 {
+html.dark header h2,
+html.dark header h2 span {
   color: #fbf8fe !important;
 }
 
+/* Cards & Surfaces */
+html.dark .bg-white,
+html.dark [class*="bg-white/"] {
+  background-color: #170a26 !important;
+  color: #f8f5fc !important;
+  border-color: #3d165f !important;
+}
+
+html.dark .bg-slate-50,
+html.dark [class*="bg-slate-50"] {
+  background-color: #12071f !important;
+  border-color: #351354 !important;
+}
+
+html.dark .bg-\[\#f7f5fa\] {
+  background-color: #0e0517 !important;
+}
+
+/* Typography Overrides for Dark Mode */
+html.dark .text-slate-900 {
+  color: #ffffff !important;
+}
+
 html.dark .text-slate-800 {
-  color: #eee6f5 !important;
+  color: #f3ecf8 !important;
 }
 
 html.dark .text-slate-700 {
-  color: #dfd4e8 !important;
+  color: #e5d9f0 !important;
 }
 
 html.dark .text-slate-600 {
-  color: #bfb0cf !important;
+  color: #d1c0e3 !important;
 }
 
 html.dark .text-slate-500 {
-  color: #9d8db0 !important;
+  color: #bfa8d6 !important;
 }
 
+html.dark .text-slate-400 {
+  color: #9d83ba !important;
+}
+
+/* Borders */
 html.dark .border-slate-100,
 html.dark .border-slate-200,
+html.dark .border-slate-200\/70,
 html.dark .border-slate-200\/80,
 html.dark .border-purple-100,
-html.dark .border-purple-100\/80 {
-  border-color: #381a54 !important;
+html.dark .border-purple-100\/80,
+html.dark .border-purple-200,
+html.dark .border-purple-200\/60,
+html.dark .border-purple-200\/70,
+html.dark .border-purple-200\/80 {
+  border-color: #3d165f !important;
 }
 
-html.dark input, html.dark select, html.dark textarea {
-  background-color: #1b0f2a !important;
-  color: #f4eff9 !important;
+/* Inputs, Selects, Buttons */
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: #13071f !important;
+  color: #ffffff !important;
   border-color: #481e6e !important;
 }
 
-html.dark input:focus, html.dark select:focus, html.dark textarea:focus {
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #8c71a8 !important;
+}
+
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
   border-color: #f59e0b !important;
 }
 
-html.dark thead {
-  background-color: #150920 !important;
-  border-color: #381a54 !important;
+/* Buttons in Dark Mode */
+html.dark button.bg-slate-100,
+html.dark .bg-slate-100 {
+  background-color: #2b1142 !important;
+  color: #f8f5fc !important;
+  border-color: #4a1d73 !important;
 }
 
-html.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) {
-  border-color: #2b1341 !important;
+html.dark button.bg-slate-100:hover,
+html.dark .bg-slate-100:hover {
+  background-color: #3b175c !important;
+}
+
+/* Table Specific High Contrast in Dark Mode */
+html.dark table thead,
+html.dark table thead tr,
+html.dark thead.bg-slate-50 {
+  background-color: #11051c !important;
+  color: #e5d9f0 !important;
+  border-bottom: 2px solid #3d165f !important;
+}
+
+html.dark table thead th {
+  color: #d1c0e3 !important;
+  font-weight: 700 !important;
+}
+
+html.dark tbody.divide-slate-100 > tr,
+html.dark table tbody tr {
+  border-bottom: 1px solid #280f3e !important;
+}
+
+html.dark table tbody tr:hover {
+  background-color: #220e36 !important;
+}
+
+/* Ref Tags in Dark Mode */
+html.dark td.font-mono.font-bold {
+  color: #fcd34d !important; /* Bright Gold */
+}
+
+/* Action Icons */
+html.dark td .p-1\.5.text-slate-400 {
+  color: #bfa8d6 !important;
+}
+
+html.dark td .p-1\.5.text-slate-400:hover {
+  color: #fcd34d !important;
+  background-color: #3b175c !important;
+}
+
+/* Header Badges */
+html.dark header .bg-purple-50 {
+  background-color: #280e3c !important;
+  color: #f8f5fc !important;
+  border-color: #4c1d75 !important;
+}
+
+html.dark header .bg-emerald-50 {
+  background-color: #064e3b !important;
+  color: #a7f3d0 !important;
+  border-color: #047857 !important;
 }

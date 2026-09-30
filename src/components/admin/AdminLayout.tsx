@@ -219,17 +219,17 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header Bar */}
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-purple-100/80 px-4 sm:px-8 py-3.5 flex items-center justify-between shadow-xs">
+        <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#170a24]/95 backdrop-blur border-b border-purple-100/80 dark:border-purple-900/60 px-4 sm:px-8 py-3.5 flex items-center justify-between shadow-xs">
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="md:hidden text-purple-900 p-1.5 rounded-lg hover:bg-purple-50 transition-colors"
+              className="md:hidden text-purple-900 dark:text-purple-200 p-1.5 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/50 transition-colors cursor-pointer"
               aria-label="Open sidebar"
             >
               <Menu className="w-5 h-5" />
             </button>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center space-x-2">
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center space-x-2">
                 <span>{title}</span>
               </h2>
             </div>
@@ -240,12 +240,12 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             {/* Dark / Light Mode Switcher */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-900 dark:text-amber-400 hover:bg-purple-100 border border-purple-200/80 dark:border-purple-800/80 transition-all cursor-pointer shadow-xs flex items-center space-x-1.5 text-xs font-semibold"
+              className="p-2 rounded-xl bg-purple-50 dark:bg-purple-900/60 text-purple-900 dark:text-amber-300 hover:bg-purple-100 dark:hover:bg-purple-800/80 border border-purple-200/80 dark:border-purple-700/80 transition-all cursor-pointer shadow-xs flex items-center space-x-1.5 text-xs font-semibold"
               title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {isDarkMode ? (
                 <>
-                  <Sun className="w-4 h-4 text-amber-400" />
+                  <Sun className="w-4 h-4 text-amber-300" />
                   <span className="hidden sm:inline">Light</span>
                 </>
               ) : (
@@ -256,25 +256,25 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
               )}
             </button>
 
-            <div className="hidden sm:flex items-center space-x-2 bg-purple-50 border border-purple-200/70 text-purple-900 px-3 py-1 rounded-full text-xs font-medium">
+            <div className="hidden sm:flex items-center space-x-2 bg-purple-50 dark:bg-purple-950/80 border border-purple-200/70 dark:border-purple-800 text-purple-900 dark:text-purple-200 px-3 py-1 rounded-full text-xs font-medium">
               <Radio className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
               <span>Unity 101 Radio 99.8 FM</span>
             </div>
 
-            <div className="flex items-center space-x-1.5 bg-emerald-50 border border-emerald-200 text-emerald-800 px-2.5 py-1 rounded-full text-[11px] font-semibold">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <div className="flex items-center space-x-1.5 bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 px-2.5 py-1 rounded-full text-[11px] font-semibold">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Aiven MySQL Live</span>
             </div>
 
             <Link
               href="/admin/profile"
-              className="flex items-center space-x-2 p-1 pl-2 pr-2.5 rounded-xl hover:bg-purple-50 border border-transparent hover:border-purple-200 transition-all text-xs font-semibold text-slate-800"
+              className="flex items-center space-x-2 p-1 pl-2 pr-2.5 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/40 border border-transparent hover:border-purple-200 dark:hover:border-purple-800 transition-all text-xs font-semibold text-slate-800 dark:text-purple-100"
               title="Admin Profile & Settings"
             >
               <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-400 to-amber-300 text-slate-950 font-bold text-xs flex items-center justify-center shadow-xs">
                 {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'A'}
               </div>
-              <span className="hidden lg:inline-block max-w-[120px] truncate text-slate-700">
+              <span className="hidden lg:inline-block max-w-[120px] truncate text-slate-700 dark:text-purple-200">
                 {currentUser?.name || 'Admin'}
               </span>
             </Link>
