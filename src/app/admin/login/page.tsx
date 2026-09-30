@@ -138,7 +138,7 @@ export default function AdminLoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@unity101events.org"
+                placeholder="Enter administrator email"
                 required
                 className="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-[#481268] focus:bg-white text-slate-900"
               />
@@ -155,18 +155,13 @@ export default function AdminLoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••••"
+                placeholder="Enter your password"
                 required
                 className="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-[#481268] focus:bg-white text-slate-900"
               />
             </div>
           </div>
 
-          {/* Quick Credential Hint */}
-          <div className="p-2.5 bg-purple-50/80 rounded-lg border border-purple-100 text-[11px] text-purple-900">
-            <p className="font-semibold text-purple-950 mb-0.5">Default Seed Admin Credentials:</p>
-            <p className="font-mono text-[10px] text-purple-800">admin@unity101events.org / Admin@Unity101!2026</p>
-          </div>
 
           <button
             type="submit"
