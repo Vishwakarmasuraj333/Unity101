@@ -23,6 +23,8 @@ import {
   FileSpreadsheet,
   Printer,
   FileText,
+  ExternalLink,
+  QrCode,
 } from 'lucide-react';
 import { Registration, FoodPreference, RegistrationStatus } from '@/types';
 
@@ -353,6 +355,17 @@ export default function RegistrationsManagementPage() {
                 )}
               </div>
 
+              <a
+                href="/admin/scanner"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center space-x-1.5 bg-amber-500/15 hover:bg-amber-500/25 text-amber-900 dark:text-amber-300 border border-amber-300/80 dark:border-amber-700/60 text-xs font-bold py-2 px-3.5 rounded-xl shadow-xs transition-all active:scale-95"
+                title="Launch VIP QR Scanner in New Tab"
+              >
+                <QrCode className="w-3.5 h-3.5 text-amber-500" />
+                <span className="hidden sm:inline">Scanner ↗</span>
+              </a>
+
               <button
                 onClick={() => setIsAddModalOpen(true)}
                 className="inline-flex items-center space-x-1.5 bg-[#481268] hover:bg-[#581c87] text-white text-xs font-bold py-2 px-4 rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer border border-purple-600/50"
@@ -647,6 +660,27 @@ export default function RegistrationsManagementPage() {
                             >
                               <Eye className="w-3.5 h-3.5" />
                             </Link>
+
+                            <Link
+                              href={`/admin/registrations/${reg.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-1.5 text-slate-400 hover:text-purple-700 dark:hover:text-amber-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors inline-flex items-center"
+                              title="Open Details in New Tab"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </Link>
+
+                            <Link
+                              href={`/pass/${reg.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-1.5 text-amber-500 hover:text-amber-600 dark:hover:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/40 rounded-lg transition-colors inline-flex items-center"
+                              title="Open VIP Entry Pass in New Tab"
+                            >
+                              <QrCode className="w-3.5 h-3.5" />
+                            </Link>
+
                             <button
                               onClick={() => setEditingItem(reg)}
                               className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-amber-700 dark:hover:text-amber-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"

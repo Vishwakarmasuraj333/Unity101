@@ -41,6 +41,7 @@ import {
   MapPin,
   Sparkles,
   RefreshCw,
+  QrCode,
 } from 'lucide-react';
 import { Registration } from '@/types';
 
@@ -367,6 +368,12 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
       heading: 'CORE OPERATIONS',
       items: [
         {
+          name: 'VIP Pass Scanner',
+          href: '/admin/scanner',
+          icon: QrCode,
+          badge: 'Live',
+        },
+        {
           name: 'All Registrations',
           href: '/admin/registrations',
           icon: Users,
@@ -507,13 +514,13 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                         <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-amber-300' : 'text-slate-300'}`} />
                         {!isCollapsed && <span className="truncate">{item.name}</span>}
                       </div>
-                      {!isCollapsed && item.badge !== undefined && item.badge > 0 && (
-                        <span className="inline-flex items-center space-x-1 text-[10px] bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)] animate-pulse shrink-0 font-mono">
+                      {!isCollapsed && item.badge !== undefined && (typeof item.badge === 'number' ? item.badge > 0 : Boolean(item.badge)) && (
+                        <span className="inline-flex items-center space-x-1 text-[10px] bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)] shrink-0 font-mono">
                           <span className="w-1.5 h-1.5 rounded-full bg-slate-950 animate-ping mr-0.5" />
-                          <span>{item.badge} New</span>
+                          <span>{typeof item.badge === 'number' ? `${item.badge} New` : item.badge}</span>
                         </span>
                       )}
-                      {isCollapsed && item.badge !== undefined && item.badge > 0 && (
+                      {isCollapsed && item.badge !== undefined && (typeof item.badge === 'number' ? item.badge > 0 : Boolean(item.badge)) && (
                         <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-amber-400 ring-2 ring-[#1c082b] animate-pulse" />
                       )}
                     </Link>
@@ -700,15 +707,16 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
           </div>
 
           <div className={`grid gap-2 ${isCollapsed ? 'grid-cols-1' : 'grid-cols-2'}`}>
-            <Link
+            <a
               href="/register"
               target="_blank"
-              title="Open Public Registration Form"
+              rel="noopener noreferrer"
+              title="Open Public Registration Form in New Tab"
               className="inline-flex items-center justify-center space-x-1.5 py-2 px-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-100 hover:text-white text-xs font-semibold transition-colors border border-slate-700/60"
             >
               <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
-              {!isCollapsed && <span>Public</span>}
-            </Link>
+              {!isCollapsed && <span>Public ↗</span>}
+            </a>
 
             <button
               onClick={handleLogout}
@@ -757,8 +765,33 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             </div>
           </div>
 
-          {/* Right Header Controls: Notification Feed, Theme Switcher, Profile */}
+          {/* Right Header Controls: Quick Launch, Notification Feed, Theme Switcher, Profile */}
           <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Quick Launch: Public Site & VIP Scanner in New Tab */}
+            <div className="hidden lg:flex items-center space-x-1.5 mr-1">
+              <a
+                href="/register"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Open Public Registration Form in New Tab"
+                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 dark:hover:bg-purple-900/60 text-purple-900 dark:text-amber-300 border border-purple-200/80 dark:border-purple-800 text-xs font-bold transition-all shadow-xs"
+              >
+                <ExternalLink className="w-3.5 h-3.5 text-amber-500" />
+                <span>Public Form ↗</span>
+              </a>
+
+              <a
+                href="/admin/scanner"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Open VIP Pass Scanner in New Tab"
+                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-all"
+              >
+                <QrCode className="w-3.5 h-3.5 text-purple-600 dark:text-amber-400" />
+                <span>Scanner ↗</span>
+              </a>
+            </div>
+
             {/* Live Registration Notifications Dropdown */}
             <div className="relative" ref={notificationsRef}>
               <button
@@ -1085,15 +1118,41 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                       <span>System Settings</span>
                     </Link>
 
-                    <Link
+                    <a
                       href="/register"
                       target="_blank"
+                      rel="noopener noreferrer"
                       onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium"
+                      className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium text-xs"
+                      title="Open Public Registration Form in New Tab"
                     >
-                      <ExternalLink className="w-4 h-4 text-slate-400" />
-                      <span>Public Registration Form</span>
-                    </Link>
+                      <ExternalLink className="w-4 h-4 text-amber-500" />
+                      <span>Public Registration Form ↗</span>
+                    </a>
+
+                    <a
+                      href="/admin/scanner"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setUserDropdownOpen(false)}
+                      className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium text-xs"
+                      title="Open Live Scanner Console in New Tab"
+                    >
+                      <QrCode className="w-4 h-4 text-purple-500" />
+                      <span>VIP Scanner Console ↗</span>
+                    </a>
+
+                    <a
+                      href="https://unity101.org"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setUserDropdownOpen(false)}
+                      className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium text-xs"
+                      title="Unity 101 Official Website in New Tab"
+                    >
+                      <Radio className="w-4 h-4 text-amber-500" />
+                      <span>Unity 101 Official Site ↗</span>
+                    </a>
                   </div>
 
                   <div className="p-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-[#0d121f]">

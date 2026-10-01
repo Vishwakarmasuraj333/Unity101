@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Lock, Mail, Loader2, AlertCircle, ArrowRight } from 'lucide-react';
+import { Lock, Mail, Loader2, AlertCircle, ArrowRight, ExternalLink } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -99,11 +99,11 @@ export default function AdminLoginPage() {
         <div className="text-center mb-6">
           <div className="w-36 h-auto mx-auto mb-3">
             <Image
-              src="/images/unity101-logo.png"
-              alt="Unity 101 Community Radio"
+              src="/images/unity101-21st-anniversary-logo-transparent.png"
+              alt="Unity 101 Community Radio - 21st Anniversary"
               width={200}
-              height={220}
-              className="w-full h-auto object-contain"
+              height={200}
+              className="w-28 h-auto mx-auto object-contain"
               priority
             />
           </div>
@@ -120,7 +120,7 @@ export default function AdminLoginPage() {
 
         {/* Error message */}
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-center space-x-2">
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700 flex items-center space-x-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -162,11 +162,10 @@ export default function AdminLoginPage() {
             </div>
           </div>
 
-
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center space-x-2 bg-[#481268] hover:bg-[#390c53] text-white py-2.5 px-4 rounded-lg font-semibold text-xs transition-all shadow-md active:scale-[0.99] disabled:opacity-75"
+            className="w-full flex items-center justify-center space-x-2 bg-[#481268] hover:bg-[#390c53] text-white py-2.5 px-4 rounded-lg font-semibold text-xs transition-all shadow-md active:scale-[0.99] disabled:opacity-75 cursor-pointer"
           >
             {loading ? (
               <>
@@ -182,13 +181,35 @@ export default function AdminLoginPage() {
           </button>
         </form>
 
-        <div className="mt-6 text-center border-t border-slate-100 pt-4">
+        <div className="mt-6 text-center border-t border-slate-100 pt-4 space-y-2">
           <a
             href="/register"
-            className="text-xs text-[#481268] hover:text-amber-600 font-medium transition-colors"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-[#481268] hover:text-amber-600 font-bold transition-colors inline-flex items-center space-x-1"
           >
-            ← Return to Public Guest Registration
+            <span>Open Public Guest Registration</span>
+            <ExternalLink className="w-3 h-3" />
           </a>
+          <div className="flex justify-center items-center space-x-3 text-[11px] text-slate-400">
+            <a
+              href="https://unity101.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-purple-700 transition-colors"
+            >
+              unity101.org ↗
+            </a>
+            <span>•</span>
+            <a
+              href="/scanner"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-purple-700 transition-colors"
+            >
+              VIP Scanner ↗
+            </a>
+          </div>
         </div>
       </div>
     </div>

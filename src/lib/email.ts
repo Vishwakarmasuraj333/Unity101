@@ -72,6 +72,7 @@ export interface RegistrationEmailData {
  */
 function generateGuestConfirmationHtml(data: RegistrationEmailData): string {
   const refCode = `U101-${String(data.id).padStart(5, '0')}`;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://unity101.vercel.app';
   const isVeg = data.food_preference.toLowerCase().includes('veg') && !data.food_preference.toLowerCase().includes('non');
   const foodBadgeColor = isVeg ? '#166534' : '#991b1b';
   const foodBadgeBg = isVeg ? '#dcfce7' : '#fee2e2';
@@ -159,6 +160,16 @@ function generateGuestConfirmationHtml(data: RegistrationEmailData): string {
                   </td>
                 </tr>
               </table>
+
+              <!-- Digital VIP Entry Pass Button (Opens in New Tab) -->
+              <div style="text-align: center; margin: 26px 0 26px 0;">
+                <a href="${appUrl}/pass/${data.id}" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #1e1b4b; text-decoration: none; padding: 14px 30px; border-radius: 12px; font-weight: 800; font-size: 14px; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4); text-transform: uppercase; letter-spacing: 0.5px;">
+                  View &amp; Print Your VIP Entry Pass &rarr;
+                </a>
+                <p style="margin: 8px 0 0 0; font-size: 11px; color: #64748b;">
+                  Opens your official entry badge with high-resolution QR code in a new tab
+                </p>
+              </div>
 
               <!-- Event Details Box -->
               <div style="background-color: #faf5ff; border-left: 4px solid #f59e0b; padding: 16px 20px; border-radius: 0 10px 10px 0; margin-bottom: 24px;">

@@ -9,55 +9,58 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://unity101.org'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://unity101.vercel.app'),
   title: {
-    default: 'Unity 101 Community Radio | Official Event Registration',
+    default: 'Unity 101 Community Radio | 21st Anniversary Awards & Achievement Celebrations',
     template: '%s | Unity 101 Community Radio',
   },
   description:
-    'Register for Unity 101 Community Radio 20th Anniversary Gala Celebration. Confirm your guest attendance, food preferences, and receive your digital entry confirmation.',
+    'Official invitation and registration portal for Unity 101 Community Radio 21st Anniversary Awards & Achievement Celebrations. Friday 15 January 2027 at Novotel Southampton.',
   keywords: [
     'Unity 101',
     'Community Radio',
     'Southampton Radio',
     'Event Registration',
     'Gala Dinner',
-    '20th Anniversary',
+    '21st Anniversary',
+    'Awards & Achievement Celebrations',
+    'Novotel Southampton',
     'Southampton Events',
   ],
   authors: [{ name: 'Unity 101 Community Radio', url: 'https://unity101.org' }],
   creator: 'Unity 101 Community Radio',
   publisher: 'Unity 101 Community Radio',
   icons: {
-    icon: '/images/unity101-logo.svg',
-    shortcut: '/images/unity101-logo.svg',
-    apple: '/images/unity101-logo.svg',
+    icon: '/images/unity101-21st-anniversary-logo-transparent.png',
+    shortcut: '/images/unity101-21st-anniversary-logo-transparent.png',
+    apple: '/images/unity101-21st-anniversary-logo-transparent.png',
   },
   openGraph: {
-    title: 'Unity 101 Community Radio - 20th Anniversary Event Registration',
+    title: 'Unity 101 Community Radio - 21st Anniversary Awards & Achievement Celebrations',
     description:
-      'Join us in celebrating 20 years of broadcasting excellence. Register your attendance and select catering options.',
-    url: 'https://unity101.org/register',
+      'Join civic leaders, broadcast legends, and valued community partners at Novotel Southampton for an unforgettable evening honoring 21 landmark years of broadcasting excellence.',
+    url: 'https://unity101.vercel.app',
     siteName: 'Unity 101 Community Radio',
     locale: 'en_GB',
     type: 'website',
     images: [
       {
-        url: '/images/unity101-logo.png',
-        width: 1200,
-        height: 630,
-        alt: 'Unity 101 Community Radio 20th Anniversary Gala',
+        url: '/images/unity101-21st-anniversary-logo-transparent.png',
+        width: 800,
+        height: 533,
+        alt: 'Unity 101 Community Radio 21st Anniversary Awards & Achievement Celebrations',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Unity 101 Community Radio - Event Registration',
-    description: 'Official guest registration for Unity 101 Community Radio 20th Anniversary Gala.',
-    images: ['/images/unity101-logo.png'],
+    title: 'Unity 101 Community Radio - 21st Anniversary Celebrations',
+    description:
+      'Official guest registration for Unity 101 Community Radio 21st Anniversary Awards at Novotel Southampton.',
+    images: ['/images/unity101-21st-anniversary-logo-transparent.png'],
   },
   alternates: {
-    canonical: 'https://unity101.org/register',
+    canonical: 'https://unity101.vercel.app',
   },
   robots: {
     index: true,

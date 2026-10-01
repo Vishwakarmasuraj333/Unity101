@@ -19,6 +19,7 @@ import {
   Mail,
   ShieldCheck,
   Download,
+  ExternalLink,
 } from 'lucide-react';
 import { RegistrationSchema, RegistrationFormData } from '@/lib/validation';
 import { generateQrSvg } from '@/lib/qrcode';
@@ -232,11 +233,11 @@ export default function RegistrationForm() {
         <div className="pt-8 sm:pt-10 pb-4 px-6 sm:px-10 text-center flex flex-col items-center">
           <div className="w-56 sm:w-64 h-auto relative mb-3">
             <Image
-              src="/images/unity101-21st-anniversary-logo.png"
+              src="/images/unity101-21st-anniversary-logo-transparent.png"
               alt="Unity 101 Community Radio - 21st Anniversary Awards & Achievement Celebrations"
-              width={340}
-              height={230}
-              className="w-full h-auto object-contain drop-shadow-md"
+              width={260}
+              height={270}
+              className="w-48 sm:w-56 h-auto mx-auto object-contain drop-shadow-md"
               priority
             />
           </div>
@@ -287,7 +288,7 @@ export default function RegistrationForm() {
                   {/* Background Watermark */}
                   <div className="absolute -right-8 -top-8 w-32 h-32 opacity-10 pointer-events-none select-none">
                     <Image
-                      src="/images/unity101-logo.png"
+                      src="/images/unity101-21st-anniversary-logo-transparent.png"
                       alt=""
                       width={128}
                       height={128}
@@ -421,8 +422,20 @@ export default function RegistrationForm() {
                 </p>
               </div>
 
-              {/* Action Buttons Row (Print, Calendar, WhatsApp, Register Another) */}
+              {/* Action Buttons Row (Open New Tab, Print, Calendar, WhatsApp, Register Another) */}
               <div className="flex flex-wrap items-center justify-center gap-2.5 max-w-md mx-auto no-print">
+                {/* Open Full Pass in New Tab */}
+                <a
+                  href={`/pass/${submissionSuccess?.id || refCode}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-1.5 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs font-black py-2.5 px-4 rounded-xl transition-all shadow-md active:scale-95 cursor-pointer"
+                  title="Open Official VIP Pass in a New Tab"
+                >
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-950" />
+                  <span>Open Pass in New Tab ↗</span>
+                </a>
+
                 {/* Print / Save Pass */}
                 <button
                   type="button"
@@ -431,7 +444,7 @@ export default function RegistrationForm() {
                   title="Print or Save as PDF"
                 >
                   <Printer className="w-3.5 h-3.5 text-amber-300" />
-                  <span>Print / Save Pass</span>
+                  <span>Print / Save</span>
                 </button>
 
                 {/* Add to Calendar */}
@@ -773,13 +786,40 @@ export default function RegistrationForm() {
 
       {/* Footer Branding Credit */}
       <div className="mt-8 text-center text-xs text-slate-500">
-        <p>© 2026 Unity 101 Community Radio. 20 Years of Broadcasting Excellence.</p>
-        <div className="mt-2 flex justify-center space-x-4 text-slate-500">
-          <a href="/admin/login" className="hover:text-purple-700 transition-colors">
-            Admin Portal
+        <p>© 2005–2027 Unity 101 Community Radio. 21st Anniversary Awards &amp; Achievement Celebrations.</p>
+        <div className="mt-2 flex justify-center items-center space-x-3 text-slate-500">
+          <a
+            href="https://unity101.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-purple-700 transition-colors inline-flex items-center space-x-1"
+            title="Unity 101 Official Website (Opens in new tab)"
+          >
+            <span>unity101.org</span>
+            <ExternalLink className="w-2.5 h-2.5" />
           </a>
           <span>•</span>
-          <span>Southampton, UK</span>
+          <a
+            href="/admin/login"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-purple-700 transition-colors inline-flex items-center space-x-1"
+            title="Admin Management Portal (Opens in new tab)"
+          >
+            <span>Admin Portal</span>
+            <ExternalLink className="w-2.5 h-2.5" />
+          </a>
+          <span>•</span>
+          <a
+            href="/scanner"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-purple-700 transition-colors inline-flex items-center space-x-1"
+            title="Reception Pass Scanner (Opens in new tab)"
+          >
+            <span>Scanner</span>
+            <ExternalLink className="w-2.5 h-2.5" />
+          </a>
         </div>
       </div>
     </div>

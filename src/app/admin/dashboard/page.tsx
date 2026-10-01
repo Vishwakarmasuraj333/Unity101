@@ -18,6 +18,8 @@ import {
   Eye,
   History,
   Sparkles,
+  ExternalLink,
+  QrCode,
 } from 'lucide-react';
 import {
   DashboardMetrics,
@@ -323,14 +325,36 @@ export default function AdminDashboardPage() {
                           {new Date(reg.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
                         </td>
                         <td className="py-3 text-right">
-                          <Link
-                            href={`/admin/registrations/${reg.id}`}
-                            className="inline-flex items-center space-x-1 text-slate-600 dark:text-slate-400 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-950/40 px-2 py-1 rounded-lg transition-colors font-semibold text-[11px]"
-                            title="View Registration Details"
-                          >
-                            <Eye className="w-3.5 h-3.5" />
-                            <span>View</span>
-                          </Link>
+                          <div className="flex items-center justify-end space-x-1">
+                            <Link
+                              href={`/admin/registrations/${reg.id}`}
+                              className="inline-flex items-center space-x-1 text-slate-600 dark:text-slate-400 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-950/40 px-2 py-1 rounded-lg transition-colors font-semibold text-[11px]"
+                              title="View Registration Details"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>View</span>
+                            </Link>
+
+                            <Link
+                              href={`/admin/registrations/${reg.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-1 text-slate-400 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors inline-flex items-center"
+                              title="Open Details in New Tab"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </Link>
+
+                            <Link
+                              href={`/pass/${reg.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-1 text-amber-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40 rounded-lg transition-colors inline-flex items-center"
+                              title="Open Official VIP Pass in New Tab"
+                            >
+                              <QrCode className="w-3.5 h-3.5" />
+                            </Link>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -356,6 +380,36 @@ export default function AdminDashboardPage() {
                   </div>
                   <ArrowRight className="w-3.5 h-3.5 text-purple-700 dark:text-purple-300 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
+
+                {/* VIP Pass Scanner (New Tab) */}
+                <a
+                  href="/admin/scanner"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-between p-3 rounded-xl bg-amber-50/80 hover:bg-amber-100 dark:bg-amber-950/30 dark:hover:bg-amber-900/50 text-amber-950 dark:text-amber-200 font-semibold text-xs transition-colors group border border-amber-200/80 dark:border-amber-800/60"
+                  title="Launch VIP QR Scanner in a New Tab"
+                >
+                  <div className="flex items-center space-x-2">
+                    <QrCode className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    <span>Launch VIP Scanner</span>
+                  </div>
+                  <ExternalLink className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 group-hover:translate-x-0.5 transition-transform" />
+                </a>
+
+                {/* Public Registration Form (New Tab) */}
+                <a
+                  href="/register"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-[#161e31] dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold text-xs transition-colors group border border-slate-200 dark:border-slate-700"
+                  title="Open Public Registration Portal in a New Tab"
+                >
+                  <div className="flex items-center space-x-2">
+                    <ExternalLink className="w-4 h-4 text-purple-700 dark:text-purple-400" />
+                    <span>Public Registration Form</span>
+                  </div>
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                </a>
 
                 <button
                   onClick={handleExportAll}

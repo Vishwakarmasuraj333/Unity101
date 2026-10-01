@@ -6,9 +6,9 @@ import { Settings, Save, CheckCircle, AlertCircle, Loader2, Mail, Send, ShieldCh
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState({
-    event_name: 'Unity 101 Community Radio - 20th Anniversary Gala',
-    event_date: '2026-11-20',
-    event_location: 'Southampton, Hampshire, UK',
+    event_name: 'Unity 101 Community Radio - 21st Anniversary Awards & Achievement Celebrations',
+    event_date: '2027-01-15',
+    event_location: 'Novotel Southampton, 1 West Quay Road, SO15 1RA',
     registration_open: 'true',
     allow_food_choice: 'true',
     notification_email: 'events@unity101.org',

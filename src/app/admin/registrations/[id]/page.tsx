@@ -23,6 +23,8 @@ import {
   Sparkles,
   Save,
   X,
+  QrCode,
+  ExternalLink,
 } from 'lucide-react';
 import { Registration, RegistrationStatus, FoodPreference } from '@/types';
 import { useForm } from 'react-hook-form';
@@ -210,9 +212,22 @@ export default function RegistrationDetailsPage() {
             <span>Back to Registrations</span>
           </Link>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-2">
             {!isEditing && (
               <>
+                {registration && (
+                  <a
+                    href={`/pass/${registration.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center space-x-1.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs font-bold py-2 px-3.5 rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer"
+                    title="Open VIP Pass Ticket in a New Tab"
+                  >
+                    <QrCode className="w-3.5 h-3.5 text-slate-950" />
+                    <span>Open VIP Pass ↗</span>
+                  </a>
+                )}
+
                 <button
                   onClick={handleResendEmail}
                   disabled={resendingEmail || actionLoading}
