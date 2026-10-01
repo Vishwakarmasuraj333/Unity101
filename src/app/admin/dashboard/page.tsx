@@ -77,7 +77,12 @@ export default function AdminDashboardPage() {
   };
 
   const handleExportAll = () => {
-    window.location.href = '/api/admin/export';
+    const a = document.createElement('a');
+    a.href = '/api/admin/export';
+    a.setAttribute('download', '');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   return (

@@ -211,7 +211,12 @@ export default function RegistrationsManagementPage() {
       if (foodFilter !== 'all') params.set('food', foodFilter);
       if (dateFilter !== 'all') params.set('dateRange', dateFilter);
     }
-    window.location.href = `/api/admin/export?${params.toString()}`;
+    const a = document.createElement('a');
+    a.href = `/api/admin/export?${params.toString()}`;
+    a.setAttribute('download', '');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   return (
