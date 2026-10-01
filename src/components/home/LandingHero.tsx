@@ -200,79 +200,12 @@ export default function LandingHero() {
           </div>
         </div>
 
-        {/* Main Headline with Royal Typography & Dynamic Multi-Direction Continuous Word Animations */}
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              @keyframes wordFromLeft {
-                0%, 100% { transform: translateX(0); }
-                50% { transform: translateX(-18px); }
-              }
-              @keyframes wordFromTop {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-16px); }
-              }
-              @keyframes wordFromBottom {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(16px); }
-              }
-              @keyframes wordFromRight {
-                0%, 100% { transform: translateX(0); }
-                50% { transform: translateX(18px); }
-              }
-              .animate-word-left {
-                display: inline-block !important;
-                animation: wordFromLeft 3s ease-in-out infinite;
-                will-change: transform;
-              }
-              .animate-word-top {
-                display: inline-block !important;
-                animation: wordFromTop 3s ease-in-out infinite;
-                will-change: transform;
-              }
-              .animate-word-bottom {
-                display: inline-block !important;
-                animation: wordFromBottom 3s ease-in-out infinite;
-                will-change: transform;
-              }
-              .animate-word-right {
-                display: inline-block !important;
-                animation: wordFromRight 3s ease-in-out infinite;
-                will-change: transform;
-              }
-            `,
-          }}
-        />
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.25] mb-6 font-serif-brand">
-          <span className="animate-word-left text-white drop-shadow-[0_2px_15px_rgba(255,255,255,0.35)]" style={{ animationDelay: '0s' }}>
-            Celebrating
-          </span>{' '}
-          <span className="animate-word-top text-white drop-shadow-[0_2px_15px_rgba(255,255,255,0.35)]" style={{ animationDelay: '0.35s' }}>
-            21
-          </span>{' '}
-          <span className="animate-word-bottom text-white drop-shadow-[0_2px_15px_rgba(255,255,255,0.35)]" style={{ animationDelay: '0.7s' }}>
-            Years
-          </span>{' '}
-          <span className="animate-word-right text-white drop-shadow-[0_2px_15px_rgba(255,255,255,0.35)]" style={{ animationDelay: '1.05s' }}>
-            of
-          </span>{' '}
-          <span className="animate-word-left text-white drop-shadow-[0_2px_15px_rgba(255,255,255,0.35)]" style={{ animationDelay: '1.4s' }}>
-            Voice,
-          </span>
-          <br className="block my-1" />
-          <span className="inline-block mt-1">
-            <span className="animate-word-top text-amber-300 drop-shadow-[0_4px_25px_rgba(245,196,81,0.7)]" style={{ animationDelay: '1.75s' }}>
-              Heritage
-            </span>{' '}
-            <span className="animate-word-bottom text-amber-300 drop-shadow-[0_4px_25px_rgba(245,196,81,0.7)]" style={{ animationDelay: '2.1s' }}>
-              &amp;
-            </span>{' '}
-            <span className="animate-word-right text-amber-300 drop-shadow-[0_4px_25px_rgba(245,196,81,0.7)]" style={{ animationDelay: '2.45s' }}>
-              Community
-            </span>{' '}
-            <span className="animate-word-left text-amber-300 drop-shadow-[0_4px_25px_rgba(245,196,81,0.7)]" style={{ animationDelay: '2.8s' }}>
-              Honors
-            </span>
+        {/* Main Headline with Royal Typography */}
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.15] mb-6 font-serif-brand">
+          Celebrating 21 Years of Voice,
+          <br />
+          <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-yellow-300 bg-clip-text text-transparent drop-shadow-[0_4px_25px_rgba(245,196,81,0.5)]">
+            Heritage &amp; Community Honors
           </span>
         </h1>
 

@@ -92,67 +92,6 @@ html.dark ::-webkit-scrollbar-thumb:hover {
   animation: satrangiFlow 4s ease infinite;
 }
 
-/* Dynamic Continuous Heading Word Stagger Animations: Left, Top, Bottom, Right */
-@keyframes wordFromLeft {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(-12px);
-  }
-}
-
-@keyframes wordFromTop {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-12px);
-  }
-}
-
-@keyframes wordFromBottom {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(12px);
-  }
-}
-
-@keyframes wordFromRight {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(12px);
-  }
-}
-
-.animate-word-left {
-  display: inline-block;
-  animation: wordFromLeft 3.2s ease-in-out infinite;
-  will-change: transform;
-}
-
-.animate-word-top {
-  display: inline-block;
-  animation: wordFromTop 3.2s ease-in-out infinite;
-  will-change: transform;
-}
-
-.animate-word-bottom {
-  display: inline-block;
-  animation: wordFromBottom 3.2s ease-in-out infinite;
-  will-change: transform;
-}
-
-.animate-word-right {
-  display: inline-block;
-  animation: wordFromRight 3.2s ease-in-out infinite;
-  will-change: transform;
-}
-
 @keyframes scannerLaser {
   0% {
     top: 5%;
