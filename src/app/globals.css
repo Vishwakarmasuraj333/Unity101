@@ -72,6 +72,86 @@ html.dark ::-webkit-scrollbar-thumb:hover {
   animation: spinSlow 30s linear infinite;
 }
 
+@keyframes satrangiSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-satrangi {
+  animation: satrangiSpin 3.5s linear infinite;
+}
+
+@keyframes satrangiFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-satrangi-flow {
+  background-size: 300% 300%;
+  animation: satrangiFlow 4s ease infinite;
+}
+
+@keyframes flyInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-60px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes flyInTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-60px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes flyInBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(60px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes flyInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(60px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.animate-fly-left {
+  animation: flyInLeft 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fly-top {
+  animation: flyInTop 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fly-bottom {
+  animation: flyInBottom 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fly-right {
+  animation: flyInRight 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @keyframes scannerLaser {
   0% {
     top: 5%;

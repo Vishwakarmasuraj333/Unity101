@@ -17,6 +17,7 @@ import {
   Users,
   Lock,
   ArrowRight,
+  ArrowUp,
   ExternalLink,
   Car,
   Shirt,
@@ -29,6 +30,8 @@ export default function LandingHero() {
     minutes: 0,
     seconds: 0,
   });
+
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   // Target Gala Date: Friday, 15 January 2027, 18:00:00 GMT
   useEffect(() => {
@@ -48,7 +51,17 @@ export default function LandingHero() {
 
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
-    return () => clearInterval(interval);
+
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 280);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   return (
@@ -95,13 +108,15 @@ export default function LandingHero() {
               />
             </div>
             <div>
-              <div className="font-serif-brand font-black text-sm sm:text-base text-white tracking-wider flex items-center space-x-2">
-                <span>UNITY 101</span>
-                <span className="text-amber-400 text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/40">
+              <div className="font-serif-brand font-black text-sm sm:text-base tracking-wider flex items-center space-x-2">
+                <span className="bg-gradient-to-r from-amber-100 via-amber-300 to-yellow-200 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(245,196,81,0.5)]">
+                  UNITY 101
+                </span>
+                <span className="text-amber-300 text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-400/15 border border-amber-400/50 shadow-xs">
                   21 YEARS
                 </span>
               </div>
-              <div className="text-[10px] text-purple-300/80 uppercase tracking-widest font-semibold">
+              <div className="text-[10px] text-amber-200/90 uppercase tracking-widest font-semibold">
                 Awards &amp; Achievement Celebrations
               </div>
             </div>
@@ -132,13 +147,26 @@ export default function LandingHero() {
 
             <Link
               href="/register"
-              className="relative group overflow-hidden rounded-xl p-px font-semibold text-xs transition-all active:scale-95 shadow-md shadow-amber-500/20"
+              className="relative group rounded-xl p-[1.5px] font-semibold text-xs transition-all active:scale-95 shadow-md shadow-amber-500/20 overflow-hidden flex items-center justify-center"
             >
-              <span className="absolute inset-0 bg-gradient-to-r from-amber-400 via-purple-500 to-amber-300 group-hover:opacity-100 transition-opacity" />
-              <span className="relative block px-3.5 sm:px-4 py-2 rounded-[11px] bg-[#220735] text-amber-300 group-hover:bg-[#2e0947] transition-colors flex items-center space-x-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-                <span className="font-bold">Register Guest Pass</span>
-                <ArrowRight className="w-3.5 h-3.5 text-amber-300 group-hover:translate-x-0.5 transition-transform" />
+              {/* Satrangi Rotating Border */}
+              <span
+                className="absolute -inset-[150%] bg-[conic-gradient(from_0deg,#ff0055,#ff5500,#ffcc00,#00e676,#00b0ff,#7c4dff,#e040fb,#ff0055)] animate-satrangi pointer-events-none"
+                aria-hidden="true"
+              />
+
+              <span className="relative block px-3.5 sm:px-4 py-2 rounded-[10.5px] bg-gradient-to-r from-[#2f0a4f] via-[#48117a] to-[#2f0a4f] text-amber-200 overflow-hidden z-10 transition-colors duration-300">
+                {/* Left-to-Right Sliding Hover Background Fill */}
+                <span
+                  className="absolute inset-0 w-full h-full bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out will-change-transform"
+                  aria-hidden="true"
+                />
+
+                <span className="relative z-10 flex items-center space-x-1.5 group-hover:text-purple-950 transition-colors">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400 group-hover:text-purple-950 transition-colors animate-pulse" />
+                  <span className="font-bold">Register Guest Pass</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-amber-300 group-hover:text-purple-950 group-hover:translate-x-0.5 transition-all" />
+                </span>
               </span>
             </Link>
           </div>
@@ -172,12 +200,37 @@ export default function LandingHero() {
           </div>
         </div>
 
-        {/* Main Headline with Royal Typography */}
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.15] mb-6 font-serif-brand">
-          Celebrating 21 Years of Voice,
+        {/* Main Headline with Royal Typography & Dynamic Multi-Direction Word Stagger Animation */}
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.25] mb-6 font-serif-brand">
+          <span className="inline-block animate-fly-left" style={{ animationDelay: '100ms' }}>
+            Celebrating
+          </span>{' '}
+          <span className="inline-block animate-fly-top" style={{ animationDelay: '200ms' }}>
+            21
+          </span>{' '}
+          <span className="inline-block animate-fly-bottom" style={{ animationDelay: '300ms' }}>
+            Years
+          </span>{' '}
+          <span className="inline-block animate-fly-right" style={{ animationDelay: '400ms' }}>
+            of
+          </span>{' '}
+          <span className="inline-block animate-fly-left" style={{ animationDelay: '500ms' }}>
+            Voice,
+          </span>
           <br />
-          <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-yellow-300 bg-clip-text text-transparent drop-shadow-[0_4px_25px_rgba(245,196,81,0.5)]">
-            Heritage &amp; Community Honors
+          <span className="inline-block bg-gradient-to-r from-amber-200 via-amber-400 to-yellow-300 bg-clip-text text-transparent drop-shadow-[0_4px_25px_rgba(245,196,81,0.5)]">
+            <span className="inline-block animate-fly-top" style={{ animationDelay: '600ms' }}>
+              Heritage
+            </span>{' '}
+            <span className="inline-block animate-fly-bottom" style={{ animationDelay: '700ms' }}>
+              &amp;
+            </span>{' '}
+            <span className="inline-block animate-fly-right" style={{ animationDelay: '800ms' }}>
+              Community
+            </span>{' '}
+            <span className="inline-block animate-fly-left" style={{ animationDelay: '900ms' }}>
+              Honors
+            </span>
           </span>
         </h1>
 
@@ -255,13 +308,41 @@ export default function LandingHero() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
           <Link
             href="/register"
-            className="w-full sm:w-auto relative group overflow-hidden rounded-2xl p-0.5 transition-all duration-300 shadow-[0_0_35px_rgba(245,158,11,0.45)] hover:shadow-[0_0_50px_rgba(245,158,11,0.7)] hover:scale-105 active:scale-95 flex items-center justify-center"
+            id="hero-reserve-seat-btn"
+            className="w-full sm:w-auto relative group rounded-2xl p-[2.5px] transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center overflow-hidden shadow-[0_0_30px_rgba(245,158,11,0.35)] hover:shadow-[0_0_55px_rgba(236,72,153,0.55),0_0_40px_rgba(59,130,246,0.45)]"
           >
-            <span className="absolute inset-0 bg-gradient-to-r from-amber-400 via-yellow-200 to-amber-500 animate-shimmer" />
-            <span className="relative flex items-center justify-center space-x-2.5 px-8 py-4 rounded-[14px] bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-purple-950 font-black text-sm uppercase tracking-wider">
-              <Sparkles className="w-4 h-4 text-purple-950" />
-              <span>Reserve Complimentary Guest Seat</span>
-              <ChevronRight className="w-4 h-4 stroke-[3]" />
+            {/* Satrangi (7-Color Rainbow) Ambient Glow Filter Behind Button */}
+            <span
+              className="absolute -inset-1 rounded-2xl bg-[conic-gradient(from_0deg,#ff0055,#ff5500,#ffcc00,#00e676,#00b0ff,#7c4dff,#e040fb,#ff0055)] opacity-50 blur-md group-hover:opacity-95 group-hover:blur-xl transition-all duration-500 animate-satrangi pointer-events-none"
+              aria-hidden="true"
+            />
+
+            {/* Satrangi (7-Color Rainbow) Rotating Border Frame */}
+            <span
+              className="absolute -inset-[150%] bg-[conic-gradient(from_0deg,#ff0055,#ff5500,#ffcc00,#00e676,#00b0ff,#7c4dff,#e040fb,#ff0055)] animate-satrangi pointer-events-none"
+              aria-hidden="true"
+            />
+
+            {/* Inner Content Box with Full Royal Purple Gala Base */}
+            <span className="relative w-full h-full flex items-center justify-center space-x-2.5 px-8 py-4 rounded-[13.5px] bg-gradient-to-r from-[#2c0847] via-[#48117a] to-[#2c0847] overflow-hidden z-10 transition-colors duration-300">
+              {/* Left-to-Right Sliding Background Color on Hover - Full Coverage */}
+              <span
+                className="absolute inset-0 w-full h-full bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out will-change-transform"
+                aria-hidden="true"
+              />
+
+              {/* Dazzling Satrangi / Radiant Light Flare Overlay on Hover */}
+              <span
+                className="absolute inset-0 w-full h-full bg-gradient-to-r from-pink-500/25 via-amber-400/25 to-cyan-400/25 -translate-x-full group-hover:translate-x-0 transition-transform duration-700 ease-out delay-75 will-change-transform"
+                aria-hidden="true"
+              />
+
+              {/* Button Typography & Icons */}
+              <span className="relative z-10 flex items-center justify-center space-x-2.5 text-amber-200 group-hover:text-purple-950 font-black text-sm uppercase tracking-wider transition-colors duration-300">
+                <Sparkles className="w-4 h-4 text-amber-300 group-hover:text-purple-950 transition-all duration-300 group-hover:rotate-45 group-hover:scale-110" />
+                <span>Reserve Complimentary Guest Seat</span>
+                <ChevronRight className="w-4 h-4 stroke-[3] text-amber-300 group-hover:text-purple-950 transition-all duration-300 group-hover:translate-x-1.5" />
+              </span>
             </span>
           </Link>
 
@@ -504,9 +585,28 @@ export default function LandingHero() {
 
           <Link
             href="/register"
-            className="px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-purple-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 shrink-0"
+            className="relative group rounded-xl p-[2px] transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center overflow-hidden shadow-lg shadow-purple-950/50 shrink-0"
           >
-            Claim Your Guest Seat Now
+            {/* Satrangi Rotating Border Frame */}
+            <span
+              className="absolute -inset-[150%] bg-[conic-gradient(from_0deg,#ff0055,#ff5500,#ffcc00,#00e676,#00b0ff,#7c4dff,#e040fb,#ff0055)] animate-satrangi pointer-events-none"
+              aria-hidden="true"
+            />
+
+            {/* Inner Pill with Full Purple Base */}
+            <span className="relative w-full h-full flex items-center justify-center space-x-2 px-6 py-3 rounded-[10px] bg-gradient-to-r from-[#2c0847] via-[#48117a] to-[#2c0847] overflow-hidden z-10 transition-colors duration-300">
+              {/* Left-to-Right Sliding Background Color on Hover - Full Coverage */}
+              <span
+                className="absolute inset-0 w-full h-full bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out will-change-transform"
+                aria-hidden="true"
+              />
+
+              <span className="relative z-10 text-amber-200 group-hover:text-purple-950 font-bold text-xs uppercase tracking-wider transition-colors duration-300 flex items-center space-x-2">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400 group-hover:text-purple-950 transition-colors" />
+                <span>Claim Your Guest Seat Now</span>
+                <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </span>
           </Link>
         </div>
       </section>
@@ -568,6 +668,34 @@ export default function LandingHero() {
           © 2005–2027 Unity 101 Community Radio. 21st Anniversary Awards &amp; Achievement Celebrations.
         </div>
       </footer>
+
+      {/* Floating Professional Back to Top Button */}
+      <button
+        type="button"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="Back to top"
+        title="Back to top"
+        className={`fixed bottom-6 right-6 z-50 group p-[2px] rounded-full transition-all duration-300 shadow-[0_0_25px_rgba(245,158,11,0.3)] hover:shadow-[0_0_35px_rgba(236,72,153,0.5)] hover:scale-110 active:scale-95 overflow-hidden flex items-center justify-center ${
+          showBackToTop
+            ? 'opacity-100 translate-y-0 pointer-events-auto'
+            : 'opacity-0 translate-y-6 pointer-events-none'
+        }`}
+      >
+        {/* Satrangi Rotating Border */}
+        <span
+          className="absolute -inset-[150%] bg-[conic-gradient(from_0deg,#ff0055,#ff5500,#ffcc00,#00e676,#00b0ff,#7c4dff,#e040fb,#ff0055)] animate-satrangi pointer-events-none"
+          aria-hidden="true"
+        />
+
+        {/* Inner Purple Circular Pill with Left-to-Right Hover Sweep */}
+        <span className="relative w-11 h-11 rounded-full bg-gradient-to-b from-[#3b0b5e] to-[#25053f] flex items-center justify-center overflow-hidden z-10">
+          <span
+            className="absolute inset-0 w-full h-full bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 -translate-x-full group-hover:translate-x-0 transition-transform duration-400 ease-out will-change-transform"
+            aria-hidden="true"
+          />
+          <ArrowUp className="w-5 h-5 text-amber-300 group-hover:text-purple-950 relative z-10 transition-all duration-300 group-hover:-translate-y-0.5 stroke-[2.5]" />
+        </span>
+      </button>
     </div>
   );
 }
