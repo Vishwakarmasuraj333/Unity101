@@ -201,6 +201,48 @@ export default function LandingHero() {
         </div>
 
         {/* Main Headline with Royal Typography & Dynamic Multi-Direction Continuous Word Animations */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              @keyframes wordFromLeft {
+                0%, 100% { transform: translateX(0); }
+                50% { transform: translateX(-18px); }
+              }
+              @keyframes wordFromTop {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-16px); }
+              }
+              @keyframes wordFromBottom {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(16px); }
+              }
+              @keyframes wordFromRight {
+                0%, 100% { transform: translateX(0); }
+                50% { transform: translateX(18px); }
+              }
+              .animate-word-left {
+                display: inline-block !important;
+                animation: wordFromLeft 3s ease-in-out infinite;
+                will-change: transform;
+              }
+              .animate-word-top {
+                display: inline-block !important;
+                animation: wordFromTop 3s ease-in-out infinite;
+                will-change: transform;
+              }
+              .animate-word-bottom {
+                display: inline-block !important;
+                animation: wordFromBottom 3s ease-in-out infinite;
+                will-change: transform;
+              }
+              .animate-word-right {
+                display: inline-block !important;
+                animation: wordFromRight 3s ease-in-out infinite;
+                will-change: transform;
+              }
+            `,
+          }}
+        />
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.25] mb-6 font-serif-brand">
           <span className="animate-word-left text-white drop-shadow-[0_2px_15px_rgba(255,255,255,0.35)]" style={{ animationDelay: '0s' }}>
             Celebrating
