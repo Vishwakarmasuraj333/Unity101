@@ -200,35 +200,35 @@ export default function LandingHero() {
           </div>
         </div>
 
-        {/* Main Headline with Royal Typography & Dynamic Multi-Direction Word Stagger Animation */}
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.25] mb-6 font-serif-brand">
-          <span className="inline-block animate-fly-left" style={{ animationDelay: '100ms' }}>
+        {/* Main Headline with Royal Typography & Dynamic Multi-Direction Continuous Word Animations */}
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.25] mb-6 font-serif-brand">
+          <span className="animate-word-left text-white drop-shadow-[0_2px_15px_rgba(255,255,255,0.35)]" style={{ animationDelay: '0s' }}>
             Celebrating
           </span>{' '}
-          <span className="inline-block animate-fly-top" style={{ animationDelay: '200ms' }}>
+          <span className="animate-word-top text-white drop-shadow-[0_2px_15px_rgba(255,255,255,0.35)]" style={{ animationDelay: '0.35s' }}>
             21
           </span>{' '}
-          <span className="inline-block animate-fly-bottom" style={{ animationDelay: '300ms' }}>
+          <span className="animate-word-bottom text-white drop-shadow-[0_2px_15px_rgba(255,255,255,0.35)]" style={{ animationDelay: '0.7s' }}>
             Years
           </span>{' '}
-          <span className="inline-block animate-fly-right" style={{ animationDelay: '400ms' }}>
+          <span className="animate-word-right text-white drop-shadow-[0_2px_15px_rgba(255,255,255,0.35)]" style={{ animationDelay: '1.05s' }}>
             of
           </span>{' '}
-          <span className="inline-block animate-fly-left" style={{ animationDelay: '500ms' }}>
+          <span className="animate-word-left text-white drop-shadow-[0_2px_15px_rgba(255,255,255,0.35)]" style={{ animationDelay: '1.4s' }}>
             Voice,
           </span>
-          <br />
-          <span className="inline-block bg-gradient-to-r from-amber-200 via-amber-400 to-yellow-300 bg-clip-text text-transparent drop-shadow-[0_4px_25px_rgba(245,196,81,0.5)]">
-            <span className="inline-block animate-fly-top" style={{ animationDelay: '600ms' }}>
+          <br className="block my-1" />
+          <span className="inline-block mt-1">
+            <span className="animate-word-top text-amber-300 drop-shadow-[0_4px_25px_rgba(245,196,81,0.7)]" style={{ animationDelay: '1.75s' }}>
               Heritage
             </span>{' '}
-            <span className="inline-block animate-fly-bottom" style={{ animationDelay: '700ms' }}>
+            <span className="animate-word-bottom text-amber-300 drop-shadow-[0_4px_25px_rgba(245,196,81,0.7)]" style={{ animationDelay: '2.1s' }}>
               &amp;
             </span>{' '}
-            <span className="inline-block animate-fly-right" style={{ animationDelay: '800ms' }}>
+            <span className="animate-word-right text-amber-300 drop-shadow-[0_4px_25px_rgba(245,196,81,0.7)]" style={{ animationDelay: '2.45s' }}>
               Community
             </span>{' '}
-            <span className="inline-block animate-fly-left" style={{ animationDelay: '900ms' }}>
+            <span className="animate-word-left text-amber-300 drop-shadow-[0_4px_25px_rgba(245,196,81,0.7)]" style={{ animationDelay: '2.8s' }}>
               Honors
             </span>
           </span>

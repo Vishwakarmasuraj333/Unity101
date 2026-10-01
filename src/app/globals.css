@@ -92,64 +92,65 @@ html.dark ::-webkit-scrollbar-thumb:hover {
   animation: satrangiFlow 4s ease infinite;
 }
 
-@keyframes flyInLeft {
-  0% {
-    opacity: 0;
-    transform: translateX(-60px) scale(0.9);
+/* Dynamic Continuous Heading Word Stagger Animations: Left, Top, Bottom, Right */
+@keyframes wordFromLeft {
+  0%, 100% {
+    transform: translateX(0);
   }
-  100% {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-}
-
-@keyframes flyInTop {
-  0% {
-    opacity: 0;
-    transform: translateY(-60px) scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+  50% {
+    transform: translateX(-12px);
   }
 }
 
-@keyframes flyInBottom {
-  0% {
-    opacity: 0;
-    transform: translateY(60px) scale(0.9);
+@keyframes wordFromTop {
+  0%, 100% {
+    transform: translateY(0);
   }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+  50% {
+    transform: translateY(-12px);
   }
 }
 
-@keyframes flyInRight {
-  0% {
-    opacity: 0;
-    transform: translateX(60px) scale(0.9);
+@keyframes wordFromBottom {
+  0%, 100% {
+    transform: translateY(0);
   }
-  100% {
-    opacity: 1;
-    transform: translateX(0) scale(1);
+  50% {
+    transform: translateY(12px);
   }
 }
 
-.animate-fly-left {
-  animation: flyInLeft 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+@keyframes wordFromRight {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(12px);
+  }
 }
 
-.animate-fly-top {
-  animation: flyInTop 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+.animate-word-left {
+  display: inline-block;
+  animation: wordFromLeft 3.2s ease-in-out infinite;
+  will-change: transform;
 }
 
-.animate-fly-bottom {
-  animation: flyInBottom 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+.animate-word-top {
+  display: inline-block;
+  animation: wordFromTop 3.2s ease-in-out infinite;
+  will-change: transform;
 }
 
-.animate-fly-right {
-  animation: flyInRight 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+.animate-word-bottom {
+  display: inline-block;
+  animation: wordFromBottom 3.2s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-word-right {
+  display: inline-block;
+  animation: wordFromRight 3.2s ease-in-out infinite;
+  will-change: transform;
 }
 
 @keyframes scannerLaser {
