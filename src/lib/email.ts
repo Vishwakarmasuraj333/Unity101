@@ -98,10 +98,11 @@ function generateGuestConfirmationHtml(data: RegistrationEmailData): string {
                 <tr>
                   <td align="center">
                     <div style="background-color: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.4); display: inline-block; padding: 4px 14px; border-radius: 9999px; margin-bottom: 12px;">
-                      <span style="color: #fde68a; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Official Confirmation</span>
+                      <span style="color: #fde68a; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">VIP Guest Invitation & Pass</span>
                     </div>
                     <h1 style="margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; color: #ffffff;">Unity 101 Community Radio</h1>
-                    <p style="margin: 6px 0 0 0; font-size: 14px; color: #e9d5ff; font-weight: 500;">20th Anniversary Community Gala Celebration</p>
+                    <p style="margin: 6px 0 0 0; font-size: 15px; color: #fbbf24; font-weight: 700;">21st Anniversary Awards &amp; Achievement Celebrations</p>
+                    <p style="margin: 4px 0 0 0; font-size: 13px; color: #e9d5ff;">Friday 15 January 2027 &bull; 6:00 PM &ndash; 10:30 PM &bull; Novotel Southampton</p>
                   </td>
                 </tr>
               </table>
@@ -111,9 +112,9 @@ function generateGuestConfirmationHtml(data: RegistrationEmailData): string {
           <!-- Reference Code Box -->
           <tr>
             <td style="padding: 24px 28px 12px 28px; background-color: #faf5ff; border-bottom: 1px dashed #d8b4fe; text-align: center;">
-              <span style="display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #6b21a8; margin-bottom: 4px;">Your Registration Reference</span>
-              <span style="display: inline-block; font-size: 24px; font-weight: 800; font-family: monospace; color: #481268; letter-spacing: 2px; background: #ffffff; padding: 6px 18px; border-radius: 8px; border: 1px solid #c084fc;">${refCode}</span>
-              <p style="margin: 8px 0 0 0; font-size: 12px; color: #64748b;">Please keep this reference code for check-in on the event day.</p>
+              <span style="display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #6b21a8; margin-bottom: 4px;">Your Official Pass Reference</span>
+              <span style="display: inline-block; font-size: 26px; font-weight: 800; font-family: monospace; color: #481268; letter-spacing: 2px; background: #ffffff; padding: 8px 22px; border-radius: 8px; border: 1.5px solid #c084fc;">${refCode}</span>
+              <p style="margin: 8px 0 0 0; font-size: 12px; color: #64748b;">Please present this reference code or digital pass upon arrival at Novotel Southampton.</p>
             </td>
           </tr>
 
@@ -122,7 +123,7 @@ function generateGuestConfirmationHtml(data: RegistrationEmailData): string {
             <td style="padding: 28px;">
               <h2 style="margin: 0 0 16px 0; font-size: 18px; font-weight: 700; color: #0f172a;">Dear ${data.first_name} ${data.last_name},</h2>
               <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.6; color: #334155;">
-                Thank you for registering to attend the <strong>Unity 101 Community Radio 20th Anniversary Celebration</strong>. Your registration details have been securely recorded in our guest database.
+                We are delighted to confirm your guest registration for the <strong>Unity 101 Community Radio 21st Anniversary Awards &amp; Achievement Celebrations</strong>. Your seat and catering allocation have been officially confirmed.
               </p>
 
               <!-- Registration Summary Table -->
@@ -150,7 +151,7 @@ function generateGuestConfirmationHtml(data: RegistrationEmailData): string {
                   <td style="font-size: 13px; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding: 10px 14px;">${data.town}${data.post_code ? `, ${data.post_code}` : ''}</td>
                 </tr>` : ''}
                 <tr>
-                  <td style="font-size: 13px; font-weight: 600; color: #64748b; padding: 10px 14px;">Food Choice:</td>
+                  <td style="font-size: 13px; font-weight: 600; color: #64748b; padding: 10px 14px;">Meal Choice:</td>
                   <td style="font-size: 13px; padding: 10px 14px;">
                     <span style="display: inline-block; background-color: ${foodBadgeBg}; color: ${foodBadgeColor}; font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 9999px;">
                       ${data.food_preference}
@@ -160,13 +161,14 @@ function generateGuestConfirmationHtml(data: RegistrationEmailData): string {
               </table>
 
               <!-- Event Details Box -->
-              <div style="background-color: #faf5ff; border-left: 4px solid #7e22ce; padding: 16px 20px; border-radius: 0 10px 10px 0; margin-bottom: 24px;">
-                <h3 style="margin: 0 0 6px 0; font-size: 14px; font-weight: 700; color: #581c87;">Event Information & Entry Instructions</h3>
-                <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #475569; line-height: 1.6;">
-                  <li><strong>Arrival:</strong> Please arrive 15 minutes before the ceremony start time.</li>
-                  <li><strong>Check-in:</strong> Present this email or quote Reference <strong>${refCode}</strong> at the reception desk.</li>
-                  <li><strong>Venue:</strong> Southampton Community Venue, Hampshire, UK.</li>
-                  <li><strong>Dietary:</strong> Your meal preference (<strong>${data.food_preference}</strong>) has been reserved.</li>
+              <div style="background-color: #faf5ff; border-left: 4px solid #f59e0b; padding: 16px 20px; border-radius: 0 10px 10px 0; margin-bottom: 24px;">
+                <h3 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 800; color: #581c87;">Event Itinerary & Venue Details</h3>
+                <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #334155; line-height: 1.7;">
+                  <li><strong>Date:</strong> Friday 15 January 2027</li>
+                  <li><strong>Timings:</strong> 6:00 PM &ndash; 10:30 PM (Reception opens at 6:00 PM)</li>
+                  <li><strong>Venue:</strong> Novotel Southampton, 1 West Quay Road, Southampton, SO15 1RA</li>
+                  <li><strong>Dress Code:</strong> Smart / Evening / Traditional Attire</li>
+                  <li><strong>Dietary:</strong> Your meal choice (<strong>${data.food_preference}</strong>) is confirmed with catering.</li>
                 </ul>
               </div>
 
@@ -233,8 +235,8 @@ export async function sendGuestRegistrationConfirmationEmail(
     const info = await transporter.sendMail({
       from: config.from,
       to: data.email,
-      subject: `Registration Confirmed [${refCode}] - Unity 101 Community Radio 20th Anniversary`,
-      text: `Hello ${data.first_name} ${data.last_name},\n\nYour registration for the Unity 101 Community Radio 20th Anniversary Celebration is confirmed.\nReference: ${refCode}\nFood Preference: ${data.food_preference}\n\nWe look forward to seeing you!`,
+      subject: `VIP Guest Pass [${refCode}] — Unity 101 21st Anniversary Awards & Achievement Celebrations`,
+      text: `Hello ${data.first_name} ${data.last_name},\n\nYour guest registration for the Unity 101 21st Anniversary Awards & Achievement Celebrations is confirmed.\n\nDate: Friday 15 January 2027\nTime: 6:00 PM – 10:30 PM\nVenue: Novotel Southampton, 1 West Quay Road, Southampton, SO15 1RA\nPass Reference: ${refCode}\nMeal Choice: ${data.food_preference}\n\nWe look forward to welcoming you!`,
       html: generateGuestConfirmationHtml(data),
     });
 
@@ -283,8 +285,8 @@ export async function sendAdminNewRegistrationAlertEmail(
     const info = await transporter.sendMail({
       from: config.from,
       to: config.adminAlertEmail,
-      subject: `[Unity 101 Admin Alert] New Guest Registered: ${data.first_name} ${data.last_name} (${refCode})`,
-      text: `A new registration has been received for the Unity 101 20th Anniversary Gala:\n\nReference: ${refCode}\nGuest Name: ${data.first_name} ${data.last_name}\nEmail: ${data.email}\nMobile: ${data.mobile}\nStreet Address: ${data.address || 'Not provided'}\nTown / City: ${data.town || 'Not provided'}\nPostcode: ${data.post_code || 'Not provided'}\nFood Preference: ${data.food_preference}\n\nView Guest in Admin Portal: ${appUrl}/admin/registrations/${data.id}`,
+      subject: `[Admin Alert] New Registration: ${data.first_name} ${data.last_name} [${refCode}] — 21st Anniversary Awards`,
+      text: `A new registration has been received for the Unity 101 21st Anniversary Awards & Achievement Celebrations:\n\nReference: ${refCode}\nGuest Name: ${data.first_name} ${data.last_name}\nEmail: ${data.email}\nMobile: ${data.mobile}\nStreet Address: ${data.address || 'Not provided'}\nTown / City: ${data.town || 'Not provided'}\nPostcode: ${data.post_code || 'Not provided'}\nFood Preference: ${data.food_preference}\nEvent Date: Friday 15 January 2027 (6:00 PM – 10:30 PM)\nVenue: Novotel Southampton\n\nView Guest in Admin Portal: ${appUrl}/admin/registrations/${data.id}`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -298,7 +300,8 @@ export async function sendAdminNewRegistrationAlertEmail(
                     <td style="background: linear-gradient(135deg, #1e052c 0%, #3b0e54 100%); padding: 24px; color: #ffffff; text-align: left;">
                       <span style="background-color: #f59e0b; color: #0f172a; font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; letter-spacing: 1px;">Admin Notification</span>
                       <h2 style="margin: 8px 0 0 0; font-size: 20px; font-weight: 800; color: #ffffff;">New Guest Registration Received</h2>
-                      <p style="margin: 4px 0 0 0; font-size: 13px; color: #e9d5ff;">Unity 101 Community Radio • 20th Anniversary Celebration</p>
+                      <p style="margin: 4px 0 0 0; font-size: 13px; color: #fbbf24; font-weight: 700;">Unity 101 • 21st Anniversary Awards &amp; Achievement Celebrations</p>
+                      <p style="margin: 2px 0 0 0; font-size: 12px; color: #e9d5ff;">Friday 15 January 2027 &bull; Novotel Southampton</p>
                     </td>
                   </tr>
                   <tr>

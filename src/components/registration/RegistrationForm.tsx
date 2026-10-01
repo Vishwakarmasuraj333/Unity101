@@ -18,8 +18,12 @@ import {
   Share2,
   Mail,
   ShieldCheck,
+  Download,
 } from 'lucide-react';
 import { RegistrationSchema, RegistrationFormData } from '@/lib/validation';
+import { generateQrSvg } from '@/lib/qrcode';
+import { downloadIcsFile } from '@/lib/calendar';
+import { sounds } from '@/lib/sound';
 
 export default function RegistrationForm() {
   const [submissionSuccess, setSubmissionSuccess] = useState<{
@@ -132,6 +136,7 @@ export default function RegistrationForm() {
         town: data.town,
         post_code: data.post_code,
       });
+      sounds.playGoldenChime();
       reset();
     } catch (err) {
       console.error('Registration submission error:', err);
@@ -169,17 +174,29 @@ export default function RegistrationForm() {
 
   const calendarUrl = submissionSuccess
     ? `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
-        'Unity 101 Community Radio - 20th Anniversary Gala Dinner'
-      )}&dates=20261120T180000Z/20261120T230000Z&details=${encodeURIComponent(
-        `Guest Registration Confirmed: ${submissionSuccess.first_name} ${submissionSuccess.last_name}\nPass Ref: ${refCode}\nMeal Choice: ${submissionSuccess.food_preference}\nVenue: Southampton Community Venue, SO14, UK`
-      )}&location=${encodeURIComponent('Southampton, Hampshire, UK')}`
+        'Unity 101 Community Radio - 21st Anniversary Awards & Achievement Celebrations'
+      )}&dates=20270115T180000Z/20270115T223000Z&details=${encodeURIComponent(
+        `Official Guest Registration Confirmed: ${submissionSuccess.first_name} ${submissionSuccess.last_name}\nPass Ref: ${refCode}\nMeal Choice: ${submissionSuccess.food_preference}\nVenue: Novotel Southampton, 1 West Quay Road, Southampton, SO15 1RA`
+      )}&location=${encodeURIComponent('Novotel Southampton, 1 West Quay Road, Southampton, SO15 1RA')}`
     : '#';
 
   const shareUrl = submissionSuccess
     ? `https://api.whatsapp.com/send?text=${encodeURIComponent(
-        `🎉 I have registered for the Unity 101 Community Radio 20th Anniversary Gala Dinner!\nGuest: ${submissionSuccess.first_name} ${submissionSuccess.last_name}\nRef: ${refCode}\n📅 20 November 2026 • 6:00 PM\n📍 Southampton, UK\nRegister yours: https://unity101.vercel.app/register`
+        `🎉 I have registered for the Unity 101 21st Anniversary Awards & Achievement Celebrations!\nGuest: ${submissionSuccess.first_name} ${submissionSuccess.last_name}\nPass Ref: ${refCode}\n📅 Friday 15 January 2027 • 6:00 PM – 10:30 PM\n📍 Novotel Southampton, UK\nRegister yours: https://unity101events.org/register`
       )}`
     : '#';
+
+  const handleDownloadIcs = () => {
+    if (!submissionSuccess) return;
+    downloadIcsFile({
+      title: 'Unity 101 21st Anniversary Awards & Achievement Celebrations',
+      description: `Official VIP Guest Invitation: ${submissionSuccess.first_name} ${submissionSuccess.last_name}\nPass Reference: ${refCode}\nMeal Choice: ${submissionSuccess.food_preference}\nTimings: 6:00 PM to 10:30 PM`,
+      location: 'Novotel Southampton, 1 West Quay Road, Southampton, SO15 1RA',
+      startDate: '2027-01-15T18:00:00Z',
+      endDate: '2027-01-15T22:30:00Z',
+      fileName: `unity101-21st-anniversary-${refCode}.ics`,
+    });
+  };
 
   const handlePrint = () => {
     window.print();
@@ -211,15 +228,15 @@ export default function RegistrationForm() {
 
       {/* Main Registration Card */}
       <div className="bg-white rounded-2xl shadow-2xl shadow-purple-950/15 border border-purple-100/70 overflow-hidden transition-all duration-300 relative">
-        {/* Card Header with Unity 101 Logo & 20th Anniversary */}
+        {/* Card Header with Unity 101 Logo & 21st Anniversary */}
         <div className="pt-8 sm:pt-10 pb-4 px-6 sm:px-10 text-center flex flex-col items-center">
-          <div className="w-52 sm:w-60 h-auto relative mb-3">
+          <div className="w-56 sm:w-64 h-auto relative mb-3">
             <Image
-              src="/images/unity101-logo.png"
-              alt="Unity 101 Community Radio - 20th Anniversary 2025"
-              width={300}
-              height={330}
-              className="w-full h-auto object-contain drop-shadow-sm"
+              src="/images/unity101-21st-anniversary-logo.png"
+              alt="Unity 101 Community Radio - 21st Anniversary Awards & Achievement Celebrations"
+              width={340}
+              height={230}
+              className="w-full h-auto object-contain drop-shadow-md"
               priority
             />
           </div>
@@ -285,7 +302,7 @@ export default function RegistrationForm() {
                         Official Event Pass
                       </span>
                       <h4 className="font-serif-brand font-black text-xs sm:text-sm text-[#481268] tracking-wider">
-                        UNITY 101 • 20TH ANNIVERSARY GALA
+                        UNITY 101 • 21ST ANNIVERSARY AWARDS
                       </h4>
                     </div>
                     <span className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black text-[9.5px] px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs flex items-center space-x-1 shrink-0">
@@ -357,14 +374,14 @@ export default function RegistrationForm() {
                     <div>
                       <p className="text-[10px] uppercase font-bold text-slate-400">Event Date</p>
                       <p className="font-semibold text-slate-800 text-[11px] mt-0.5">
-                        Friday, 20 Nov 2026
+                        Friday, 15 Jan 2027
                       </p>
                     </div>
 
                     <div>
                       <p className="text-[10px] uppercase font-bold text-slate-400">Venue & Time</p>
-                      <p className="font-semibold text-slate-800 text-[11px] mt-0.5">
-                        Southampton • 6:00 PM GMT
+                      <p className="font-semibold text-slate-800 text-[11px] mt-0.5 truncate" title="Novotel Southampton">
+                        Novotel Southampton • 6:00 PM – 10:30 PM
                       </p>
                     </div>
                   </div>
@@ -375,34 +392,22 @@ export default function RegistrationForm() {
                     <div className="absolute -right-7 w-4 h-4 rounded-full bg-[#f7f5fa] border-l border-slate-200" />
                   </div>
 
-                  {/* Vector Barcode Strip Simulation */}
+                  {/* Vector QR Code */}
                   <div className="flex flex-col items-center justify-center pt-1 text-center">
-                    <div className="flex items-center justify-center space-x-1 tracking-widest text-slate-800 font-mono text-xs opacity-80 h-7 select-none">
-                      <div className="w-1 h-7 bg-slate-900" />
-                      <div className="w-0.5 h-7 bg-slate-900" />
-                      <div className="w-1.5 h-7 bg-slate-900" />
-                      <div className="w-0.5 h-7 bg-slate-900" />
-                      <div className="w-2 h-7 bg-slate-900" />
-                      <div className="w-1 h-7 bg-slate-900" />
-                      <div className="w-0.5 h-7 bg-slate-900" />
-                      <div className="w-1.5 h-7 bg-slate-900" />
-                      <div className="w-1 h-7 bg-slate-900" />
-                      <div className="w-2 h-7 bg-slate-900" />
-                      <div className="w-0.5 h-7 bg-slate-900" />
-                      <div className="w-1 h-7 bg-slate-900" />
-                      <div className="w-1.5 h-7 bg-slate-900" />
-                      <div className="w-0.5 h-7 bg-slate-900" />
-                      <div className="w-2 h-7 bg-slate-900" />
-                      <div className="w-1 h-7 bg-slate-900" />
-                      <div className="w-1 h-7 bg-slate-900" />
-                      <div className="w-0.5 h-7 bg-slate-900" />
-                      <div className="w-1.5 h-7 bg-slate-900" />
-                      <div className="w-2 h-7 bg-slate-900" />
-                      <div className="w-0.5 h-7 bg-slate-900" />
-                      <div className="w-1 h-7 bg-slate-900" />
-                    </div>
-                    <p className="text-[9.5px] font-mono tracking-widest text-slate-500 mt-1 uppercase">
-                      ENTRY CODE: {refCode} • SCAN FOR VERIFICATION
+                    <div
+                      className="bg-white p-2.5 rounded-xl shadow-xs border border-purple-100 flex items-center justify-center"
+                      dangerouslySetInnerHTML={{
+                        __html: generateQrSvg(
+                          `UNITY101:21ST:${refCode}:${submissionSuccess.first_name}+${submissionSuccess.last_name}`,
+                          { size: 125, color: '#320a4b' }
+                        ),
+                      }}
+                    />
+                    <p className="text-[10.5px] font-mono font-bold tracking-widest text-[#481268] mt-2 uppercase">
+                      ENTRY PASS: {refCode}
+                    </p>
+                    <p className="text-[9.5px] text-slate-500 mt-0.5">
+                      Present at Novotel Southampton reception desk for priority check-in
                     </p>
                   </div>
                 </div>
@@ -438,8 +443,19 @@ export default function RegistrationForm() {
                   title="Add to Google Calendar"
                 >
                   <Calendar className="w-3.5 h-3.5 text-[#481268]" />
-                  <span>Add to Calendar</span>
+                  <span>Google Cal</span>
                 </a>
+
+                {/* Download Apple / Outlook .ics */}
+                <button
+                  type="button"
+                  onClick={handleDownloadIcs}
+                  className="inline-flex items-center space-x-1.5 bg-purple-50 hover:bg-purple-100 text-purple-900 text-xs font-bold py-2.5 px-3.5 rounded-xl transition-all border border-purple-200 active:scale-95 cursor-pointer"
+                  title="Download Apple / Outlook iCal Event"
+                >
+                  <Download className="w-3.5 h-3.5 text-purple-700" />
+                  <span>Download .ics</span>
+                </button>
 
                 {/* Share on WhatsApp */}
                 <a

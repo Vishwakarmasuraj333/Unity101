@@ -96,8 +96,8 @@ export default function AdminDashboardPage() {
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                 <span>Unity 101 Community Radio</span>
               </span>
-              <span className="text-[10px] bg-amber-400/20 text-amber-200 px-2 py-0.5 rounded-full border border-amber-400/30 font-semibold">
-                20th Anniversary Gala
+              <span className="text-[10px] bg-amber-400/20 text-amber-200 px-2.5 py-0.5 rounded-full border border-amber-400/30 font-semibold">
+                21st Anniversary Awards • Novotel Southampton (15 Jan 2027)
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold font-serif-brand mt-1 text-white">

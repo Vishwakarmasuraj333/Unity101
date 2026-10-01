@@ -4,16 +4,16 @@ import RegistrationForm from '@/components/registration/RegistrationForm';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Guest Registration | 20th Anniversary Gala Celebration',
+  title: 'Guest Registration | Unity 101 21st Anniversary Awards & Celebrations',
   description:
-    'Join Unity 101 Community Radio for our landmark 20th Anniversary Community Gala. Fill in your guest details and confirm meal preferences (Vegetarian or Non-Vegetarian).',
+    'Official guest registration for Unity 101 Community Radio 21st Anniversary Awards & Achievement Celebrations on Friday 15 January 2027 at Novotel Southampton.',
   alternates: {
     canonical: '/register',
   },
   openGraph: {
-    title: 'Guest Registration | Unity 101 Community Radio 20th Anniversary Gala',
+    title: 'Guest Registration | Unity 101 21st Anniversary Awards & Achievement Celebrations',
     description:
-      'Official guest registration for Unity 101 Community Radio 20th Anniversary Gala Dinner. Secure your place now.',
+      'Official guest registration for Unity 101 Community Radio 21st Anniversary Awards & Achievement Celebrations at Novotel Southampton.',
     url: '/register',
     type: 'website',
   },
@@ -22,32 +22,33 @@ export const metadata: Metadata = {
 const jsonLdEvent = {
   '@context': 'https://schema.org',
   '@type': 'Event',
-  name: 'Unity 101 Community Radio 20th Anniversary Community Gala',
-  startDate: '2026-11-20T18:00:00+00:00',
-  endDate: '2026-11-20T23:00:00+00:00',
+  name: 'Unity 101 Community Radio 21st Anniversary Awards & Achievement Celebrations',
+  startDate: '2027-01-15T18:00:00+00:00',
+  endDate: '2027-01-15T22:30:00+00:00',
   eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
   eventStatus: 'https://schema.org/EventScheduled',
   location: {
     '@type': 'Place',
-    name: 'Southampton Community Venue',
+    name: 'Novotel Southampton',
     address: {
       '@type': 'PostalAddress',
+      streetAddress: '1 West Quay Road',
       addressLocality: 'Southampton',
       addressRegion: 'Hampshire',
-      postalCode: 'SO14',
+      postalCode: 'SO15 1RA',
       addressCountry: 'GB',
     },
   },
   organizer: {
     '@type': 'Organization',
     name: 'Unity 101 Community Radio',
-    url: 'https://unity101.org',
+    url: 'https://unity101events.org',
   },
   description:
-    'Celebration of 20 years of community service and broadcasting by Unity 101 Community Radio.',
+    'Unity 101 21st Anniversary Awards & Achievement Celebrations celebrating 21 landmark years of community radio service, broadcasting, and awards.',
   offers: {
     '@type': 'Offer',
-    url: 'https://unity101.org/register',
+    url: 'https://unity101events.org/register',
     price: '0',
     priceCurrency: 'GBP',
     availability: 'https://schema.org/InStock',

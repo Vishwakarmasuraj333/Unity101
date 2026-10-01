@@ -129,7 +129,7 @@ export async function GET(req: NextRequest) {
       // Banner Row 1: Title
       sheet.mergeCells('A1:N1');
       const titleCell = sheet.getCell('A1');
-      titleCell.value = 'UNITY 101 COMMUNITY RADIO — OFFICIAL GALA GUEST REGISTER';
+      titleCell.value = 'UNITY 101 COMMUNITY RADIO — 21ST ANNIVERSARY AWARDS & ACHIEVEMENTS';
       titleCell.font = { name: 'Calibri', size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
       titleCell.fill = {
         type: 'pattern',
@@ -142,7 +142,7 @@ export async function GET(req: NextRequest) {
       // Banner Row 2: Subtitle & Metrics
       sheet.mergeCells('A2:N2');
       const subCell = sheet.getCell('A2');
-      subCell.value = `20th Anniversary Gala Dinner • Generated on ${new Date().toLocaleString()} • Total Guests: ${totalCount} (Veg: ${vegCount}, Non-Veg: ${nonVegCount}) | Confirmed: ${confirmedCount}`;
+      subCell.value = `21st Anniversary Awards & Celebrations • Novotel Southampton (15 Jan 2027) • Generated on ${new Date().toLocaleString()} • Total Guests: ${totalCount} (Veg: ${vegCount}, Non-Veg: ${nonVegCount}) | Confirmed: ${confirmedCount}`;
       subCell.font = { name: 'Calibri', size: 10, italic: true, color: { argb: 'FFF59E0B' } }; // Gold text
       subCell.fill = {
         type: 'pattern',
@@ -380,7 +380,7 @@ export async function GET(req: NextRequest) {
       doc.setTextColor(255, 255, 255);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(10);
-      doc.text('20th Anniversary Gala Dinner • Official Guest Master Register', 28, 46);
+      doc.text('21st Anniversary Awards & Achievement Celebrations • Novotel Southampton (15 Jan 2027)', 28, 46);
 
       // Top Right Metric Snapshot
       doc.setFontSize(8.5);
