@@ -73,11 +73,16 @@ export default function AdminExportsPage() {
     if (search.trim()) params.set('search', search.trim());
 
     const downloadUrl = `/api/admin/export?${params.toString()}`;
-    window.location.href = downloadUrl;
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.setAttribute('download', `unity101-manifest.${selectedFmt === 'excel' ? 'xlsx' : selectedFmt}`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
     setTimeout(() => {
       setIsExporting(false);
-      setDownloadSuccess(`Successfully triggered ${selectedFmt.toUpperCase()} export!`);
+      setDownloadSuccess(`Successfully downloaded ${selectedFmt.toUpperCase()} file!`);
       setTimeout(() => setDownloadSuccess(null), 4000);
     }, 1200);
   };

@@ -34,6 +34,13 @@ import {
   FileText,
   FileDown,
   Mail,
+  Check,
+  CheckCheck,
+  Volume2,
+  VolumeX,
+  MapPin,
+  Sparkles,
+  RefreshCw,
 } from 'lucide-react';
 import { Registration } from '@/types';
 
@@ -57,27 +64,110 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [guestCount, setGuestCount] = useState<number>(4);
+  const [guestCount, setGuestCount] = useState<number>(0);
   const [recentNotifications, setRecentNotifications] = useState<Registration[]>([]);
+  const [readNotificationIds, setReadNotificationIds] = useState<number[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState<'all' | 'unread'>('all');
+  const prevUnreadRef = useRef<number>(0);
 
-  // Helper for human-readable relative time
-  const formatRelativeTime = (dateStr?: string | Date) => {
-    if (!dateStr) return 'Recently';
+  // Safe date parser handling MySQL DATETIME strings and ISO dates accurately with UTC alignment
+  const parseSafeDate = (dateStr?: string | Date): Date | null => {
+    if (!dateStr) return null;
+    if (dateStr instanceof Date) return isNaN(dateStr.getTime()) ? null : dateStr;
     try {
-      const now = new Date();
-      const past = new Date(dateStr);
-      const diffSec = Math.floor((now.getTime() - past.getTime()) / 1000);
-      if (diffSec < 45) return 'Just now';
-      const diffMin = Math.floor(diffSec / 60);
-      if (diffMin < 60) return `${diffMin}m ago`;
-      const diffHr = Math.floor(diffMin / 60);
-      if (diffHr < 24) return `${diffHr}h ago`;
-      const diffDays = Math.floor(diffHr / 24);
-      if (diffDays < 7) return `${diffDays}d ago`;
-      return past.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      let s = String(dateStr).trim();
+      if (s.includes(' ') && !s.includes('T')) {
+        s = s.replace(' ', 'T');
+      }
+      // If there's no timezone offset (no 'Z' and no +HH:MM / -HH:MM), append 'Z' because MySQL server stores UTC!
+      if (!s.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(s)) {
+        s += 'Z';
+      }
+      const d = new Date(s);
+      return isNaN(d.getTime()) ? new Date(dateStr) : d;
     } catch {
-      return 'Recently';
+      return null;
+    }
+  };
+
+  // Helper for real hour time (e.g. 04:15 PM) and dynamic relative time
+  const formatNotificationTime = (dateStr?: string | Date) => {
+    const d = parseSafeDate(dateStr);
+    if (!d) {
+      return {
+        hourTime: '—',
+        relativeTime: 'Recently',
+        fullDate: 'Recently',
+      };
+    }
+
+    const now = new Date();
+    const diffMs = now.getTime() - d.getTime();
+    const diffSec = Math.floor(diffMs / 1000);
+
+    // Exact Hour & Minute in 12-hour format e.g. "04:19 PM"
+    const hourTime = d.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    }).toUpperCase();
+
+    // Full Date & Time for tooltip
+    const fullDate = d.toLocaleString('en-GB', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+
+    let relativeTime = 'Just now';
+    if (diffSec < 45) {
+      relativeTime = 'Just now';
+    } else if (diffSec < 3600) {
+      const mins = Math.floor(diffSec / 60);
+      relativeTime = `${mins}m ago`;
+    } else if (diffSec < 86400) {
+      const hrs = Math.floor(diffSec / 3600);
+      relativeTime = `${hrs}h ago`;
+    } else if (diffSec < 172800) {
+      relativeTime = 'Yesterday';
+    } else if (diffSec < 604800) {
+      const days = Math.floor(diffSec / 86400);
+      relativeTime = `${days}d ago`;
+    } else {
+      relativeTime = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    }
+
+    return { hourTime, relativeTime, fullDate };
+  };
+
+  // Pleasant gentle chime using browser Web Audio API
+  const playNotificationSound = () => {
+    if (!soundEnabled) return;
+    try {
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.08); // A5
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.35);
+    } catch {
+      // Audio autoplay restriction fallback
     }
   };
 
@@ -105,6 +195,20 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     const savedCollapsed = localStorage.getItem('unity101_sidebar_collapsed');
     if (savedCollapsed === 'true') {
       setIsCollapsed(true);
+    }
+
+    // Load persisted read notifications & sound setting
+    try {
+      const savedRead = localStorage.getItem('unity101_read_notifications');
+      if (savedRead) {
+        setReadNotificationIds(JSON.parse(savedRead));
+      }
+      const savedSound = localStorage.getItem('unity101_notification_sound');
+      if (savedSound !== null) {
+        setSoundEnabled(savedSound === 'true');
+      }
+    } catch {
+      // Ignore
     }
   }, []);
 
@@ -146,6 +250,32 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     });
   };
 
+  const toggleSound = () => {
+    const next = !soundEnabled;
+    setSoundEnabled(next);
+    localStorage.setItem('unity101_notification_sound', String(next));
+  };
+
+  const markAllAsRead = () => {
+    const allIds = Array.from(new Set([...readNotificationIds, ...recentNotifications.map((r) => r.id)]));
+    setReadNotificationIds(allIds);
+    setUnreadCount(0);
+    try {
+      localStorage.setItem('unity101_read_notifications', JSON.stringify(allIds));
+    } catch {}
+  };
+
+  const markSingleAsRead = (id: number, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const updated = Array.from(new Set([...readNotificationIds, id]));
+    setReadNotificationIds(updated);
+    const remainingUnread = recentNotifications.filter((r) => !updated.includes(r.id)).length;
+    setUnreadCount(remainingUnread);
+    try {
+      localStorage.setItem('unity101_read_notifications', JSON.stringify(updated));
+    } catch {}
+  };
+
   useEffect(() => {
     async function checkAuth() {
       try {
@@ -178,8 +308,34 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
             setGuestCount(data.metrics.totalRegistrations);
           }
           if (data.recentRegistrations) {
-            setRecentNotifications(data.recentRegistrations.slice(0, 6));
-            setUnreadCount(data.recentRegistrations.slice(0, 6).length);
+            const list: Registration[] = data.recentRegistrations.slice(0, 8);
+            setRecentNotifications(list);
+
+            // Read latest read IDs from localStorage
+            let storedReadIds: number[] = [];
+            try {
+              const saved = localStorage.getItem('unity101_read_notifications');
+              if (saved) storedReadIds = JSON.parse(saved);
+            } catch {}
+
+            // If user is currently on /admin/registrations, auto mark all current as read ("seen krne pe hatt jaye")
+            if (pathname === '/admin/registrations') {
+              const allIds = Array.from(new Set([...storedReadIds, ...list.map((r) => r.id)]));
+              localStorage.setItem('unity101_read_notifications', JSON.stringify(allIds));
+              setReadNotificationIds(allIds);
+              setUnreadCount(0);
+              prevUnreadRef.current = 0;
+            } else {
+              const unreadItems = list.filter((r) => !storedReadIds.includes(r.id));
+              const count = unreadItems.length;
+              setUnreadCount(count);
+
+              // Play chime if new registration arrived while admin is active
+              if (prevUnreadRef.current > 0 && count > prevUnreadRef.current) {
+                playNotificationSound();
+              }
+              prevUnreadRef.current = count;
+            }
           }
         }
       } catch {
@@ -189,13 +345,13 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
     loadQuickStats();
 
-    // Auto-poll every 25 seconds for live notifications feed
-    const pollTimer = setInterval(loadQuickStats, 25000);
+    // Auto-poll every 20 seconds for live notifications feed
+    const pollTimer = setInterval(loadQuickStats, 20000);
     return () => {
       isMounted = false;
       clearInterval(pollTimer);
     };
-  }, [pathname]);
+  }, [pathname, soundEnabled]);
 
   const handleLogout = async () => {
     try {
@@ -210,8 +366,13 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     {
       heading: 'CORE OPERATIONS',
       items: [
+        {
+          name: 'All Registrations',
+          href: '/admin/registrations',
+          icon: Users,
+          badge: unreadCount > 0 ? unreadCount : undefined,
+        },
         { name: 'Dashboard & Analytics', href: '/admin/dashboard', icon: LayoutDashboard },
-        { name: 'All Registrations', href: '/admin/registrations', icon: Users, badge: guestCount },
         { name: 'Veg Catering Choice', href: '/admin/registrations?food=Veg+Food', icon: Salad },
         { name: 'Non-Veg Catering', href: '/admin/registrations?food=Non+Veg+Food', icon: Drumstick },
       ],
@@ -329,9 +490,14 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                     <Link
                       key={item.name}
                       href={item.href}
-                      onClick={() => setSidebarOpen(false)}
+                      onClick={() => {
+                        setSidebarOpen(false);
+                        if (item.href === '/admin/registrations' || item.href.startsWith('/admin/registrations?')) {
+                          markAllAsRead();
+                        }
+                      }}
                       title={item.name}
-                      className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs tracking-wide transition-all ${
+                      className={`relative flex items-center justify-between px-3 py-2.5 rounded-xl text-xs tracking-wide transition-all ${
                         isActive
                           ? 'bg-gradient-to-r from-[#5a1682] to-[#481268] text-white border border-purple-400/50 shadow-md font-bold'
                           : 'text-slate-200 hover:bg-white/10 hover:text-white font-medium'
@@ -341,10 +507,14 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                         <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-amber-300' : 'text-slate-300'}`} />
                         {!isCollapsed && <span className="truncate">{item.name}</span>}
                       </div>
-                      {!isCollapsed && item.badge !== undefined && (
-                        <span className="text-[10px] bg-purple-900/90 text-purple-200 border border-purple-700/60 font-bold px-2 py-0.5 rounded-full shadow-xs shrink-0 font-mono">
-                          {item.badge}
+                      {!isCollapsed && item.badge !== undefined && item.badge > 0 && (
+                        <span className="inline-flex items-center space-x-1 text-[10px] bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)] animate-pulse shrink-0 font-mono">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-950 animate-ping mr-0.5" />
+                          <span>{item.badge} New</span>
                         </span>
+                      )}
+                      {isCollapsed && item.badge !== undefined && item.badge > 0 && (
+                        <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-amber-400 ring-2 ring-[#1c082b] animate-pulse" />
                       )}
                     </Link>
                   );
@@ -601,108 +771,230 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                 title="Registration Alerts & Live Activity"
                 aria-label="Notifications"
               >
-                <Bell className="w-4 h-4 text-slate-800 dark:text-slate-100" />
+                <Bell className={`w-4 h-4 ${unreadCount > 0 ? 'text-amber-500 animate-[wiggle_1s_ease-in-out_infinite]' : 'text-slate-800 dark:text-slate-100'}`} />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-amber-500 text-slate-950 font-extrabold text-[9px] shadow-sm animate-pulse">
-                    {unreadCount}
-                  </span>
+                  <>
+                    <span className="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 px-1 items-center justify-center rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-[10px] shadow-[0_0_10px_rgba(251,191,36,0.6)]">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                    <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5 rounded-full bg-amber-400 animate-ping opacity-60 pointer-events-none" />
+                  </>
                 )}
               </button>
 
               {notificationsOpen && (
-                <div className="absolute right-0 mt-2 w-80 sm:w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-[#111625] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="absolute right-0 mt-2 w-84 sm:w-104 max-w-[calc(100vw-2rem)] bg-white dark:bg-[#111625] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
                   {/* Dropdown Header */}
-                  <div className="p-3.5 bg-gradient-to-r from-[#2f0846] to-[#481268] text-white flex items-center justify-between">
+                  <div className="p-3.5 bg-gradient-to-r from-[#2f0846] via-[#3d0b5b] to-[#481268] text-white flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <span className="w-2 h-2 rounded-full bg-amber-400" />
-                      <h4 className="font-bold text-xs tracking-wide">Registration Notifications</h4>
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)] animate-pulse" />
+                      <div>
+                        <h4 className="font-bold text-xs tracking-wide">Registration Notifications</h4>
+                        <p className="text-[10px] text-amber-200/80 font-mono">
+                          {unreadCount > 0 ? `${unreadCount} unread alert${unreadCount > 1 ? 's' : ''}` : 'All caught up'}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1.5">
+                      {/* Audio chime toggle */}
+                      <button
+                        onClick={toggleSound}
+                        className={`p-1.5 rounded-lg text-xs transition-colors cursor-pointer ${
+                          soundEnabled
+                            ? 'bg-amber-400/20 text-amber-300 hover:bg-amber-400/30'
+                            : 'bg-white/10 text-slate-400 hover:bg-white/20'
+                        }`}
+                        title={soundEnabled ? 'Chime sound: Enabled' : 'Chime sound: Muted'}
+                      >
+                        {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+                      </button>
+
                       {unreadCount > 0 && (
                         <button
-                          onClick={() => setUnreadCount(0)}
-                          className="text-[10px] bg-white/20 hover:bg-white/30 text-white px-2 py-0.5 rounded-md font-semibold transition-colors cursor-pointer"
+                          onClick={markAllAsRead}
+                          className="flex items-center space-x-1 text-[10.5px] bg-white/15 hover:bg-white/25 text-white px-2.5 py-1 rounded-lg font-semibold transition-all cursor-pointer border border-white/20"
+                          title="Mark all notifications as read"
                         >
-                          Mark all read
+                          <CheckCheck className="w-3 h-3 text-amber-300" />
+                          <span>Mark all read</span>
                         </button>
                       )}
-                      <span className="text-[10px] bg-purple-900 text-purple-200 border border-purple-700/80 px-2 py-0.5 rounded-full font-mono font-bold">
-                        Live
-                      </span>
+                    </div>
+                  </div>
+
+                  {/* Filter Tabs & Live Status */}
+                  <div className="px-3 py-2 bg-slate-50 dark:bg-[#161e31] border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+                    <div className="flex items-center space-x-1 bg-slate-200/70 dark:bg-slate-800/80 p-0.5 rounded-lg">
+                      <button
+                        onClick={() => setActiveTab('all')}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
+                          activeTab === 'all'
+                            ? 'bg-white dark:bg-[#111625] text-purple-900 dark:text-amber-400 shadow-xs'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
+                        All ({recentNotifications.length})
+                      </button>
+                      <button
+                        onClick={() => setActiveTab('unread')}
+                        className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
+                          activeTab === 'unread'
+                            ? 'bg-white dark:bg-[#111625] text-purple-900 dark:text-amber-400 shadow-xs'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
+                      >
+                        Unread ({unreadCount})
+                      </button>
+                    </div>
+
+                    <div className="flex items-center space-x-1.5 text-[10.5px] text-slate-500 dark:text-slate-400 font-mono">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span>Live Sync</span>
                     </div>
                   </div>
 
                   {/* Notifications List */}
-                  <div className="max-h-84 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60 text-xs">
-                    {recentNotifications.length === 0 ? (
-                      <div className="p-8 text-center text-slate-400">
-                        <Clock className="w-8 h-8 mx-auto mb-2 text-slate-300 dark:text-slate-600" />
-                        <p className="font-semibold text-xs text-slate-600 dark:text-slate-300">
-                          No recent registration alerts
-                        </p>
-                        <p className="text-[11px] text-slate-400 mt-0.5">
-                          New guest submissions will appear here automatically
-                        </p>
-                      </div>
-                    ) : (
-                      recentNotifications.map((reg) => (
-                        <Link
-                          key={reg.id}
-                          href={`/admin/registrations/${reg.id}`}
-                          onClick={() => {
-                            setNotificationsOpen(false);
-                            setUnreadCount((c) => Math.max(0, c - 1));
-                          }}
-                          className="p-3 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors flex items-start space-x-2.5 block group"
-                        >
-                          <div className="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-950/80 text-[#481268] dark:text-purple-300 font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 border border-purple-200 dark:border-purple-800">
-                            #{reg.id}
+                  <div className="max-h-92 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/60 text-xs">
+                    {(() => {
+                      const displayed =
+                        activeTab === 'unread'
+                          ? recentNotifications.filter((r) => !readNotificationIds.includes(r.id))
+                          : recentNotifications;
+
+                      if (displayed.length === 0) {
+                        return (
+                          <div className="p-8 text-center text-slate-400">
+                            <Clock className="w-8 h-8 mx-auto mb-2 text-slate-300 dark:text-slate-600" />
+                            <p className="font-semibold text-xs text-slate-700 dark:text-slate-200">
+                              {activeTab === 'unread'
+                                ? 'All notifications are marked as seen!'
+                                : 'No registration alerts yet'}
+                            </p>
+                            <p className="text-[11px] text-slate-400 mt-1">
+                              {activeTab === 'unread'
+                                ? 'New guest registrations will appear here in real-time.'
+                                : 'Incoming guests will be listed with exact hours & timestamps.'}
+                            </p>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between">
-                              <p className="font-bold text-slate-900 dark:text-white truncate group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
-                                {reg.first_name} {reg.last_name}
-                              </p>
-                              <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono shrink-0 ml-1">
-                                {formatRelativeTime(reg.created_at)}
-                              </span>
-                            </div>
-                            <div className="flex items-center space-x-2 mt-1">
-                              <span
-                                className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-purple-100 text-purple-900 dark:bg-purple-950/80 dark:text-purple-300 border border-purple-200/80 dark:border-purple-800/80"
-                              >
-                                {reg.food_preference}
-                              </span>
-                              <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                                {reg.town || 'No town'}
-                              </span>
-                            </div>
-                          </div>
-                          <span
-                            className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
-                              reg.status === 'confirmed'
-                                ? 'bg-purple-900/60 text-purple-200 border border-purple-700'
-                                : reg.status === 'cancelled'
-                                ? 'bg-slate-800 text-slate-400 border border-slate-700'
-                                : 'bg-purple-950 text-purple-300 border border-purple-800'
+                        );
+                      }
+
+                      return displayed.map((reg) => {
+                        const isUnread = !readNotificationIds.includes(reg.id);
+                        const timeInfo = formatNotificationTime(reg.created_at);
+
+                        return (
+                          <div
+                            key={reg.id}
+                            onClick={() => {
+                              markSingleAsRead(reg.id);
+                              setNotificationsOpen(false);
+                              router.push(`/admin/registrations/${reg.id}`);
+                            }}
+                            className={`p-3 transition-colors flex items-start space-x-3 cursor-pointer group relative ${
+                              isUnread
+                                ? 'bg-purple-50/60 dark:bg-purple-950/25 hover:bg-purple-100/70 dark:hover:bg-purple-900/35 border-l-4 border-amber-400'
+                                : 'hover:bg-slate-50 dark:hover:bg-slate-800/60 border-l-4 border-transparent'
                             }`}
                           >
-                            {reg.status}
-                          </span>
-                        </Link>
-                      ))
-                    )}
+                            {/* Guest Avatar / Badge */}
+                            <div
+                              className={`w-9 h-9 rounded-xl font-mono font-bold text-xs flex items-center justify-center shrink-0 border ${
+                                isUnread
+                                  ? 'bg-amber-400/20 text-amber-700 dark:text-amber-300 border-amber-400/40 shadow-xs'
+                                  : 'bg-purple-100 dark:bg-purple-950/80 text-[#481268] dark:text-purple-300 border-purple-200 dark:border-purple-800'
+                              }`}
+                            >
+                              #{reg.id}
+                            </div>
+
+                            {/* Info Details */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between gap-1">
+                                <div className="truncate">
+                                  <div className="flex items-center space-x-1.5">
+                                    <p className="font-bold text-slate-900 dark:text-white truncate group-hover:text-purple-700 dark:group-hover:text-amber-300 transition-colors">
+                                      {reg.first_name} {reg.last_name}
+                                    </p>
+                                    {isUnread && (
+                                      <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)] animate-pulse shrink-0" />
+                                    )}
+                                  </div>
+                                  <div className="flex items-center space-x-1.5 text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                                    <MapPin className="w-3 h-3 shrink-0 text-slate-400" />
+                                    <span className="truncate">
+                                      {reg.town || 'No town'} {reg.post_code ? `(${reg.post_code})` : ''}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* REAL HOUR TIME + RELATIVE TIME */}
+                                <div className="flex flex-col items-end shrink-0 ml-2" title={timeInfo.fullDate}>
+                                  <span className="text-[11px] font-mono font-bold text-slate-900 dark:text-amber-300 flex items-center space-x-1">
+                                    <Clock className="w-3 h-3 text-amber-500 shrink-0" />
+                                    <span>{timeInfo.hourTime}</span>
+                                  </span>
+                                  <span className="text-[9.5px] font-semibold text-purple-700 dark:text-purple-300 font-mono mt-0.5">
+                                    {timeInfo.relativeTime}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Chips row & Quick Mark as Read */}
+                              <div className="flex items-center justify-between mt-2 pt-1 border-t border-slate-100 dark:border-slate-800/40">
+                                <div className="flex items-center space-x-1.5">
+                                  <span
+                                    className={`text-[9.5px] font-bold px-1.5 py-0.5 rounded-md border ${
+                                      reg.food_preference === 'Veg Food'
+                                        ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border-emerald-300/80 dark:border-emerald-800'
+                                        : 'bg-amber-50 text-amber-800 dark:bg-amber-950/70 dark:text-amber-300 border-amber-300/80 dark:border-amber-800'
+                                    }`}
+                                  >
+                                    {reg.food_preference === 'Veg Food' ? '🌱 Veg' : '🍗 Non-Veg'}
+                                  </span>
+                                  <span
+                                    className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
+                                      reg.status === 'confirmed'
+                                        ? 'bg-purple-900/40 text-purple-800 dark:text-purple-200 border border-purple-300 dark:border-purple-700'
+                                        : reg.status === 'cancelled'
+                                        ? 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700'
+                                        : 'bg-amber-100 dark:bg-purple-950 text-amber-900 dark:text-purple-300 border border-amber-300 dark:border-purple-800'
+                                    }`}
+                                  >
+                                    {reg.status}
+                                  </span>
+                                </div>
+
+                                {isUnread && (
+                                  <button
+                                    onClick={(e) => markSingleAsRead(reg.id, e)}
+                                    className="text-[10px] text-purple-700 dark:text-amber-400 hover:underline font-semibold flex items-center space-x-0.5 px-1.5 py-0.5 rounded hover:bg-white dark:hover:bg-slate-800 transition-colors"
+                                    title="Mark this notification as read"
+                                  >
+                                    <Check className="w-3 h-3" />
+                                    <span>Seen</span>
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      });
+                    })()}
                   </div>
 
                   {/* Dropdown Footer */}
-                  <div className="p-2.5 bg-slate-50 dark:bg-[#0d121f] border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                  <div className="p-3 bg-slate-50 dark:bg-[#0d121f] border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
                     <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                      Total: <strong className="text-slate-800 dark:text-slate-200">{guestCount}</strong> registered
+                      Total: <strong className="text-slate-800 dark:text-slate-200 font-bold">{guestCount}</strong> registered
                     </span>
                     <Link
                       href="/admin/registrations"
-                      onClick={() => setNotificationsOpen(false)}
-                      className="text-xs font-bold text-purple-700 dark:text-purple-300 hover:underline flex items-center space-x-1"
+                      onClick={() => {
+                        markAllAsRead();
+                        setNotificationsOpen(false);
+                      }}
+                      className="text-xs font-bold text-purple-700 dark:text-amber-400 hover:underline flex items-center space-x-1"
                     >
                       <span>View All Registrations</span>
                       <span>&rarr;</span>

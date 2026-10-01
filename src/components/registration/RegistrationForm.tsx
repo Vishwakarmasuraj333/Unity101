@@ -1,21 +1,39 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CheckCircle2, AlertCircle, Loader2, ArrowRight, Sparkles, RefreshCw, Check } from 'lucide-react';
+import {
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  ArrowRight,
+  Sparkles,
+  RefreshCw,
+  Check,
+  Copy,
+  Printer,
+  Calendar,
+  Share2,
+  Mail,
+  ShieldCheck,
+} from 'lucide-react';
 import { RegistrationSchema, RegistrationFormData } from '@/lib/validation';
 
 export default function RegistrationForm() {
   const [submissionSuccess, setSubmissionSuccess] = useState<{
     id: number;
+    reference?: string;
     first_name: string;
     last_name: string;
     email: string;
     food_preference: string;
+    town?: string;
+    post_code?: string;
   } | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const {
     register,
@@ -43,6 +61,54 @@ export default function RegistrationForm() {
   const selectedFood = watch('food_preference');
   const values = watch();
 
+  // Gentle celebratory confetti effect on successful registration
+  useEffect(() => {
+    if (!submissionSuccess) return;
+    try {
+      const canvas = document.getElementById('confetti-canvas') as HTMLCanvasElement;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      canvas.width = canvas.offsetWidth || 500;
+      canvas.height = canvas.offsetHeight || 600;
+      const colors = ['#f59e0b', '#fbbf24', '#7c3aed', '#ec4899', '#10b981', '#3b82f6'];
+      const particles = Array.from({ length: 60 }).map(() => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * -canvas.height,
+        r: Math.random() * 6 + 3,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vx: (Math.random() - 0.5) * 4,
+        vy: Math.random() * 4 + 2,
+        rotation: Math.random() * 360,
+        vr: (Math.random() - 0.5) * 8,
+      }));
+      let animId: number;
+      let ticks = 0;
+      const render = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rotation += p.vr;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 1.5);
+          ctx.restore();
+        });
+        ticks++;
+        if (ticks < 180) {
+          animId = requestAnimationFrame(render);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      };
+      animId = requestAnimationFrame(render);
+      return () => cancelAnimationFrame(animId);
+    } catch {}
+  }, [submissionSuccess]);
+
   const onSubmit = async (data: RegistrationFormData) => {
     setServerError(null);
 
@@ -61,7 +127,11 @@ export default function RegistrationForm() {
       }
 
       // Success
-      setSubmissionSuccess(responseData.data);
+      setSubmissionSuccess({
+        ...responseData.data,
+        town: data.town,
+        post_code: data.post_code,
+      });
       reset();
     } catch (err) {
       console.error('Registration submission error:', err);
@@ -72,6 +142,7 @@ export default function RegistrationForm() {
   const handleResetForAnother = () => {
     setSubmissionSuccess(null);
     setServerError(null);
+    setCopied(false);
     reset({
       first_name: '',
       last_name: '',
@@ -83,6 +154,35 @@ export default function RegistrationForm() {
       food_preference: undefined,
       gdpr_consent: false as unknown as true,
     });
+  };
+
+  const refCode = submissionSuccess
+    ? submissionSuccess.reference || `#U101-${submissionSuccess.id.toString().padStart(5, '0')}`
+    : '';
+
+  const handleCopyRef = () => {
+    if (!refCode) return;
+    navigator.clipboard.writeText(refCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const calendarUrl = submissionSuccess
+    ? `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+        'Unity 101 Community Radio - 20th Anniversary Gala Dinner'
+      )}&dates=20261120T180000Z/20261120T230000Z&details=${encodeURIComponent(
+        `Guest Registration Confirmed: ${submissionSuccess.first_name} ${submissionSuccess.last_name}\nPass Ref: ${refCode}\nMeal Choice: ${submissionSuccess.food_preference}\nVenue: Southampton Community Venue, SO14, UK`
+      )}&location=${encodeURIComponent('Southampton, Hampshire, UK')}`
+    : '#';
+
+  const shareUrl = submissionSuccess
+    ? `https://api.whatsapp.com/send?text=${encodeURIComponent(
+        `🎉 I have registered for the Unity 101 Community Radio 20th Anniversary Gala Dinner!\nGuest: ${submissionSuccess.first_name} ${submissionSuccess.last_name}\nRef: ${refCode}\n📅 20 November 2026 • 6:00 PM\n📍 Southampton, UK\nRegister yours: https://unity101.vercel.app/register`
+      )}`
+    : '#';
+
+  const handlePrint = () => {
+    window.print();
   };
 
   return (
@@ -110,10 +210,10 @@ export default function RegistrationForm() {
       </div>
 
       {/* Main Registration Card */}
-      <div className="bg-white rounded-2xl shadow-xl shadow-purple-950/10 border border-purple-100/60 overflow-hidden transition-all duration-300">
+      <div className="bg-white rounded-2xl shadow-2xl shadow-purple-950/15 border border-purple-100/70 overflow-hidden transition-all duration-300 relative">
         {/* Card Header with Unity 101 Logo & 20th Anniversary */}
-        <div className="pt-8 pb-4 px-6 sm:px-10 text-center flex flex-col items-center">
-          <div className="w-48 sm:w-56 h-auto relative mb-3">
+        <div className="pt-8 sm:pt-10 pb-4 px-6 sm:px-10 text-center flex flex-col items-center">
+          <div className="w-52 sm:w-60 h-auto relative mb-3">
             <Image
               src="/images/unity101-logo.png"
               alt="Unity 101 Community Radio - 20th Anniversary 2025"
@@ -125,62 +225,244 @@ export default function RegistrationForm() {
           </div>
 
           {/* Purple Pill "Register Below" */}
-          <div className="mt-1 mb-3">
-            <span className="inline-block bg-[#481268] text-white text-xs sm:text-sm font-medium tracking-wide py-1.5 px-7 rounded-full shadow-sm">
-              Register Below
+          <div className="mt-1 mb-2">
+            <span className="inline-block bg-[#481268] text-white text-xs sm:text-sm font-semibold tracking-wide py-1.5 px-7 rounded-full shadow-sm">
+              {submissionSuccess ? 'Confirmed Attendance' : 'Register Below'}
             </span>
           </div>
 
           {/* Cursive "Guest information" Script Heading */}
           <h2 className="font-script text-[#481268] text-3xl sm:text-4xl font-bold tracking-wide mt-1 select-none">
-            Guest information
+            {submissionSuccess ? 'Invitation Confirmation' : 'Guest information'}
           </h2>
         </div>
 
         {/* Content Area */}
         <div className="px-6 sm:px-10 pb-10">
-          {/* Submission Success State */}
+          {/* Submission Success State with Luxury VIP Pass */}
           {submissionSuccess ? (
-            <div className="py-6 text-center animate-in fade-in duration-300">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 mb-4 border border-emerald-200 shadow-inner">
-                <CheckCircle2 className="w-10 h-10" />
+            <div className="py-2 text-center animate-in fade-in duration-300 relative">
+              {/* Confetti Animation Canvas */}
+              <canvas
+                id="confetti-canvas"
+                className="pointer-events-none absolute inset-0 w-full h-full z-20"
+              />
+
+              {/* Status Badge */}
+              <div className="inline-flex items-center space-x-1.5 bg-emerald-50 border border-emerald-300/80 px-3.5 py-1 rounded-full text-emerald-800 text-xs font-bold mb-3 shadow-xs">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>Registration Successfully Verified</span>
               </div>
-              <h3 className="text-2xl font-bold text-[#481268] mb-1 font-serif-brand">
-                Registration completed successfully.
+
+              <h3 className="text-2xl sm:text-3xl font-black text-[#481268] mb-1 font-serif-brand tracking-wide">
+                YOU ARE REGISTERED!
               </h3>
-              <p className="text-sm text-slate-600 max-w-md mx-auto mb-6">
-                Thank you, <span className="font-semibold text-slate-800">{submissionSuccess.first_name} {submissionSuccess.last_name}</span>. 
-                Your verified guest registration has been safely recorded in our database.
+              <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto mb-6">
+                Thank you, <strong className="text-slate-900 font-bold">{submissionSuccess.first_name} {submissionSuccess.last_name}</strong>. Your verified guest registration has been safely recorded in our database.
               </p>
 
-              <div className="bg-purple-50 border border-purple-200/80 rounded-xl p-4 max-w-sm mx-auto mb-6 text-left">
-                <div className="flex justify-between items-center text-xs text-purple-900 border-b border-purple-200/60 pb-2 mb-2">
-                  <span className="font-medium">Registration Ref</span>
-                  <span className="font-mono font-bold text-sm bg-purple-200/70 px-2 py-0.5 rounded text-purple-950">
-                    #U101-{submissionSuccess.id.toString().padStart(4, '0')}
-                  </span>
-                </div>
-                <div className="text-xs text-slate-700 space-y-1">
-                  <p><span className="text-slate-500">Email:</span> {submissionSuccess.email}</p>
-                  <p><span className="text-slate-500">Meal Preference:</span> <span className="font-semibold text-amber-700">{submissionSuccess.food_preference}</span></p>
-                  <p><span className="text-slate-500">Status:</span> <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800">Confirmed Received</span></p>
+              {/* Luxury VIP Commemorative Pass / Ticket */}
+              <div
+                id="vip-guest-pass"
+                className="bg-gradient-to-r from-amber-400 via-purple-600 to-amber-400 p-[1.5px] rounded-2xl shadow-xl shadow-purple-950/15 max-w-md mx-auto mb-6 text-left overflow-hidden transition-transform duration-300"
+              >
+                <div className="bg-white rounded-[15px] p-5 relative overflow-hidden">
+                  {/* Background Watermark */}
+                  <div className="absolute -right-8 -top-8 w-32 h-32 opacity-10 pointer-events-none select-none">
+                    <Image
+                      src="/images/unity101-logo.png"
+                      alt=""
+                      width={128}
+                      height={128}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+
+                  {/* Ticket Header */}
+                  <div className="flex items-center justify-between border-b border-purple-100 pb-3 mb-3">
+                    <div>
+                      <span className="text-[10px] tracking-widest font-black uppercase text-amber-600 block">
+                        Official Event Pass
+                      </span>
+                      <h4 className="font-serif-brand font-black text-xs sm:text-sm text-[#481268] tracking-wider">
+                        UNITY 101 • 20TH ANNIVERSARY GALA
+                      </h4>
+                    </div>
+                    <span className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black text-[9.5px] px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs flex items-center space-x-1 shrink-0">
+                      <Sparkles className="w-3 h-3 text-slate-950" />
+                      <span>VIP INVITEE</span>
+                    </span>
+                  </div>
+
+                  {/* Guest Name & Reference */}
+                  <div className="mb-4">
+                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                      Invited Guest
+                    </p>
+                    <p className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-serif-brand">
+                      {submissionSuccess.first_name} {submissionSuccess.last_name}
+                    </p>
+                  </div>
+
+                  {/* Grid Details */}
+                  <div className="grid grid-cols-2 gap-3 text-xs bg-slate-50/80 p-3.5 rounded-xl border border-slate-100">
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-slate-400">Pass Reference</p>
+                      <div className="flex items-center space-x-1.5 mt-0.5">
+                        <span className="font-mono font-black text-xs text-[#481268] bg-purple-100/80 px-1.5 py-0.5 rounded">
+                          {refCode}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={handleCopyRef}
+                          className="p-1 text-slate-400 hover:text-purple-700 rounded transition-colors no-print cursor-pointer"
+                          title="Copy Reference Number"
+                        >
+                          {copied ? (
+                            <Check className="w-3 h-3 text-emerald-600" />
+                          ) : (
+                            <Copy className="w-3 h-3" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-slate-400">Status</p>
+                      <div className="flex items-center space-x-1 text-emerald-700 font-bold text-[11px] mt-0.5">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span>Confirmed Received</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-slate-400">Meal Preference</p>
+                      <p className="font-semibold text-slate-800 text-[11px] mt-0.5">
+                        {submissionSuccess.food_preference === 'Veg Food'
+                          ? '🌱 Veg Food'
+                          : '🍗 Non Veg Food'}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-slate-400">Registered Email</p>
+                      <p
+                        className="font-medium text-slate-700 text-[11px] truncate mt-0.5"
+                        title={submissionSuccess.email}
+                      >
+                        {submissionSuccess.email}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-slate-400">Event Date</p>
+                      <p className="font-semibold text-slate-800 text-[11px] mt-0.5">
+                        Friday, 20 Nov 2026
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-slate-400">Venue & Time</p>
+                      <p className="font-semibold text-slate-800 text-[11px] mt-0.5">
+                        Southampton • 6:00 PM GMT
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Perforated Cutout Line */}
+                  <div className="relative my-4 flex items-center justify-between border-t-2 border-dashed border-slate-200">
+                    <div className="absolute -left-7 w-4 h-4 rounded-full bg-[#f7f5fa] border-r border-slate-200" />
+                    <div className="absolute -right-7 w-4 h-4 rounded-full bg-[#f7f5fa] border-l border-slate-200" />
+                  </div>
+
+                  {/* Vector Barcode Strip Simulation */}
+                  <div className="flex flex-col items-center justify-center pt-1 text-center">
+                    <div className="flex items-center justify-center space-x-1 tracking-widest text-slate-800 font-mono text-xs opacity-80 h-7 select-none">
+                      <div className="w-1 h-7 bg-slate-900" />
+                      <div className="w-0.5 h-7 bg-slate-900" />
+                      <div className="w-1.5 h-7 bg-slate-900" />
+                      <div className="w-0.5 h-7 bg-slate-900" />
+                      <div className="w-2 h-7 bg-slate-900" />
+                      <div className="w-1 h-7 bg-slate-900" />
+                      <div className="w-0.5 h-7 bg-slate-900" />
+                      <div className="w-1.5 h-7 bg-slate-900" />
+                      <div className="w-1 h-7 bg-slate-900" />
+                      <div className="w-2 h-7 bg-slate-900" />
+                      <div className="w-0.5 h-7 bg-slate-900" />
+                      <div className="w-1 h-7 bg-slate-900" />
+                      <div className="w-1.5 h-7 bg-slate-900" />
+                      <div className="w-0.5 h-7 bg-slate-900" />
+                      <div className="w-2 h-7 bg-slate-900" />
+                      <div className="w-1 h-7 bg-slate-900" />
+                      <div className="w-1 h-7 bg-slate-900" />
+                      <div className="w-0.5 h-7 bg-slate-900" />
+                      <div className="w-1.5 h-7 bg-slate-900" />
+                      <div className="w-2 h-7 bg-slate-900" />
+                      <div className="w-0.5 h-7 bg-slate-900" />
+                      <div className="w-1 h-7 bg-slate-900" />
+                    </div>
+                    <p className="text-[9.5px] font-mono tracking-widest text-slate-500 mt-1 uppercase">
+                      ENTRY CODE: {refCode} • SCAN FOR VERIFICATION
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="p-4 bg-amber-50/80 border border-amber-200/60 rounded-xl text-xs text-amber-900 mb-6 flex items-start text-left">
-                <Sparkles className="w-4 h-4 text-amber-600 mr-2.5 mt-0.5 shrink-0" />
-                <p>
-                  Once our event committee verifies guest capacities, we will send you a formal invitation card by post to your registered address.
+              {/* Postal Delivery Assurance Notice */}
+              <div className="p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 rounded-xl text-xs text-amber-900 max-w-md mx-auto mb-6 flex items-start text-left shadow-xs no-print">
+                <Mail className="w-4 h-4 text-amber-600 mr-2.5 mt-0.5 shrink-0" />
+                <p className="leading-relaxed">
+                  <strong>Formal Postal Invitation:</strong> Once our event committee verifies guest capacities, we will send you a formal invitation card by post to your registered address.
                 </p>
               </div>
 
-              <button
-                onClick={handleResetForAnother}
-                className="inline-flex items-center justify-center space-x-2 bg-[#481268] hover:bg-[#380952] text-white text-xs font-semibold py-2.5 px-6 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>Register Another Guest</span>
-              </button>
+              {/* Action Buttons Row (Print, Calendar, WhatsApp, Register Another) */}
+              <div className="flex flex-wrap items-center justify-center gap-2.5 max-w-md mx-auto no-print">
+                {/* Print / Save Pass */}
+                <button
+                  type="button"
+                  onClick={handlePrint}
+                  className="inline-flex items-center space-x-1.5 bg-[#481268] hover:bg-[#380952] text-white text-xs font-bold py-2.5 px-4 rounded-xl transition-all shadow-md active:scale-95 cursor-pointer"
+                  title="Print or Save as PDF"
+                >
+                  <Printer className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Print / Save Pass</span>
+                </button>
+
+                {/* Add to Calendar */}
+                <a
+                  href={calendarUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold py-2.5 px-3.5 rounded-xl transition-all border border-slate-300 active:scale-95 cursor-pointer"
+                  title="Add to Google Calendar"
+                >
+                  <Calendar className="w-3.5 h-3.5 text-[#481268]" />
+                  <span>Add to Calendar</span>
+                </a>
+
+                {/* Share on WhatsApp */}
+                <a
+                  href={shareUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold py-2.5 px-3.5 rounded-xl transition-all border border-emerald-200 active:scale-95 cursor-pointer"
+                  title="Share details via WhatsApp"
+                >
+                  <Share2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>WhatsApp</span>
+                </a>
+
+                {/* Register Another Guest */}
+                <button
+                  type="button"
+                  onClick={handleResetForAnother}
+                  className="inline-flex items-center space-x-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2.5 px-3.5 rounded-xl transition-all border border-slate-200 active:scale-95 cursor-pointer w-full sm:w-auto justify-center mt-1"
+                >
+                  <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Register Another Guest</span>
+                </button>
+              </div>
             </div>
           ) : (
             /* Registration Form */

@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
-@variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --primary-purple: #481268;
@@ -291,4 +291,29 @@ html.dark .bg-blue-100 {
 html.dark .bg-gradient-to-br.from-white {
   background: #111625 !important;
   border-color: #1e293b !important;
+}
+
+/* Print Styling for VIP Event Pass */
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  #vip-guest-pass,
+  #vip-guest-pass * {
+    visibility: visible !important;
+  }
+  #vip-guest-pass {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 650px !important;
+    margin: 20px auto !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+  .no-print {
+    display: none !important;
+  }
 }

@@ -64,37 +64,37 @@ export default function RegisterPage() {
       />
       <main className="min-h-screen bg-[#f7f5fa] relative flex flex-col justify-start items-center">
         {/* Top Royal Purple Brand Banner with Clearly Visible Golden Flowers (Mandalas) */}
-        <div className="w-full h-44 sm:h-52 bg-[#3e085c] relative overflow-hidden flex items-start justify-center shadow-md">
+        <div className="w-full h-56 sm:h-64 bg-gradient-to-b from-[#2a0640] via-[#3e085c] to-[#481268] relative overflow-hidden flex items-start justify-center shadow-lg">
           {/* Left Golden Flower (Mandala) Watermark - Mast & Visible */}
-          <div className="absolute -left-10 sm:-left-12 -top-10 sm:-top-12 w-64 sm:w-76 h-64 sm:h-76 opacity-85 select-none pointer-events-none filter drop-shadow-[0_0_25px_rgba(245,196,81,0.6)]">
+          <div className="absolute -left-10 sm:-left-12 -top-10 sm:-top-12 w-64 sm:w-80 h-64 sm:h-80 opacity-90 select-none pointer-events-none filter drop-shadow-[0_0_25px_rgba(245,196,81,0.6)]">
             <Image
               src="/images/mandala-pattern.svg"
               alt=""
-              width={304}
-              height={304}
+              width={320}
+              height={320}
               className="w-full h-full"
               priority
             />
           </div>
 
           {/* Right Golden Flower (Mandala) Watermark - Mast & Visible */}
-          <div className="absolute -right-10 sm:-right-12 -top-10 sm:-top-12 w-64 sm:w-76 h-64 sm:h-76 opacity-85 select-none pointer-events-none filter drop-shadow-[0_0_25px_rgba(245,196,81,0.6)]">
+          <div className="absolute -right-10 sm:-right-12 -top-10 sm:-top-12 w-64 sm:w-80 h-64 sm:h-80 opacity-90 select-none pointer-events-none filter drop-shadow-[0_0_25px_rgba(245,196,81,0.6)]">
             <Image
               src="/images/mandala-pattern.svg"
               alt=""
-              width={304}
-              height={304}
+              width={320}
+              height={320}
               className="w-full h-full rotate-90"
               priority
             />
           </div>
 
           {/* Center subtle glow */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/20 to-black/20 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/20 to-black/30 pointer-events-none" />
         </div>
 
         {/* Main Registration Form Container with Negative Top Margin for Layered Look */}
-        <div className="w-full -mt-36 sm:-mt-40 z-10 mb-12">
+        <div className="w-full -mt-40 sm:-mt-48 z-10 mb-12">
           <RegistrationForm />
         </div>
       </main>

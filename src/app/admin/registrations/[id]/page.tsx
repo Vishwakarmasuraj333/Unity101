@@ -489,38 +489,44 @@ export default function RegistrationDetailsPage() {
             {/* Information Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Guest & Contact Information */}
-              <div className="bg-white rounded-2xl border border-purple-100/80 p-6 shadow-xs space-y-4">
-                <div className="flex items-center space-x-2 text-[#481268] border-b border-slate-100 pb-3">
+              <div className="bg-white dark:bg-[#111625] rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-xs space-y-4">
+                <div className="flex items-center space-x-2 text-[#481268] dark:text-purple-300 border-b border-slate-100 dark:border-slate-800 pb-3">
                   <User className="w-4 h-4 text-amber-500" />
-                  <h3 className="font-bold text-slate-900 text-sm">Guest & Contact Information</h3>
+                  <h3 className="font-bold text-slate-900 dark:text-white text-sm">Guest & Contact Information</h3>
                 </div>
 
-                <div className="space-y-3 text-xs">
+                <div className="space-y-4 text-xs">
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Full Name</span>
-                    <span className="font-semibold text-slate-900 text-sm">
+                    <span className="text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider text-[11px] block mb-1">
+                      Full Name
+                    </span>
+                    <span className="font-extrabold text-slate-900 dark:text-white text-base">
                       {registration.first_name} {registration.last_name}
                     </span>
                   </div>
 
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Email Address</span>
+                    <span className="text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider text-[11px] block mb-1">
+                      Email Address
+                    </span>
                     <a
                       href={`mailto:${registration.email}`}
-                      className="font-medium text-purple-700 hover:underline flex items-center space-x-1.5 mt-0.5"
+                      className="font-bold text-purple-700 dark:text-amber-400 hover:underline flex items-center space-x-1.5 mt-0.5 text-sm"
                     >
-                      <Mail className="w-3.5 h-3.5 text-slate-400" />
+                      <Mail className="w-4 h-4 text-purple-600 dark:text-amber-400 shrink-0" />
                       <span>{registration.email}</span>
                     </a>
                   </div>
 
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Mobile Phone</span>
+                    <span className="text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider text-[11px] block mb-1">
+                      Mobile Phone
+                    </span>
                     <a
                       href={`tel:${registration.mobile}`}
-                      className="font-medium text-purple-700 hover:underline flex items-center space-x-1.5 mt-0.5"
+                      className="font-bold text-purple-700 dark:text-amber-400 hover:underline flex items-center space-x-1.5 mt-0.5 text-sm"
                     >
-                      <Phone className="w-3.5 h-3.5 text-slate-400" />
+                      <Phone className="w-4 h-4 text-purple-600 dark:text-amber-400 shrink-0" />
                       <span>{registration.mobile}</span>
                     </a>
                   </div>
@@ -528,61 +534,77 @@ export default function RegistrationDetailsPage() {
               </div>
 
               {/* Postal Address */}
-              <div className="bg-white rounded-2xl border border-purple-100/80 p-6 shadow-xs space-y-4">
-                <div className="flex items-center space-x-2 text-[#481268] border-b border-slate-100 pb-3">
+              <div className="bg-white dark:bg-[#111625] rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-xs space-y-4">
+                <div className="flex items-center space-x-2 text-[#481268] dark:text-purple-300 border-b border-slate-100 dark:border-slate-800 pb-3">
                   <MapPin className="w-4 h-4 text-amber-500" />
-                  <h3 className="font-bold text-slate-900 text-sm">Postal Address</h3>
+                  <h3 className="font-bold text-slate-900 dark:text-white text-sm">Postal Address</h3>
                 </div>
 
-                <div className="space-y-3 text-xs">
+                <div className="space-y-4 text-xs">
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Street Address</span>
-                    <span className="font-medium text-slate-900">{registration.address}</span>
+                    <span className="text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider text-[11px] block mb-1">
+                      Street Address
+                    </span>
+                    <span className="font-bold text-slate-900 dark:text-white text-sm">
+                      {registration.address || '—'}
+                    </span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <span className="text-slate-400 block text-[11px]">Town / City</span>
-                      <span className="font-semibold text-slate-900">{registration.town}</span>
+                      <span className="text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider text-[11px] block mb-1">
+                        Town / City
+                      </span>
+                      <span className="font-extrabold text-slate-900 dark:text-white text-sm">
+                        {registration.town || '—'}
+                      </span>
                     </div>
 
                     <div>
-                      <span className="text-slate-400 block text-[11px]">Post Code</span>
-                      <span className="font-mono font-bold text-purple-950 uppercase">{registration.post_code}</span>
+                      <span className="text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider text-[11px] block mb-1">
+                        Post Code
+                      </span>
+                      <span className="font-mono font-black text-purple-950 dark:text-amber-300 uppercase text-sm bg-purple-100 dark:bg-purple-950/80 px-2 py-0.5 rounded border border-purple-200 dark:border-purple-800 inline-block">
+                        {registration.post_code || '—'}
+                      </span>
                     </div>
                   </div>
 
-                  <p className="text-[11px] text-slate-400 italic pt-1">
+                  <p className="text-[11.5px] text-slate-500 dark:text-slate-400 italic pt-1 border-t border-slate-100 dark:border-slate-800">
                     Formal anniversary invitation card will be addressed to this location.
                   </p>
                 </div>
               </div>
 
               {/* Event Preferences & GDPR */}
-              <div className="bg-white rounded-2xl border border-purple-100/80 p-6 shadow-xs space-y-4">
-                <div className="flex items-center space-x-2 text-[#481268] border-b border-slate-100 pb-3">
+              <div className="bg-white dark:bg-[#111625] rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-xs space-y-4">
+                <div className="flex items-center space-x-2 text-[#481268] dark:text-purple-300 border-b border-slate-100 dark:border-slate-800 pb-3">
                   <Utensils className="w-4 h-4 text-amber-500" />
-                  <h3 className="font-bold text-slate-900 text-sm">Event Preferences</h3>
+                  <h3 className="font-bold text-slate-900 dark:text-white text-sm">Event Preferences</h3>
                 </div>
 
-                <div className="space-y-3 text-xs">
+                <div className="space-y-4 text-xs">
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Meal Selection</span>
+                    <span className="text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider text-[11px] block mb-1.5">
+                      Meal Selection
+                    </span>
                     <span
-                      className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-semibold ${
+                      className={`inline-block px-3 py-1 rounded-full text-xs font-bold border ${
                         registration.food_preference === 'Veg Food'
-                          ? 'bg-amber-100 text-amber-900 border border-amber-300'
-                          : 'bg-orange-100 text-orange-900 border border-orange-300'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700'
+                          : 'bg-amber-50 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700'
                       }`}
                     >
-                      {registration.food_preference}
+                      {registration.food_preference === 'Veg Food' ? '🌱 Veg Food' : '🍗 Non Veg Food'}
                     </span>
                   </div>
 
                   <div>
-                    <span className="text-slate-400 block text-[11px]">GDPR Consent</span>
-                    <div className="flex items-center space-x-1.5 mt-1 text-emerald-700 font-medium">
-                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                    <span className="text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider text-[11px] block mb-1.5">
+                      GDPR Consent
+                    </span>
+                    <div className="flex items-center space-x-2 text-emerald-700 dark:text-emerald-400 font-semibold bg-emerald-50/60 dark:bg-emerald-950/40 p-2.5 rounded-xl border border-emerald-200/80 dark:border-emerald-800/80">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                       <span>Agreed to Unity 101 communications under GDPR regulations</span>
                     </div>
                   </div>
@@ -590,43 +612,69 @@ export default function RegistrationDetailsPage() {
               </div>
 
               {/* Record Timestamps & Audit */}
-              <div className="bg-white rounded-2xl border border-purple-100/80 p-6 shadow-xs space-y-4">
-                <div className="flex items-center space-x-2 text-[#481268] border-b border-slate-100 pb-3">
+              <div className="bg-white dark:bg-[#111625] rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-xs space-y-4">
+                <div className="flex items-center space-x-2 text-[#481268] dark:text-purple-300 border-b border-slate-100 dark:border-slate-800 pb-3">
                   <Calendar className="w-4 h-4 text-amber-500" />
-                  <h3 className="font-bold text-slate-900 text-sm">Audit Timestamps</h3>
+                  <h3 className="font-bold text-slate-900 dark:text-white text-sm">Audit Timestamps</h3>
                 </div>
 
-                <div className="space-y-3 text-xs">
+                <div className="space-y-4 text-xs">
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Registration Submitted</span>
-                    <span className="font-medium text-slate-800">
-                      {new Date(registration.created_at).toLocaleString('en-GB', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
+                    <span className="text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider text-[11px] block mb-1">
+                      Registration Submitted
+                    </span>
+                    <span className="font-bold text-slate-900 dark:text-slate-100 font-mono text-xs">
+                      {(() => {
+                        let s = String(registration.created_at || '').trim();
+                        if (s.includes(' ') && !s.includes('T')) s = s.replace(' ', 'T');
+                        if (!s.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(s)) s += 'Z';
+                        const d = new Date(s);
+                        return isNaN(d.getTime())
+                          ? registration.created_at
+                          : d.toLocaleString('en-GB', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: true,
+                            });
+                      })()}
                     </span>
                   </div>
 
                   <div>
-                    <span className="text-slate-400 block text-[11px]">Last Updated</span>
-                    <span className="font-medium text-slate-800">
-                      {new Date(registration.updated_at).toLocaleString('en-GB', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
+                    <span className="text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider text-[11px] block mb-1">
+                      Last Updated
+                    </span>
+                    <span className="font-bold text-slate-900 dark:text-slate-100 font-mono text-xs">
+                      {(() => {
+                        let s = String(registration.updated_at || registration.created_at || '').trim();
+                        if (s.includes(' ') && !s.includes('T')) s = s.replace(' ', 'T');
+                        if (!s.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(s)) s += 'Z';
+                        const d = new Date(s);
+                        return isNaN(d.getTime())
+                          ? registration.updated_at
+                          : d.toLocaleString('en-GB', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: true,
+                            });
+                      })()}
                     </span>
                   </div>
 
                   {registration.notes && (
-                    <div className="pt-2 border-t border-slate-100">
-                      <span className="text-slate-400 block text-[11px]">Administrative Notes</span>
-                      <p className="p-2.5 rounded-lg bg-slate-50 text-slate-700 mt-1">{registration.notes}</p>
+                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <span className="text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider text-[11px] block mb-1">
+                        Administrative Notes
+                      </span>
+                      <p className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-medium">
+                        {registration.notes}
+                      </p>
                     </div>
                   )}
                 </div>

@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const targetEmail = body.to || session.email;
+    const targetEmail = (body.email || body.to || session.email)?.trim();
 
     if (!targetEmail || !targetEmail.includes('@')) {
       return NextResponse.json(
