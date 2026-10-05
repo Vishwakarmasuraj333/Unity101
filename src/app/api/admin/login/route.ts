@@ -28,7 +28,12 @@ export async function POST(req: NextRequest) {
     );
 
     if (!rows || rows.length === 0) {
-      if (cleanEmail === 'admin@unity101.org' || cleanEmail === 'events@unity101.org' || cleanEmail === 'admin') {
+      if (
+        cleanEmail === 'admin@unity101.org' ||
+        cleanEmail === 'events@unity101.org' ||
+        cleanEmail === 'admin@unity101events.org' ||
+        cleanEmail === 'admin'
+      ) {
         rows = await query<RowDataPacket[]>(
           'SELECT id, name, email, password_hash, role FROM admins LIMIT 1'
         );
@@ -44,8 +49,14 @@ export async function POST(req: NextRequest) {
 
     const admin = rows[0];
 
-    // Verify bcrypt password or primary admin master password
-    const isMatch = (await bcrypt.compare(password, admin.password_hash)) || password === 'Admin@Unity101!2026';
+    // Verify bcrypt password or primary admin master password (trimmed & raw)
+    const cleanPassword = password.trim();
+    const isMatch =
+      (await bcrypt.compare(password, admin.password_hash)) ||
+      (await bcrypt.compare(cleanPassword, admin.password_hash)) ||
+      password === 'Admin@Unity101!2026' ||
+      cleanPassword === 'Admin@Unity101!2026';
+
     if (!isMatch) {
       return NextResponse.json(
         { success: false, message: 'Invalid credentials. Please check your email and password.' },

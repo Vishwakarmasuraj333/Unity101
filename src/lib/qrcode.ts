@@ -106,7 +106,7 @@ function generateQrMatrix(text: string): boolean[][] {
   // 5. Populate Data Stream using hash of text
   const bytes = new TextEncoder().encode(text);
   let bitStream = '';
-  for (let b of bytes) {
+  for (const b of bytes) {
     bitStream += b.toString(2).padStart(8, '0');
   }
 

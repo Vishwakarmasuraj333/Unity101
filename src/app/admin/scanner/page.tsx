@@ -312,9 +312,21 @@ export default function ReceptionScannerPage() {
         setCameraActive(true);
         animFrameRef.current = requestAnimationFrame(tick);
       }
-    } catch (err) {
-      console.error('Camera access error:', err);
-      setCameraError('Unable to access device camera. Please grant camera permission or use manual code entry.');
+    } catch (err: unknown) {
+      const errorName = (err as { name?: string })?.name;
+      if (errorName === 'NotAllowedError' || errorName === 'PermissionDeniedError') {
+        setCameraError(
+          'Camera permission was not granted. Please allow camera access in your browser site permissions (click the lock/tune icon in the address bar), or use the Manual Pass Entry or Image Upload options below.'
+        );
+      } else if (errorName === 'NotFoundError' || errorName === 'DevicesNotFoundError') {
+        setCameraError(
+          'No camera device detected on this system. You can verify guests using the Manual Pass Reference Entry or Image Upload below.'
+        );
+      } else {
+        setCameraError(
+          'Unable to access camera. Please check camera availability or use Manual Pass Entry below.'
+        );
+      }
       setCameraActive(false);
     }
   }, [facingMode, tick]);
@@ -410,7 +422,7 @@ export default function ReceptionScannerPage() {
                     Live Reception Desk
                   </span>
                   <span className="inline-flex items-center space-x-1 text-emerald-400 text-xs font-semibold">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block" />
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
                     <span>Real-time Sync</span>
                   </span>
                 </div>

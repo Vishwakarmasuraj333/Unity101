@@ -156,6 +156,9 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
         (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext;
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') {
+        return;
+      }
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
@@ -184,7 +187,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
   useEffect(() => {
     const saved = localStorage.getItem('unity101_admin_theme');
     const isDark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    setIsDarkMode(isDark);
+    queueMicrotask(() => setIsDarkMode(isDark));
     if (isDark) {
       document.documentElement.classList.add('dark');
       document.documentElement.setAttribute('data-theme', 'dark');
@@ -515,13 +518,13 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                         {!isCollapsed && <span className="truncate">{item.name}</span>}
                       </div>
                       {!isCollapsed && item.badge !== undefined && (typeof item.badge === 'number' ? item.badge > 0 : Boolean(item.badge)) && (
-                        <span className="inline-flex items-center space-x-1 text-[10px] bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)] shrink-0 font-mono">
-                          <span className="w-1.5 h-1.5 rounded-full bg-slate-950 animate-ping mr-0.5" />
+                        <span className="inline-flex items-center space-x-1 text-[10px] bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold px-2 py-0.5 rounded-full shadow-xs shrink-0 font-mono">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-950 mr-1 inline-block" />
                           <span>{typeof item.badge === 'number' ? `${item.badge} New` : item.badge}</span>
                         </span>
                       )}
                       {isCollapsed && item.badge !== undefined && (typeof item.badge === 'number' ? item.badge > 0 : Boolean(item.badge)) && (
-                        <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-amber-400 ring-2 ring-[#1c082b] animate-pulse" />
+                        <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-[#1c082b]" />
                       )}
                     </Link>
                   );
@@ -543,7 +546,8 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                       <span className="text-xs font-bold tracking-wide">Download Manifest</span>
                     </div>
                     <div className="flex items-center space-x-1.5">
-                      <span className="bg-amber-400/20 text-amber-300 border border-amber-400/40 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold">
+                      <span className="bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-[9.5px] font-mono font-bold tracking-wider inline-flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
                         LIVE
                       </span>
                       <ChevronDown
@@ -804,14 +808,11 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                 title="Registration Alerts & Live Activity"
                 aria-label="Notifications"
               >
-                <Bell className={`w-4 h-4 ${unreadCount > 0 ? 'text-amber-500 animate-[wiggle_1s_ease-in-out_infinite]' : 'text-slate-800 dark:text-slate-100'}`} />
+                <Bell className={`w-4 h-4 ${unreadCount > 0 ? 'text-amber-500' : 'text-slate-800 dark:text-slate-100'}`} />
                 {unreadCount > 0 && (
-                  <>
-                    <span className="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 px-1 items-center justify-center rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-[10px] shadow-[0_0_10px_rgba(251,191,36,0.6)]">
-                      {unreadCount > 9 ? '9+' : unreadCount}
-                    </span>
-                    <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5 rounded-full bg-amber-400 animate-ping opacity-60 pointer-events-none" />
-                  </>
+                  <span className="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 px-1 items-center justify-center rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-[10px] shadow-xs">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
                 )}
               </button>
 
@@ -820,7 +821,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                   {/* Dropdown Header */}
                   <div className="p-3.5 bg-gradient-to-r from-[#2f0846] via-[#3d0b5b] to-[#481268] text-white flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)] animate-pulse" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-xs inline-block" />
                       <div>
                         <h4 className="font-bold text-xs tracking-wide">Registration Notifications</h4>
                         <p className="text-[10px] text-amber-200/80 font-mono">
@@ -881,7 +882,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                     </div>
 
                     <div className="flex items-center space-x-1.5 text-[10.5px] text-slate-500 dark:text-slate-400 font-mono">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
                       <span>Live Sync</span>
                     </div>
                   </div>
@@ -950,7 +951,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                                       {reg.first_name} {reg.last_name}
                                     </p>
                                     {isUnread && (
-                                      <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)] animate-pulse shrink-0" />
+                                      <span className="w-2 h-2 rounded-full bg-amber-400 shadow-xs shrink-0" />
                                     )}
                                   </div>
                                   <div className="flex items-center space-x-1.5 text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
